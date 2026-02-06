@@ -1,0 +1,42 @@
+// users [icon: user, color: yellow]{
+// id string pk
+// username string unique
+// email string unique
+// password_hash string
+// is_active boolean
+// created_at timestamp
+// updated_at timestamp
+// last_login_at timestamp
+// }
+
+model User {
+  id            Int        @id @default(autoincrement())
+  username      String
+  email         String     @unique
+  password_hash String
+  is_active     Boolean
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  last_login_at DateTime   @default(now())
+  role          Role
+  sessions      Sessions[]
+}
+
+enum Role {
+  Admin
+  Owner
+  Sales
+  Finance
+}
+
+model Sessions {
+  id            Int      @id @default(autoincrement())
+  session_token String   @unique
+  ip_address    String
+  user_agent    String
+  created_at    DateTime @default(now())
+  expires_at    DateTime
+  revoked_at    DateTime
+  user_id       Int
+  user          User     @relation(fields: [user_id], references: [id])
+}

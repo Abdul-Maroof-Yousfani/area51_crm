@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(git add:*)",
+      "Bash(git push)",
+      "Bash(git commit:*)",
+      "Bash(sort:*)",
+      "Bash(ls:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(curl:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"Get-ChildItem ''D:\\\\Work\\\\Personal\\\\RoastBot\\\\RABBIT HOLE V3\\\\backend'' -Directory | Select-Object Name\")",
+      "Bash(powershell -Command \"Get-Content ''D:\\\\Work\\\\Personal\\\\RoastBot\\\\RABBIT HOLE V3\\\\cases\\\\bible-kjv-psychological\\\\jobs.json''\")",
+      "Bash(ping:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(python -c:*)"
+    ]
+  }
+}
