@@ -10,6 +10,7 @@ import {
   openInGoogleCalendar
 } from '../../utils/googleCalendar';
 import { useGoogleCalendar } from '../../contexts/GoogleCalendarContext';
+import { leadsService } from '../../services/api';
 
 export default function LeadDetailModal({
   lead,
@@ -36,8 +37,25 @@ export default function LeadDetailModal({
     advanceAmount: '',
     notes: ''
   });
+
   const activityEndRef = useRef(null);
   const { syncLeadEvent, shouldAutoSync } = useGoogleCalendar();
+  const [timelineActivities, setTimelineActivities] = useState([]);
+
+  const fetchTimeline = async () => {
+    try {
+      const activities = await leadsService.getTimeline(lead.id);
+      setTimelineActivities(activities);
+    } catch (error) {
+      console.error('Error fetching timeline:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (lead.id) {
+      fetchTimeline();
+    }
+  }, [lead.id]);
 
   useEffect(() => {
     if (activeTab === 'activity')
@@ -77,32 +95,21 @@ export default function LeadDetailModal({
   const handleAddComment = async () => {
     if (!comment.trim()) return;
 
-    // Create activity entry for the note
-    const activityEntry = createActivityEntry(
-      ACTIVITY_TYPES.NOTE_ADDED,
-      { note: comment },
-      currentUser.name
-    );
+    try {
+      // Create activity entry for the note
+      const activityData = { note: comment };
 
-    // Also keep backward compatibility with comments array
-    const newComment = {
-      text: comment,
-      author: currentUser.name,
-      timestamp: new Date().toISOString(),
-      role: currentUser.role
-    };
+      await leadsService.addNote(lead.id, {
+        content: JSON.stringify(activityData),
+        type: ACTIVITY_TYPES.NOTE_ADDED,
+        userId: currentUser.id
+      });
 
-    setFormData((prev) => ({
-      ...prev,
-      comments: [...(prev.comments || []), newComment],
-      activityLog: [...(prev.activityLog || []), activityEntry]
-    }));
-
-    await onSave(lead.id, {
-      comments: arrayUnion(newComment),
-      activityLog: arrayUnion(activityEntry)
-    });
-    setComment('');
+      setComment('');
+      fetchTimeline(); // Refresh timeline
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    }
   };
 
   const handleStageClick = (newStage) => {
@@ -112,7 +119,7 @@ export default function LeadDetailModal({
     if (newStage === 'Booked') {
       setBookingData({
         venue: formData.venue || '',
-        eventDate: formData.eventDate || '',
+        eventDate: formData.eventDate ? new Date(formData.eventDate).toISOString().split('T')[0] : '',
         eventType: formData.eventType || '',
         guests: formData.guests || '',
         finalAmount: formData.amount || '',
@@ -131,30 +138,37 @@ export default function LeadDetailModal({
     const { from, to } = stageChangeConfirm;
 
     // Create activity entry for stage change
-    const activityEntry = createActivityEntry(
-      ACTIVITY_TYPES.STAGE_CHANGE,
-      { from, to },
-      currentUser.name
-    );
+    const activityData = { from, to };
 
-    // Update form data with new stage and activity log
-    setFormData((prev) => ({
-      ...prev,
-      stage: to,
-      activityLog: [...(prev.activityLog || []), activityEntry]
-    }));
+    try {
+      await isActiveStageChange(to);
+      await onSave(lead.id, {
+        stage: to,
+        stageUpdatedAt: new Date().toISOString(),
+        stageUpdatedBy: currentUser.name
+      });
 
-    // Save to database
-    await onSave(lead.id, {
-      stage: to,
-      stageUpdatedAt: new Date().toISOString(),
-      stageUpdatedBy: currentUser.name,
-      activityLog: arrayUnion(activityEntry)
-    });
+      // Log activity
+      await leadsService.addNote(lead.id, {
+        content: JSON.stringify(activityData),
+        type: ACTIVITY_TYPES.STAGE_CHANGE,
+        userId: currentUser.id
+      });
 
-    // Close confirmation and switch to timeline
-    setStageChangeConfirm(null);
-    setActiveTab('activity');
+      setFormData(prev => ({ ...prev, stage: to }));
+      fetchTimeline();
+
+      // Close confirmation and switch to timeline
+      setStageChangeConfirm(null);
+      setActiveTab('activity');
+    } catch (error) {
+      console.error("Error changing stage:", error);
+    }
+  };
+
+  const isActiveStageChange = async (to) => {
+    // Placeholder if any validation needed
+    return true;
   };
 
   const handleStageChangeCancel = () => {
@@ -215,7 +229,7 @@ export default function LeadDetailModal({
       eventType: bookingData.eventType,
       guests: bookingData.guests,
       amount: Number(bookingData.finalAmount),
-      advancePaid: Number(bookingData.advanceAmount) || 0,
+      advanceAmount: Number(bookingData.advanceAmount) || 0,
       totalPaid: Number(bookingData.advanceAmount) || 0,
       totalDue: Number(bookingData.finalAmount) - (Number(bookingData.advanceAmount) || 0),
       bookingNotes: bookingData.notes,
@@ -249,33 +263,25 @@ export default function LeadDetailModal({
   const timeline = useMemo(() => {
     const items = [];
 
-    // Add activity log entries
-    (formData.activityLog || []).forEach((a) => {
+    // Add API activities
+    timelineActivities.forEach((a) => {
+      let content = {};
+      try {
+        content = JSON.parse(a.content);
+      } catch (e) {
+        content = { note: a.content };
+      }
+
       items.push({
-        type: 'activity',
-        data: a,
-        timestamp: new Date(a.timestamp)
+        type: a.type,
+        data: content,
+        timestamp: new Date(a.createdAt),
+        user: a.user?.username || 'Unknown'
       });
     });
 
-    // Add legacy comments that aren't in activity log
-    (formData.comments || []).forEach((c) => {
-      // Check if this comment is already in activity log
-      const alreadyLogged = (formData.activityLog || []).some(
-        (a) => a.type === ACTIVITY_TYPES.NOTE_ADDED && a.note === c.text
-      );
-      if (!alreadyLogged) {
-        items.push({
-          type: 'comment',
-          data: c,
-          timestamp: new Date(c.timestamp)
-        });
-      }
-    });
-
-    // Sort by timestamp descending (newest first)
     return items.sort((a, b) => b.timestamp - a.timestamp);
-  }, [formData.activityLog, formData.comments]);
+  }, [timelineActivities]);
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -308,11 +314,10 @@ export default function LeadDetailModal({
             <button
               key={s}
               onClick={() => handleStageClick(s)}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
-                formData.stage === s
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-blue-400'
-              }`}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${formData.stage === s
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white text-gray-500 border-gray-200 hover:border-blue-400'
+                }`}
             >
               {s}
             </button>
@@ -384,11 +389,10 @@ export default function LeadDetailModal({
                         key={v.id}
                         type="button"
                         onClick={() => setBookingData({ ...bookingData, venue: v.id })}
-                        className={`p-3 rounded-lg border-2 text-left transition-all ${
-                          bookingData.venue === v.id
-                            ? 'border-green-500 bg-green-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
+                        className={`p-3 rounded-lg border-2 text-left transition-all ${bookingData.venue === v.id
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                          }`}
                       >
                         <div className="flex items-center gap-2">
                           <Building className={`w-5 h-5 ${bookingData.venue === v.id ? 'text-green-600' : 'text-gray-400'}`} />
@@ -518,11 +522,10 @@ export default function LeadDetailModal({
                 <button
                   onClick={handleBookingConfirm}
                   disabled={!isBookingFormValid}
-                  className={`px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
-                    isBookingFormValid
-                      ? 'bg-green-600 text-white hover:bg-green-700'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
+                  className={`px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${isBookingFormValid
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    }`}
                 >
                   <CheckCircle className="w-4 h-4" />
                   Confirm Booking
@@ -536,21 +539,19 @@ export default function LeadDetailModal({
           <div className="w-56 bg-white border-r border-gray-200 p-4 flex flex-col gap-2">
             <button
               onClick={() => setActiveTab('details')}
-              className={`text-left px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-3 ${
-                activeTab === 'details'
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-500 hover:bg-gray-50'
-              }`}
+              className={`text-left px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-3 ${activeTab === 'details'
+                ? 'bg-blue-50 text-blue-700'
+                : 'text-gray-500 hover:bg-gray-50'
+                }`}
             >
               <Edit3 className="w-4 h-4" /> Details
             </button>
             <button
               onClick={() => setActiveTab('activity')}
-              className={`text-left px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-3 ${
-                activeTab === 'activity'
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-500 hover:bg-gray-50'
-              }`}
+              className={`text-left px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-3 ${activeTab === 'activity'
+                ? 'bg-blue-50 text-blue-700'
+                : 'text-gray-500 hover:bg-gray-50'
+                }`}
             >
               <Clock className="w-4 h-4" /> Timeline
               {timeline.length > 0 && (
@@ -653,8 +654,9 @@ export default function LeadDetailModal({
                     <div>
                       <label className="text-xs font-semibold text-gray-500">Event Date</label>
                       <input
+                        type="date"
                         className="w-full p-2 border rounded-lg text-sm mt-1"
-                        value={formData.eventDate}
+                        value={formData.eventDate ? new Date(formData.eventDate).toISOString().split('T')[0] : ''}
                         onChange={(e) =>
                           setFormData({ ...formData, eventDate: e.target.value })
                         }
@@ -663,6 +665,7 @@ export default function LeadDetailModal({
                     <div>
                       <label className="text-xs font-semibold text-gray-500">Guests</label>
                       <input
+                        type="number"
                         className="w-full p-2 border rounded-lg text-sm mt-1"
                         value={formData.guests}
                         onChange={(e) =>
@@ -860,39 +863,23 @@ export default function LeadDetailModal({
                     </div>
                   ) : (
                     timeline.map((item, i) => {
-                      if (item.type === 'activity') {
-                        const meta = getActivityMeta(item.data.type);
-                        return (
-                          <div key={i} className="flex gap-3">
-                            <div className={`w-8 h-8 rounded-full bg-${meta.color}-100 flex items-center justify-center flex-shrink-0`}>
-                              <span className="text-sm">{meta.icon}</span>
-                            </div>
-                            <div className="flex-1 bg-white p-3 rounded-xl border shadow-sm">
-                              <p className="text-sm font-medium text-gray-900">
-                                {formatActivityMessage(item.data)}
-                              </p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                {item.data.user} • {item.timestamp.toLocaleString()}
-                              </p>
-                            </div>
+                      // All items from API are activities with proper types
+                      const meta = getActivityMeta(item.type);
+                      return (
+                        <div key={i} className="flex gap-3">
+                          <div className={`w-8 h-8 rounded-full bg-${meta.color}-100 flex items-center justify-center flex-shrink-0`}>
+                            <span className="text-sm">{meta.icon}</span>
                           </div>
-                        );
-                      } else {
-                        // Legacy comment
-                        return (
-                          <div key={i} className="flex gap-3">
-                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                              <MessageSquare className="w-4 h-4 text-gray-500" />
-                            </div>
-                            <div className="flex-1 bg-white p-3 rounded-xl border shadow-sm">
-                              <p className="text-sm text-gray-700">{item.data.text}</p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                {item.data.author} • {item.timestamp.toLocaleString()}
-                              </p>
-                            </div>
+                          <div className="flex-1 bg-white p-3 rounded-xl border shadow-sm">
+                            <p className="text-sm font-medium text-gray-900">
+                              {formatActivityMessage({ type: item.type, ...item.data })}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {item.user} • {item.timestamp.toLocaleString()}
+                            </p>
                           </div>
-                        );
-                      }
+                        </div>
+                      );
                     })
                   )}
                   <div ref={activityEndRef} />

@@ -10,17 +10,18 @@
 // }
 
 model User {
-  id            Int        @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   username      String
-  email         String     @unique
+  email         String         @unique
   password_hash String
   is_active     Boolean
-  created_at    DateTime   @default(now())
-  updated_at    DateTime   @updatedAt
-  last_login_at DateTime   @default(now())
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  last_login_at DateTime       @default(now())
   role          Role
   sessions      Sessions[]
   leads         Lead[]
+  activities    LeadActivity[]
 }
 
 enum Role {

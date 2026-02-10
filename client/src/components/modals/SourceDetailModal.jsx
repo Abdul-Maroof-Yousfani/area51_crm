@@ -27,10 +27,21 @@ export default function SourceDetailModal({ source, leads, onClose, onSelectLead
   // Calculate overall stats
   const overallStats = useMemo(() => {
     const total = sourceLeads.length;
-    const booked = sourceLeads.filter(l => l.stage === 'Booked').length;
-    const totalRevenue = sourceLeads
-      .filter(l => l.stage === 'Booked')
-      .reduce((sum, l) => sum + (l.amount || 0), 0);
+
+    // Include all positive outcomes
+    const bookedLeads = sourceLeads.filter(l =>
+      ['Booked', 'Won', 'Completed'].includes(l.stage) ||
+      ['Booked', 'Won', 'Completed'].includes(l.status)
+    );
+
+    const booked = bookedLeads.length;
+
+    const totalRevenue = bookedLeads.reduce((sum, l) => {
+      // Use finalAmount if available, otherwise amount
+      const val = l.finalAmount || l.amount || 0;
+      return sum + Number(val);
+    }, 0);
+
     const conversionRate = total > 0 ? (booked / total) * 100 : 0;
     const avgDealSize = booked > 0 ? totalRevenue / booked : 0;
 
@@ -57,9 +68,9 @@ export default function SourceDetailModal({ source, leads, onClose, onSelectLead
       }
 
       campaigns[campaignName].leads.push(lead);
-      if (lead.stage === 'Booked') {
+      if (['Booked', 'Won', 'Completed'].includes(lead.stage) || ['Booked', 'Won', 'Completed'].includes(lead.status)) {
         campaigns[campaignName].booked++;
-        campaigns[campaignName].totalRevenue += lead.amount || 0;
+        campaigns[campaignName].totalRevenue += (lead.finalAmount || lead.amount || 0);
       }
       if (lead.meta?.platform) campaigns[campaignName].platforms.add(lead.meta.platform);
       if (lead.meta?.adset_name) campaigns[campaignName].adSets.add(lead.meta.adset_name);
@@ -91,9 +102,9 @@ export default function SourceDetailModal({ source, leads, onClose, onSelectLead
       }
 
       locations[city].leads.push(lead);
-      if (lead.stage === 'Booked') {
+      if (['Booked', 'Won', 'Completed'].includes(lead.stage) || ['Booked', 'Won', 'Completed'].includes(lead.status)) {
         locations[city].booked++;
-        locations[city].totalRevenue += lead.amount || 0;
+        locations[city].totalRevenue += (lead.finalAmount || lead.amount || 0);
       }
     });
 
@@ -143,8 +154,8 @@ export default function SourceDetailModal({ source, leads, onClose, onSelectLead
   const isMetaSource = source.name === 'Meta Lead Gen';
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-5xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-scale-in">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white w-full max-w-5xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-scale-in" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
@@ -166,30 +177,34 @@ export default function SourceDetailModal({ source, leads, onClose, onSelectLead
         </div>
 
         {/* Stats Bar */}
-        <div className="grid grid-cols-4 gap-4 p-4 bg-slate-50 border-b">
-          <div className="bg-white p-4 rounded-xl border shadow-sm">
-            <div className="flex items-center gap-2 text-gray-500 text-xs mb-1">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-slate-50 border-b">
+          <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 shadow-sm">
+            <div className="flex items-center gap-2 text-blue-600 text-xs mb-1 font-semibold uppercase">
               <Users className="w-4 h-4" /> Total Leads
             </div>
-            <div className="text-2xl font-bold text-gray-900">{overallStats.total}</div>
+            <div className="text-2xl font-bold text-blue-900">{overallStats.total}</div>
           </div>
-          <div className="bg-white p-4 rounded-xl border shadow-sm">
-            <div className="flex items-center gap-2 text-gray-500 text-xs mb-1">
-              <TrendingUp className="w-4 h-4" /> Booked
+          <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 shadow-sm">
+            <div className="flex items-center gap-2 text-emerald-600 text-xs mb-1 font-semibold uppercase">
+              <TrendingUp className="w-4 h-4" /> Booked Deals
             </div>
-            <div className="text-2xl font-bold text-green-600">{overallStats.booked}</div>
+            <div className="text-2xl font-bold text-emerald-900">{overallStats.booked}</div>
           </div>
-          <div className="bg-white p-4 rounded-xl border shadow-sm">
-            <div className="flex items-center gap-2 text-gray-500 text-xs mb-1">
-              <DollarSign className="w-4 h-4" /> Revenue
+          <div className="bg-violet-50 p-4 rounded-xl border border-violet-100 shadow-sm">
+            <div className="flex items-center gap-2 text-violet-600 text-xs mb-1 font-semibold uppercase">
+              <DollarSign className="w-4 h-4" /> Total Revenue
             </div>
-            <div className="text-2xl font-bold text-blue-600">{formatCurrency(overallStats.totalRevenue)}</div>
+            <div className="text-xl md:text-2xl font-bold text-violet-900 truncate" title={formatCurrency(overallStats.totalRevenue)}>
+              {new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumSignificantDigits: 3 }).format(overallStats.totalRevenue)}
+            </div>
           </div>
-          <div className="bg-white p-4 rounded-xl border shadow-sm">
-            <div className="flex items-center gap-2 text-gray-500 text-xs mb-1">
-              <TrendingUp className="w-4 h-4" /> Avg Deal
+          <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 shadow-sm">
+            <div className="flex items-center gap-2 text-amber-600 text-xs mb-1 font-semibold uppercase">
+              <TrendingUp className="w-4 h-4" /> Avg Deal Size
             </div>
-            <div className="text-2xl font-bold text-purple-600">{formatCurrency(overallStats.avgDealSize)}</div>
+            <div className="text-xl md:text-2xl font-bold text-amber-900 truncate" title={formatCurrency(overallStats.avgDealSize)}>
+              {new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumSignificantDigits: 3 }).format(overallStats.avgDealSize)}
+            </div>
           </div>
         </div>
 
@@ -198,31 +213,28 @@ export default function SourceDetailModal({ source, leads, onClose, onSelectLead
           <div className="flex gap-2 px-4 pt-4 bg-white border-b">
             <button
               onClick={() => setActiveTab('campaigns')}
-              className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
-                activeTab === 'campaigns'
+              className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${activeTab === 'campaigns'
                   ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
               Campaigns
             </button>
             <button
               onClick={() => setActiveTab('locations')}
-              className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
-                activeTab === 'locations'
+              className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${activeTab === 'locations'
                   ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
               Locations
             </button>
             <button
               onClick={() => setActiveTab('leads')}
-              className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${
-                activeTab === 'leads'
+              className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-colors ${activeTab === 'leads'
                   ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
-              }`}
+                }`}
             >
               All Leads
             </button>
@@ -281,10 +293,9 @@ export default function SourceDetailModal({ source, leads, onClose, onSelectLead
                               </span>
                             </td>
                             <td className="px-4 py-3 text-center">
-                              <span className={`font-medium ${
-                                campaign.conversionRate >= 5 ? 'text-green-600' :
-                                campaign.conversionRate >= 2 ? 'text-yellow-600' : 'text-red-500'
-                              }`}>
+                              <span className={`font-medium ${campaign.conversionRate >= 5 ? 'text-green-600' :
+                                  campaign.conversionRate >= 2 ? 'text-yellow-600' : 'text-red-500'
+                                }`}>
                                 {formatPercent(campaign.conversionRate)}
                               </span>
                             </td>
@@ -383,10 +394,9 @@ export default function SourceDetailModal({ source, leads, onClose, onSelectLead
                           <div className="text-xs text-gray-500">Booked</div>
                         </div>
                         <div>
-                          <div className={`text-lg font-bold ${
-                            location.conversionRate >= 5 ? 'text-green-600' :
-                            location.conversionRate >= 2 ? 'text-yellow-600' : 'text-red-500'
-                          }`}>
+                          <div className={`text-lg font-bold ${location.conversionRate >= 5 ? 'text-green-600' :
+                              location.conversionRate >= 2 ? 'text-yellow-600' : 'text-red-500'
+                            }`}>
                             {formatPercent(location.conversionRate)}
                           </div>
                           <div className="text-xs text-gray-500">Conv</div>
@@ -449,11 +459,10 @@ export default function SourceDetailModal({ source, leads, onClose, onSelectLead
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="font-medium text-gray-900 truncate">{lead.clientName}</span>
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                              lead.stage === 'Booked' ? 'bg-green-100 text-green-700' :
-                              lead.stage === 'Lost' ? 'bg-red-100 text-red-700' :
-                              'bg-gray-100 text-gray-600'
-                            }`}>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${lead.stage === 'Booked' ? 'bg-green-100 text-green-700' :
+                                lead.stage === 'Lost' ? 'bg-red-100 text-red-700' :
+                                  'bg-gray-100 text-gray-600'
+                              }`}>
                               {lead.stage}
                             </span>
                           </div>

@@ -5,7 +5,7 @@ import { db, appId } from './lib/firebase';
 import { createActivityEntry, ACTIVITY_TYPES } from './utils/helpers';
 
 // Hooks
-import { useAuth, useFirestoreData, useAutoMigrateContacts, useCsvUpload, useNotifications, useAppSettings, useContacts, useSources } from './hooks';
+import { useAuth, useFirestoreData, useAutoMigrateContacts, useCsvUpload, useNotifications, useAppSettings, useContacts, useSources, useLeads, useUsers } from './hooks';
 
 // UI Components
 import { Toast, DebugPanel, AuthScreen, NotificationBell, LanguageToggle } from './components/ui';
@@ -66,7 +66,11 @@ export default function App() {
   const { uploading, handleFileUpload } = useCsvUpload(sources);
 
   // App settings (managers, event types from Firestore)
-  const { managers, eventTypes } = useAppSettings();
+  const { eventTypes } = useAppSettings();
+
+  // Users from API (for managers list)
+  const { users: apiUsers } = useUsers();
+  const managerNames = apiUsers.map(u => u.username);
 
   // Contacts from API
   const {
@@ -85,6 +89,18 @@ export default function App() {
     updateSource,
     deleteSource
   } = useSources();
+
+  // Leads from API
+  const {
+    leads: apiLeads,
+    stats: leadsStats,
+    loading: leadsLoading,
+    addLead,
+    updateLead,
+    deleteLead,
+    deleteAllLeads,
+    addLeadNote
+  } = useLeads();
 
   // Notifications
   const {
@@ -115,22 +131,125 @@ export default function App() {
   // Auto-migrate contacts
   useAutoMigrateContacts(activeUser, data, contacts, setToast);
 
+  // Wrapper for adding lead to handle name-to-ID mapping
+  const handleAddLeadWrapper = async (leadData) => {
+    try {
+      // Find manager ID
+      const managerUser = apiUsers.find(u => u.username === leadData.manager);
+      const assignedTo = managerUser ? managerUser.id : null;
+
+      // Find source ID
+      const sourceObj = apiSources.find(s => s.name === leadData.source);
+      const sourceId = sourceObj ? sourceObj.id : null;
+
+      // Construct title from event type and date if available
+      let title = leadData.title;
+      if (!title && leadData.eventType) {
+        title = `${leadData.eventType}${leadData.eventDate ? ` - ${leadData.eventDate}` : ''}`;
+      }
+
+      // Construct clean payload matching Joi schema
+      // Ensure status is valid
+      const status = (leadData.stage === 'New Lead' ? 'New' : leadData.stage) || 'New';
+
+      const payload = {
+        amount: Number(leadData.amount) || 0,
+        status,
+        notes: leadData.notes,
+        contactId: leadData.contactId,
+        assignedTo,
+        sourceId,
+        title,
+        // Map inquiryDate to expectedCloseDate if provided, or leave undefined
+        expectedCloseDate: leadData.inquiryDate ? new Date(leadData.inquiryDate).toISOString() : null,
+        // Event details
+        eventDate: leadData.eventDate ? new Date(leadData.eventDate).toISOString() : null,
+        eventType: leadData.eventType,
+        venue: leadData.venue,
+        guests: leadData.guests ? parseInt(leadData.guests) : null
+      };
+
+      await addLead(payload);
+      setShowNewLead(false);
+      setToast({ message: 'Lead added successfully', type: 'success' });
+    } catch (error) {
+      console.error('Error adding lead:', error);
+      setToast({ message: error.message || 'Failed to add lead', type: 'error' });
+    }
+  };
+
+
+  // Wrapper for updating lead to handle field name mapping
+  const handleUpdateLeadWrapper = async (id, updateData) => {
+    try {
+      // Map frontend field names to backend schema
+      const payload = { ...updateData };
+
+      // Map 'stage' to 'status'
+      if (payload.stage) {
+        payload.status = payload.stage;
+        delete payload.stage;
+      }
+
+      // Map source name to sourceId
+      if (payload.source && typeof payload.source === 'string') {
+        const sourceObj = apiSources.find(s => s.name === payload.source);
+        payload.sourceId = sourceObj ? sourceObj.id : null;
+        delete payload.source;
+      }
+
+      // Map manager name to assignedTo (user ID)
+      if (payload.manager && typeof payload.manager === 'string') {
+        const managerObj = apiUsers.find(u => u.username === payload.manager);
+        payload.assignedTo = managerObj ? managerObj.id : null;
+        delete payload.manager;
+      }
+
+      // Remove frontend-only fields that don't exist in backend schema
+      delete payload.id; // Prisma error: id is in where clause, not data
+      delete payload.contactId; // Can't update foreign key directly
+      delete payload.clientName;
+      delete payload.phone;
+      delete payload.source; // Already mapped to sourceId
+      delete payload.inquiryDate;
+      delete payload.stageUpdatedAt;
+      delete payload.stageUpdatedBy;
+      delete payload.createdAt;
+      delete payload.updatedAt;
+      delete payload.contact;
+      delete payload.assignee;
+      delete payload.activityLog;
+      delete payload.totalPaid;
+      delete payload.totalDue;
+      // Note: guests, venue, eventType, eventDate, finalAmount, advanceAmount, 
+      // siteVisitDate, siteVisitTime, bookingNotes, bookedAt, bookedBy are valid database fields.
+
+      await updateLead(id, payload);
+      setToast({ message: 'Lead updated successfully', type: 'success' });
+    } catch (error) {
+      console.error('Error updating lead:', error);
+      setToast({ message: error.message || 'Failed to update lead', type: 'error' });
+    }
+  };
+
+  // Handle stage change from employee view with activity logging
   // Handle stage change from employee view with activity logging
   const handleStageChange = async (leadId, newStage, oldStage = null) => {
     try {
-      // Create activity log entry for stage change
-      const activityEntry = createActivityEntry(
-        ACTIVITY_TYPES.STAGE_CHANGE,
-        { from: oldStage || 'Unknown', to: newStage },
-        activeUser?.name
-      );
-
-      await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', leadId), {
+      // 1. Update lead stage
+      await updateLead(leadId, {
         stage: newStage,
         stageUpdatedAt: new Date().toISOString(),
-        stageUpdatedBy: activeUser?.name,
-        activityLog: arrayUnion(activityEntry)
+        stageUpdatedBy: activeUser?.name
       });
+
+      // 2. Add log entry
+      const activityData = { from: oldStage || 'Unknown', to: newStage };
+      await addLeadNote(leadId,
+        JSON.stringify(activityData),
+        ACTIVITY_TYPES.STAGE_CHANGE
+      );
+
       setToast({ message: `Lead moved to ${newStage}`, type: 'success' });
     } catch (error) {
       console.error('Error updating stage:', error);
@@ -141,12 +260,10 @@ export default function App() {
   // Log WhatsApp click activity
   const handleWhatsAppClick = async (leadId) => {
     try {
-      const activityEntry = createActivityEntry(
-        ACTIVITY_TYPES.WHATSAPP_OPENED,
-        {},
-        activeUser?.name
+      await addLeadNote(leadId,
+        JSON.stringify({}),
+        ACTIVITY_TYPES.WHATSAPP_OPENED
       );
-      await addActivityLog(leadId, activityEntry);
     } catch (error) {
       console.error('Error logging WhatsApp activity:', error);
     }
@@ -155,34 +272,31 @@ export default function App() {
   // Handle call logging from CallListView
   const handleLogCall = async (leadId, callData) => {
     try {
-      // Create activity log entry for the call
-      const activityEntry = createActivityEntry(
-        ACTIVITY_TYPES.CALL_LOGGED,
-        {
-          outcome: callData.outcome,
-          notes: callData.notes,
-          nextCallDate: callData.nextCallDate,
-          nextCallTime: callData.nextCallTime
-        },
-        activeUser?.name
+      // 1. Add log entry
+      const activityData = {
+        outcome: callData.outcome,
+        notes: callData.notes,
+        nextCallDate: callData.nextCallDate,
+        nextCallTime: callData.nextCallTime
+      };
+      await addLeadNote(leadId,
+        JSON.stringify(activityData),
+        ACTIVITY_TYPES.CALL_LOGGED
       );
 
-      // Update lead with call data
+      // 2. Update lead
       const updateData = {
         lastCallDate: new Date().toISOString(),
         lastCallOutcome: callData.outcome,
         lastCallNotes: callData.notes,
-        lastCalledBy: activeUser?.name,
-        activityLog: arrayUnion(activityEntry)
+        lastCalledBy: activeUser?.name
       };
-
-      // Add next call info if scheduled
       if (callData.nextCallDate) {
         updateData.nextCallDate = callData.nextCallDate;
         updateData.nextCallTime = callData.nextCallTime || null;
       }
+      await updateLead(leadId, updateData);
 
-      await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'leads', leadId), updateData);
       setToast({ message: 'Call logged successfully', type: 'success' });
     } catch (error) {
       console.error('Error logging call:', error);
@@ -231,15 +345,15 @@ export default function App() {
         <LeadDetailModal
           lead={selectedLead}
           onClose={() => setSelectedLead(null)}
-          onSave={handleSaveLead}
+          onSave={handleUpdateLeadWrapper}
           currentUser={activeUser}
-          sources={sources}
-          managers={managers}
+          sources={apiSources}
+          managers={managerNames}
           eventTypes={eventTypes}
           onOpenAi={() => { }}
         />
       )}
-      {showRevenue && <RevenueDetailModal data={data} onClose={() => setShowRevenue(false)} />}
+      {showRevenue && <RevenueDetailModal data={apiLeads} onClose={() => setShowRevenue(false)} />}
       {showAdmin && <AdminPanel onClose={() => setShowAdmin(false)} />}
       {showIntegrationsPanel && (
         <IntegrationsPanel onClose={() => setShowIntegrationsPanel(false)} />
@@ -247,18 +361,18 @@ export default function App() {
       {showNewLead && (
         <NewLeadModal
           onClose={() => setShowNewLead(false)}
-          onSave={handleAddLead}
-          managers={managers}
-          contacts={contacts}
-          onAddContact={handleAddContact}
-          sources={sources}
+          onSave={handleAddLeadWrapper}
+          managers={managerNames}
+          contacts={apiContacts}
+          onAddContact={addContact}
+          sources={apiSources}
           eventTypes={eventTypes}
         />
       )}
       {selectedSource && (
         <SourceDetailModal
           source={selectedSource}
-          leads={data}
+          leads={apiLeads}
           onClose={() => setSelectedSource(null)}
           onSelectLead={(lead) => {
             setSelectedSource(null);
@@ -369,13 +483,13 @@ export default function App() {
 
         {/* Owner Dashboard */}
         {activeTab === 'owner-dashboard' && (
-          <OwnerDashboard leads={data} onShowRevenue={() => setShowRevenue(true)} />
+          <OwnerDashboard leads={apiLeads} onShowRevenue={() => setShowRevenue(true)} />
         )}
 
         {/* Employee Interface (Urdu) */}
         {activeTab === 'employee' && (
           <EmployeeView
-            leads={data}
+            leads={apiLeads}
             currentUser={activeUser}
             onSelectLead={setSelectedLead}
             onStageChange={handleStageChange}
@@ -384,33 +498,33 @@ export default function App() {
         )}
 
         {/* Finance View */}
-        {activeTab === 'finance' && <FinanceView leads={data} onSyncPayments={() => { }} />}
+        {activeTab === 'finance' && <FinanceView leads={apiLeads} onSyncPayments={() => { }} />}
 
         {/* Call List View */}
         {activeTab === 'call-list' && (
           <CallListView
-            leads={data}
+            leads={apiLeads}
             currentUser={activeUser}
             onLogCall={handleLogCall}
             onSelectLead={setSelectedLead}
-            onSaveLead={handleSaveLead}
+            onSaveLead={updateLead}
           />
         )}
 
         {/* Simple Dashboard (Legacy) */}
         {activeTab === 'dashboard' && (
-          <DashboardView stats={stats} onShowRevenue={() => setShowRevenue(true)} />
+          <DashboardView stats={leadsStats} onShowRevenue={() => setShowRevenue(true)} />
         )}
 
         {/* Leads Management */}
         {activeTab === 'leads' && (
           <LeadsView
-            data={data}
+            data={apiLeads}
             onSelectLead={setSelectedLead}
             onShowNewLead={() => setShowNewLead(true)}
             uploading={uploading}
             onFileUpload={handleFileUpload}
-            onTruncateLeads={handleTruncateLeads}
+            onTruncateLeads={deleteAllLeads}
           />
         )}
 
@@ -430,7 +544,7 @@ export default function App() {
         {activeTab === 'sources' && (
           <SourcesView
             sources={apiSources}
-            leads={data}
+            leads={apiLeads}
             onAdd={addSource}
             onUpdate={updateSource}
             onDelete={deleteSource}
@@ -440,12 +554,12 @@ export default function App() {
 
         {/* Conversation Logs - Owner can view employee-client WhatsApp chats */}
         {activeTab === 'conversation-logs' && (
-          <ConversationLogsView leads={data} currentUser={activeUser} />
+          <ConversationLogsView leads={apiLeads} currentUser={activeUser} />
         )}
 
         {/* AI Audit Logs - View AI interaction history */}
         {activeTab === 'audit-logs' && (
-          <AuditLogsView leads={data} currentUser={activeUser} />
+          <AuditLogsView leads={apiLeads} currentUser={activeUser} />
         )}
 
         {/* Debug Footer - Hidden on mobile */}

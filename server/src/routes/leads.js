@@ -4,24 +4,36 @@ import {
     getLeadById,
     createLead,
     updateLead,
-    deleteLead
+    deleteLead,
+    addNote,
+    getLeadTimeline,
+    deleteAllLeads
 } from '../controllers/leads.js';
 
 const router = express.Router();
 
-// GET /leads - Get all leads
-router.get('/leads', getLeads);
+// GET / - Get all leads
+router.get('/', getLeads);
 
-// GET /leads/:id - Get lead by ID
-router.get('/leads/:id', getLeadById);
+// GET /:id - Get lead by ID
+router.get('/:id', getLeadById);
 
-// POST /leads - Create new lead
-router.post('/leads', createLead);
+// POST / - Create new lead
+router.post('/', createLead);
 
-// PUT /leads/:id - Update lead
-router.put('/leads/:id', updateLead);
+// PUT /:id - Update lead
+router.put('/:id', updateLead);
 
-// DELETE /leads/:id - Delete lead
-router.delete('/leads/:id', deleteLead);
+// DELETE /:id - Delete lead
+router.delete('/:id', deleteLead);
+
+// POST /:id/timeline - Add note
+router.post('/:id/timeline', addNote);
+
+// GET /:id/timeline - Get timeline
+router.get('/:id/timeline', getLeadTimeline);
+
+// DELETE /all - Delete all leads
+router.delete('/all', deleteAllLeads);
 
 export default router;

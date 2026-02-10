@@ -34,14 +34,23 @@ export default function RevenueDetailModal({ data, onClose }) {
     };
 
     const timeFilteredData = data.filter(isWithinRange);
-    const wonDeals = timeFilteredData.filter((d) =>
-      (d.stage || '').toLowerCase().includes('won')
-    );
+
+    // Include all positive outcomes
+    const wonDeals = timeFilteredData.filter((d) => {
+      const stage = (d.stage || '').toLowerCase();
+      const status = (d.status || '').toLowerCase();
+      return (
+        stage === 'booked' || stage === 'won' || stage === 'completed' ||
+        status === 'booked' || status === 'won' || status === 'completed' ||
+        stage.includes('won') || status.includes('won')
+      );
+    });
+
     const pipelineDeals = timeFilteredData.filter((d) =>
-      ['proposal', 'negotiation'].includes((d.stage || '').toLowerCase())
+      ['proposal', 'negotiation', 'visit', 'meeting'].includes((d.stage || '').toLowerCase())
     );
 
-    const totalRevenue = wonDeals.reduce((sum, d) => sum + safeAmount(d.amount), 0);
+    const totalRevenue = wonDeals.reduce((sum, d) => sum + safeAmount(d.finalAmount || d.amount), 0);
     const potentialRevenue = pipelineDeals.reduce((sum, d) => sum + safeAmount(d.amount), 0);
     const avgDealSize = wonDeals.length > 0 ? totalRevenue / wonDeals.length : 0;
 
@@ -56,7 +65,7 @@ export default function RevenueDetailModal({ data, onClose }) {
       const displayKey = date.toLocaleString('default', { month: 'short', year: '2-digit' });
 
       if (!trendMap[key]) trendMap[key] = { name: displayKey, value: 0, rawDate: key };
-      trendMap[key].value += safeAmount(d.amount);
+      trendMap[key].value += safeAmount(d.finalAmount || d.amount);
 
       if (!eventsByMonth[displayKey]) eventsByMonth[displayKey] = [];
       eventsByMonth[displayKey].push(d);
@@ -72,13 +81,13 @@ export default function RevenueDetailModal({ data, onClose }) {
         d.eventType && d.eventType.trim()
           ? d.eventType.trim().charAt(0).toUpperCase() + d.eventType.trim().slice(1)
           : 'Other';
-      eventMap[type] = (eventMap[type] || 0) + safeAmount(d.amount);
+      eventMap[type] = (eventMap[type] || 0) + safeAmount(d.finalAmount || d.amount);
     });
     const eventData = Object.entries(eventMap)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
     const topDeals = [...wonDeals]
-      .sort((a, b) => safeAmount(b.amount) - safeAmount(a.amount))
+      .sort((a, b) => safeAmount(b.finalAmount || b.amount) - safeAmount(a.finalAmount || a.amount))
       .slice(0, 5);
 
     return {
@@ -113,7 +122,7 @@ export default function RevenueDetailModal({ data, onClose }) {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Revenue Analytics</h2>
-              <p className="text-sm text-gray-500">Confirmed Bookings Only (Status: Won)</p>
+              <p className="text-sm text-gray-500">Confirmed Bookings (Won / Booked / Completed)</p>
             </div>
           </div>
           <div className="flex gap-2">

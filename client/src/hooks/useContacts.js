@@ -42,6 +42,7 @@ export function useContacts() {
 
     // Fetch all pages to get complete data set
     const fetchAllContacts = useCallback(async () => {
+        console.log('[useContacts] Fetching all contacts...');
         setLoading(true);
         setError(null);
         try {
@@ -50,19 +51,22 @@ export function useContacts() {
             let hasMoreData = true;
 
             while (hasMoreData) {
+                console.log('[useContacts] Fetching page, cursor:', cursor);
                 const result = await contactService.getAll(cursor, 100);
+                console.log('[useContacts] Received result:', result);
                 allContacts = [...allContacts, ...result.data];
                 hasMoreData = result.pagination.hasMore;
                 cursor = result.pagination.nextCursor;
             }
 
+            console.log('[useContacts] Total contacts fetched:', allContacts.length);
             setContacts(allContacts);
             setHasMore(false);
             setNextCursor(null);
             setTotalCount(allContacts.length);
         } catch (err) {
+            console.error('[useContacts] Error fetching contacts:', err);
             setError(err.message);
-            console.error('Failed to fetch all contacts:', err);
         } finally {
             setLoading(false);
         }

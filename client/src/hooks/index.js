@@ -7,4 +7,6 @@ export { useAppSettings } from './useAppSettings';
 export { useContacts } from './useContacts';
 export { useSources } from './useSources';
 export { useContactsMigration } from './useContactsMigration';
+export { useLeads } from './useLeads';
+export { useUsers } from './useUsers';
 

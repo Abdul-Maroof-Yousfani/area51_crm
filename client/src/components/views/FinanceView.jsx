@@ -23,37 +23,78 @@ export default function FinanceView({ leads, onSyncPayments }) {
   const [filter, setFilter] = useState('all');
   const [syncing, setSyncing] = useState(false);
 
-  // Filter booked leads only
+  // Filter booked leads and calculate derived fields
   const bookedLeads = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     return leads
-      .filter((l) => l.stage === 'Booked')
+      .filter((l) => {
+        const s = (l.stage || '').toLowerCase();
+        const st = (l.status || '').toLowerCase();
+        return (
+          s === 'booked' || s === 'won' || s === 'completed' ||
+          st === 'booked' || st === 'won' || st === 'completed' ||
+          s.includes('won') || st.includes('won')
+        );
+      })
+      .map((l) => {
+        // Calculate financial fields dynamically
+        // Use finalAmount if available, otherwise amount. Ensure numbers.
+        const totalValue = safeAmount(l.finalAmount !== undefined && l.finalAmount !== null ? l.finalAmount : l.amount);
+        const totalPaid = safeAmount(l.advanceAmount); // Currently only advance is tracked
+        const totalDue = Math.max(0, totalValue - totalPaid);
+
+        // Determine status
+        let paymentStatus = 'pending';
+        if (totalValue > 0 && totalDue <= 0) {
+          paymentStatus = 'paid';
+        } else if (totalPaid > 0) {
+          paymentStatus = 'partial';
+        }
+
+        // Check for overdue (if event has passed and full payment not received)
+        if (l.eventDate) {
+          const eventDate = new Date(l.eventDate);
+          if (eventDate < today && totalDue > 0) {
+            paymentStatus = 'overdue';
+          }
+        }
+
+        return {
+          ...l,
+          totalValue,   // Calculated
+          totalPaid,    // Calculated
+          totalDue,     // Calculated
+          paymentStatus // Calculated
+        };
+      })
       .sort((a, b) => new Date(b.eventDate || 0) - new Date(a.eventDate || 0));
   }, [leads]);
 
   // Filtered data
   const filteredLeads = useMemo(() => {
     if (filter === 'all') return bookedLeads;
-    if (filter === 'overdue') return bookedLeads.filter((l) => l.paymentStatus === 'overdue');
-    if (filter === 'partial') return bookedLeads.filter((l) => l.paymentStatus === 'partial');
-    if (filter === 'paid') return bookedLeads.filter((l) => l.paymentStatus === 'paid');
-    if (filter === 'pending') return bookedLeads.filter((l) => !l.paymentStatus || l.paymentStatus === 'pending');
-    return bookedLeads;
+    // Use the calculated paymentStatus
+    return bookedLeads.filter((l) => l.paymentStatus === 'overdue' ? filter === 'overdue' : l.paymentStatus === filter);
   }, [bookedLeads, filter]);
 
   // Calculate stats
   const stats = useMemo(() => {
     const totalBookings = bookedLeads.length;
-    const totalValue = bookedLeads.reduce((sum, l) => sum + safeAmount(l.amount), 0);
-    const totalPaid = bookedLeads.reduce((sum, l) => sum + safeAmount(l.totalPaid || 0), 0);
-    const totalDue = bookedLeads.reduce((sum, l) => sum + safeAmount(l.totalDue || l.amount), 0);
+    const totalValue = bookedLeads.reduce((sum, l) => sum + l.totalValue, 0);
+    const totalPaid = bookedLeads.reduce((sum, l) => sum + l.totalPaid, 0);
+    const totalDue = bookedLeads.reduce((sum, l) => sum + l.totalDue, 0);
     const overdueCount = bookedLeads.filter((l) => l.paymentStatus === 'overdue').length;
     const overdueAmount = bookedLeads
       .filter((l) => l.paymentStatus === 'overdue')
-      .reduce((sum, l) => sum + safeAmount(l.totalDue || l.amount), 0);
+      .reduce((sum, l) => sum + l.totalDue, 0);
 
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
     const upcomingThisMonth = bookedLeads.filter((l) => {
+      // Ensure date exists
+      if (!l.eventDate) return false;
       const eventDate = new Date(l.eventDate);
       return eventDate >= now && eventDate <= endOfMonth;
     });
@@ -186,11 +227,10 @@ export default function FinanceView({ leads, onSyncPayments }) {
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`px-2 md:px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium whitespace-nowrap ${
-              filter === f.key
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            className={`px-2 md:px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium whitespace-nowrap ${filter === f.key
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
           >
             {f.label}
           </button>
@@ -210,7 +250,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
                 <div className="min-w-0 flex-1">
                   <p className="font-bold text-gray-900 truncate">{lead.clientName}</p>
                   <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                    <Calendar className="w-3 h-3" /> {lead.eventDate || '-'}
+                    <Calendar className="w-3 h-3" /> {lead.eventDate ? new Date(lead.eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
                   </p>
                 </div>
                 {getPaymentStatusBadge(lead.paymentStatus)}
@@ -218,15 +258,15 @@ export default function FinanceView({ leads, onSyncPayments }) {
               <div className="flex justify-between items-center mt-3 pt-2 border-t">
                 <div>
                   <p className="text-[10px] text-gray-400">Total</p>
-                  <p className="text-sm font-bold">{formatCurrency(lead.amount)}</p>
+                  <p className="text-sm font-bold">{formatCurrency(lead.totalValue)}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-[10px] text-gray-400">Paid</p>
-                  <p className="text-sm font-bold text-green-600">{formatCurrency(lead.totalPaid || 0)}</p>
+                  <p className="text-sm font-bold text-green-600">{formatCurrency(lead.totalPaid)}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] text-gray-400">Due</p>
-                  <p className="text-sm font-bold text-red-600">{formatCurrency(lead.totalDue || lead.amount)}</p>
+                  <p className="text-sm font-bold text-red-600">{formatCurrency(lead.totalDue)}</p>
                 </div>
               </div>
             </div>
@@ -268,18 +308,18 @@ export default function FinanceView({ leads, onSyncPayments }) {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1 text-gray-700">
                         <Calendar className="w-3 h-3" />
-                        {lead.eventDate || '-'}
+                        {lead.eventDate ? new Date(lead.eventDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-gray-600 hidden lg:table-cell">{lead.eventType || '-'}</td>
                     <td className="px-4 py-3 text-right font-bold">
-                      {formatCurrency(lead.amount)}
+                      {formatCurrency(lead.totalValue)}
                     </td>
                     <td className="px-4 py-3 text-right text-green-600 font-medium">
-                      {formatCurrency(lead.totalPaid || 0)}
+                      {formatCurrency(lead.totalPaid)}
                     </td>
                     <td className="px-4 py-3 text-right text-red-600 font-medium">
-                      {formatCurrency(lead.totalDue || lead.amount)}
+                      {formatCurrency(lead.totalDue)}
                     </td>
                     <td className="px-4 py-3 text-center">
                       {getPaymentStatusBadge(lead.paymentStatus)}

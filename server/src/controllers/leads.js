@@ -5,26 +5,50 @@ import Joi from 'joi';
 const leadSchema = Joi.object({
     title: Joi.string().max(200).allow('', null),
     amount: Joi.number().min(0).default(0),
-    status: Joi.string().valid('New Lead', 'Proposal', 'Negotiation', 'Won', 'Lost').default('New Lead'),
+    status: Joi.string().valid('New', 'Contacted', 'Qualified', 'Site Visit Scheduled', 'Quoted', 'Negotiating', 'Booked', 'Lost').default('New'),
     probability: Joi.number().min(0).max(100).default(0),
     expectedCloseDate: Joi.date().iso().allow(null),
     notes: Joi.string().allow('', null),
     contactId: Joi.number().required(),
     sourceId: Joi.number().allow(null),
-    assignedTo: Joi.number().allow(null)
+    assignedTo: Joi.number().allow(null),
+    // Booking/Event fields
+    guests: Joi.number().integer().min(0).allow(null),
+    venue: Joi.string().max(200).allow('', null),
+    eventType: Joi.string().max(100).allow('', null),
+    eventDate: Joi.date().iso().allow(null),
+    finalAmount: Joi.number().min(0).allow(null),
+    advanceAmount: Joi.number().min(0).allow(null),
+    // Site visit fields
+    siteVisitDate: Joi.date().iso().allow(null),
+    siteVisitTime: Joi.string().max(50).allow('', null)
 });
 
 const updateLeadSchema = Joi.object({
     title: Joi.string().max(200).allow('', null),
     amount: Joi.number().min(0),
-    status: Joi.string().valid('New Lead', 'Proposal', 'Negotiation', 'Won', 'Lost'),
+    status: Joi.string().valid('New', 'Contacted', 'Qualified', 'Site Visit Scheduled', 'Quoted', 'Negotiating', 'Booked', 'Lost'),
     probability: Joi.number().min(0).max(100),
     expectedCloseDate: Joi.date().iso().allow(null),
     notes: Joi.string().allow('', null),
     contactId: Joi.number(),
     sourceId: Joi.number().allow(null),
-    assignedTo: Joi.number().allow(null)
-}).min(1);
+    assignedTo: Joi.number().allow(null),
+    // Booking/Event fields
+    guests: Joi.number().integer().min(0).allow(null),
+    venue: Joi.string().max(200).allow('', null),
+    eventType: Joi.string().max(100).allow('', null),
+    eventDate: Joi.date().iso().allow(null),
+    finalAmount: Joi.number().min(0).allow(null),
+    advanceAmount: Joi.number().min(0).allow(null),
+    // Site visit fields
+    siteVisitDate: Joi.date().iso().allow(null),
+    siteVisitTime: Joi.string().max(50).allow('', null),
+    // Booking Details
+    bookingNotes: Joi.string().allow('', null),
+    bookedAt: Joi.date().iso().allow(null),
+    bookedBy: Joi.string().allow('', null)
+}).min(1).unknown(true); // Allow unknown fields from frontend
 
 // Get all leads with pagination and filtering
 export const getLeads = async (req, res) => {
@@ -207,6 +231,78 @@ export const deleteLead = async (req, res) => {
         return res.status(200).json({ status: true, message: 'Lead deleted successfully' });
     } catch (error) {
         console.error('Delete Lead Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Delete all leads
+export const deleteAllLeads = async (req, res) => {
+    try {
+        await prisma.lead.deleteMany({});
+        return res.status(200).json({ status: true, message: 'All leads deleted successfully' });
+    } catch (error) {
+        console.error('Delete All Leads Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Add note to lead
+export const addNote = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { content, type = 'NOTE', userId } = req.body;
+
+        if (!content) {
+            return res.status(400).json({ status: false, message: 'Content is required' });
+        }
+
+        const lead = await prisma.lead.findUnique({
+            where: { id: parseInt(id) }
+        });
+
+        if (!lead) {
+            return res.status(404).json({ status: false, message: 'Lead not found' });
+        }
+
+        const activity = await prisma.leadActivity.create({
+            data: {
+                leadId: parseInt(id),
+                content,
+                type,
+                userId: userId ? parseInt(userId) : null
+            },
+            include: {
+                user: {
+                    select: { id: true, username: true, email: true }
+                }
+            }
+        });
+
+        return res.status(201).json({ status: true, message: 'Note added successfully', data: activity });
+    } catch (error) {
+        console.error('Add Note Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Get lead timeline
+export const getLeadTimeline = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const activities = await prisma.leadActivity.findMany({
+            where: { leadId: parseInt(id) },
+            include: {
+                user: {
+                    select: { id: true, username: true }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
+        });
+
+        return res.status(200).json({ status: true, data: activities });
+    } catch (error) {
+        console.error('Get Timeline Error:', error);
         return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
     }
 };

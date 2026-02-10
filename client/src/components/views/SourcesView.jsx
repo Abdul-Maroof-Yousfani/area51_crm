@@ -1,11 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { Trash2, Loader, Plus, Globe, Pencil, Check, X, Lock, Zap, Users, TrendingUp, ChevronRight } from 'lucide-react';
 
+
+
 export default function SourcesView({ sources, leads = [], onAdd, onUpdate, onDelete, onSourceClick }) {
   const [val, setVal] = useState('');
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editVal, setEditVal] = useState('');
+
 
   const handleAdd = async () => {
     if (!val.trim()) return;
@@ -94,11 +97,10 @@ export default function SourcesView({ sources, leads = [], onAdd, onUpdate, onDe
             <div
               key={s.id}
               onClick={() => handleSourceClick(s)}
-              className={`p-3 md:p-4 rounded-xl border shadow-sm transition-all ${
-                s.isIntegration
-                  ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
-                  : 'bg-white'
-              } ${onSourceClick && !editingId ? 'cursor-pointer hover:shadow-md hover:border-blue-300' : ''}`}
+              className={`p-3 md:p-4 rounded-xl border shadow-sm transition-all ${s.isIntegration
+                ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
+                : 'bg-white'
+                } ${!editingId ? 'cursor-pointer hover:shadow-md hover:border-blue-300' : ''}`}
             >
               {editingId === s.id && !s.isIntegration ? (
                 <div className="flex items-center gap-2">
@@ -164,9 +166,7 @@ export default function SourcesView({ sources, leads = [], onAdd, onUpdate, onDe
                           </button>
                         </>
                       )}
-                      {onSourceClick && (
-                        <ChevronRight className="w-4 h-4 text-gray-400 ml-1" />
-                      )}
+                      <ChevronRight className="w-4 h-4 text-gray-400 ml-1" />
                     </div>
                   </div>
 
@@ -183,10 +183,9 @@ export default function SourcesView({ sources, leads = [], onAdd, onUpdate, onDe
                       <span>booked</span>
                     </div>
                     {stats.total > 0 && (
-                      <div className={`font-medium ${
-                        stats.conversionRate >= 5 ? 'text-green-600' :
+                      <div className={`font-medium ${stats.conversionRate >= 5 ? 'text-green-600' :
                         stats.conversionRate >= 2 ? 'text-yellow-600' : 'text-gray-400'
-                      }`}>
+                        }`}>
                         {stats.conversionRate.toFixed(1)}%
                       </div>
                     )}
@@ -203,6 +202,8 @@ export default function SourcesView({ sources, leads = [], onAdd, onUpdate, onDe
           No sources yet. Add your first lead source above.
         </div>
       )}
+
+
     </div>
   );
 }

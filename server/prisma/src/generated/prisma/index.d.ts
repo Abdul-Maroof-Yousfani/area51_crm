@@ -29,6 +29,16 @@ export type Sessions = $Result.DefaultSelection<Prisma.$SessionsPayload>
  */
 export type Contact = $Result.DefaultSelection<Prisma.$ContactPayload>
 /**
+ * Model Lead
+ * 
+ */
+export type Lead = $Result.DefaultSelection<Prisma.$LeadPayload>
+/**
+ * Model LeadActivity
+ * 
+ */
+export type LeadActivity = $Result.DefaultSelection<Prisma.$LeadActivityPayload>
+/**
  * Model Sources
  * 
  */
@@ -199,6 +209,26 @@ export class PrismaClient<
     * ```
     */
   get contact(): Prisma.ContactDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.lead`: Exposes CRUD operations for the **Lead** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Leads
+    * const leads = await prisma.lead.findMany()
+    * ```
+    */
+  get lead(): Prisma.LeadDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.leadActivity`: Exposes CRUD operations for the **LeadActivity** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more LeadActivities
+    * const leadActivities = await prisma.leadActivity.findMany()
+    * ```
+    */
+  get leadActivity(): Prisma.LeadActivityDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.sources`: Exposes CRUD operations for the **Sources** model.
@@ -646,6 +676,8 @@ export namespace Prisma {
     User: 'User',
     Sessions: 'Sessions',
     Contact: 'Contact',
+    Lead: 'Lead',
+    LeadActivity: 'LeadActivity',
     Sources: 'Sources'
   };
 
@@ -662,7 +694,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "sessions" | "contact" | "sources"
+      modelProps: "user" | "sessions" | "contact" | "lead" | "leadActivity" | "sources"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -888,6 +920,154 @@ export namespace Prisma {
           }
         }
       }
+      Lead: {
+        payload: Prisma.$LeadPayload<ExtArgs>
+        fields: Prisma.LeadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LeadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LeadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload>
+          }
+          findFirst: {
+            args: Prisma.LeadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LeadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload>
+          }
+          findMany: {
+            args: Prisma.LeadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload>[]
+          }
+          create: {
+            args: Prisma.LeadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload>
+          }
+          createMany: {
+            args: Prisma.LeadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LeadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload>[]
+          }
+          delete: {
+            args: Prisma.LeadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload>
+          }
+          update: {
+            args: Prisma.LeadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload>
+          }
+          deleteMany: {
+            args: Prisma.LeadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LeadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LeadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload>[]
+          }
+          upsert: {
+            args: Prisma.LeadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadPayload>
+          }
+          aggregate: {
+            args: Prisma.LeadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLead>
+          }
+          groupBy: {
+            args: Prisma.LeadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LeadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LeadCountArgs<ExtArgs>
+            result: $Utils.Optional<LeadCountAggregateOutputType> | number
+          }
+        }
+      }
+      LeadActivity: {
+        payload: Prisma.$LeadActivityPayload<ExtArgs>
+        fields: Prisma.LeadActivityFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.LeadActivityFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.LeadActivityFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+          }
+          findFirst: {
+            args: Prisma.LeadActivityFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.LeadActivityFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+          }
+          findMany: {
+            args: Prisma.LeadActivityFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload>[]
+          }
+          create: {
+            args: Prisma.LeadActivityCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+          }
+          createMany: {
+            args: Prisma.LeadActivityCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.LeadActivityCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload>[]
+          }
+          delete: {
+            args: Prisma.LeadActivityDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+          }
+          update: {
+            args: Prisma.LeadActivityUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+          }
+          deleteMany: {
+            args: Prisma.LeadActivityDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.LeadActivityUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.LeadActivityUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload>[]
+          }
+          upsert: {
+            args: Prisma.LeadActivityUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+          }
+          aggregate: {
+            args: Prisma.LeadActivityAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateLeadActivity>
+          }
+          groupBy: {
+            args: Prisma.LeadActivityGroupByArgs<ExtArgs>
+            result: $Utils.Optional<LeadActivityGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.LeadActivityCountArgs<ExtArgs>
+            result: $Utils.Optional<LeadActivityCountAggregateOutputType> | number
+          }
+        }
+      }
       Sources: {
         payload: Prisma.$SourcesPayload<ExtArgs>
         fields: Prisma.SourcesFieldRefs
@@ -1073,6 +1253,8 @@ export namespace Prisma {
     user?: UserOmit
     sessions?: SessionsOmit
     contact?: ContactOmit
+    lead?: LeadOmit
+    leadActivity?: LeadActivityOmit
     sources?: SourcesOmit
   }
 
@@ -1155,10 +1337,14 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     sessions: number
+    leads: number
+    activities: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
+    leads?: boolean | UserCountOutputTypeCountLeadsArgs
+    activities?: boolean | UserCountOutputTypeCountActivitiesArgs
   }
 
   // Custom InputTypes
@@ -1177,6 +1363,113 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SessionsWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountLeadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LeadWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LeadActivityWhereInput
+  }
+
+
+  /**
+   * Count Type ContactCountOutputType
+   */
+
+  export type ContactCountOutputType = {
+    leads: number
+  }
+
+  export type ContactCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    leads?: boolean | ContactCountOutputTypeCountLeadsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ContactCountOutputType without action
+   */
+  export type ContactCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactCountOutputType
+     */
+    select?: ContactCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ContactCountOutputType without action
+   */
+  export type ContactCountOutputTypeCountLeadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LeadWhereInput
+  }
+
+
+  /**
+   * Count Type LeadCountOutputType
+   */
+
+  export type LeadCountOutputType = {
+    activities: number
+  }
+
+  export type LeadCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    activities?: boolean | LeadCountOutputTypeCountActivitiesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * LeadCountOutputType without action
+   */
+  export type LeadCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadCountOutputType
+     */
+    select?: LeadCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * LeadCountOutputType without action
+   */
+  export type LeadCountOutputTypeCountActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LeadActivityWhereInput
+  }
+
+
+  /**
+   * Count Type SourcesCountOutputType
+   */
+
+  export type SourcesCountOutputType = {
+    leads: number
+  }
+
+  export type SourcesCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    leads?: boolean | SourcesCountOutputTypeCountLeadsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SourcesCountOutputType without action
+   */
+  export type SourcesCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SourcesCountOutputType
+     */
+    select?: SourcesCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SourcesCountOutputType without action
+   */
+  export type SourcesCountOutputTypeCountLeadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LeadWhereInput
   }
 
 
@@ -1415,6 +1708,8 @@ export namespace Prisma {
     last_login_at?: boolean
     role?: boolean
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    leads?: boolean | User$leadsArgs<ExtArgs>
+    activities?: boolean | User$activitiesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1457,6 +1752,8 @@ export namespace Prisma {
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password_hash" | "is_active" | "created_at" | "updated_at" | "last_login_at" | "role", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | User$sessionsArgs<ExtArgs>
+    leads?: boolean | User$leadsArgs<ExtArgs>
+    activities?: boolean | User$activitiesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1466,6 +1763,8 @@ export namespace Prisma {
     name: "User"
     objects: {
       sessions: Prisma.$SessionsPayload<ExtArgs>[]
+      leads: Prisma.$LeadPayload<ExtArgs>[]
+      activities: Prisma.$LeadActivityPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -1872,6 +2171,8 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    leads<T extends User$leadsArgs<ExtArgs> = {}>(args?: Subset<T, User$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    activities<T extends User$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2319,6 +2620,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SessionsScalarFieldEnum | SessionsScalarFieldEnum[]
+  }
+
+  /**
+   * User.leads
+   */
+  export type User$leadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    where?: LeadWhereInput
+    orderBy?: LeadOrderByWithRelationInput | LeadOrderByWithRelationInput[]
+    cursor?: LeadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LeadScalarFieldEnum | LeadScalarFieldEnum[]
+  }
+
+  /**
+   * User.activities
+   */
+  export type User$activitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    where?: LeadActivityWhereInput
+    orderBy?: LeadActivityOrderByWithRelationInput | LeadActivityOrderByWithRelationInput[]
+    cursor?: LeadActivityWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LeadActivityScalarFieldEnum | LeadActivityScalarFieldEnum[]
   }
 
   /**
@@ -3689,6 +4038,8 @@ export namespace Prisma {
     phone?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    leads?: boolean | Contact$leadsArgs<ExtArgs>
+    _count?: boolean | ContactCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["contact"]>
 
   export type ContactSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3722,10 +4073,18 @@ export namespace Prisma {
   }
 
   export type ContactOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "createdAt" | "updatedAt", ExtArgs["result"]["contact"]>
+  export type ContactInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    leads?: boolean | Contact$leadsArgs<ExtArgs>
+    _count?: boolean | ContactCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ContactIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type ContactIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $ContactPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Contact"
-    objects: {}
+    objects: {
+      leads: Prisma.$LeadPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       firstName: string
@@ -4128,6 +4487,7 @@ export namespace Prisma {
    */
   export interface Prisma__ContactClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    leads<T extends Contact$leadsArgs<ExtArgs> = {}>(args?: Subset<T, Contact$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4181,6 +4541,10 @@ export namespace Prisma {
      */
     omit?: ContactOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
+    /**
      * Filter, which Contact to fetch.
      */
     where: ContactWhereUniqueInput
@@ -4199,6 +4563,10 @@ export namespace Prisma {
      */
     omit?: ContactOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
+    /**
      * Filter, which Contact to fetch.
      */
     where: ContactWhereUniqueInput
@@ -4216,6 +4584,10 @@ export namespace Prisma {
      * Omit specific fields from the Contact
      */
     omit?: ContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
     /**
      * Filter, which Contact to fetch.
      */
@@ -4265,6 +4637,10 @@ export namespace Prisma {
      */
     omit?: ContactOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
+    /**
      * Filter, which Contact to fetch.
      */
     where?: ContactWhereInput
@@ -4313,6 +4689,10 @@ export namespace Prisma {
      */
     omit?: ContactOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
+    /**
      * Filter, which Contacts to fetch.
      */
     where?: ContactWhereInput
@@ -4355,6 +4735,10 @@ export namespace Prisma {
      * Omit specific fields from the Contact
      */
     omit?: ContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
     /**
      * The data needed to create a Contact.
      */
@@ -4403,6 +4787,10 @@ export namespace Prisma {
      * Omit specific fields from the Contact
      */
     omit?: ContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
     /**
      * The data needed to update a Contact.
      */
@@ -4470,6 +4858,10 @@ export namespace Prisma {
      */
     omit?: ContactOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
+    /**
      * The filter to search for the Contact to update in case it exists.
      */
     where: ContactWhereUniqueInput
@@ -4496,6 +4888,10 @@ export namespace Prisma {
      */
     omit?: ContactOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
+    /**
      * Filter which Contact to delete.
      */
     where: ContactWhereUniqueInput
@@ -4516,6 +4912,30 @@ export namespace Prisma {
   }
 
   /**
+   * Contact.leads
+   */
+  export type Contact$leadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    where?: LeadWhereInput
+    orderBy?: LeadOrderByWithRelationInput | LeadOrderByWithRelationInput[]
+    cursor?: LeadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LeadScalarFieldEnum | LeadScalarFieldEnum[]
+  }
+
+  /**
    * Contact without action
    */
   export type ContactDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4527,6 +4947,2592 @@ export namespace Prisma {
      * Omit specific fields from the Contact
      */
     omit?: ContactOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContactInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Lead
+   */
+
+  export type AggregateLead = {
+    _count: LeadCountAggregateOutputType | null
+    _avg: LeadAvgAggregateOutputType | null
+    _sum: LeadSumAggregateOutputType | null
+    _min: LeadMinAggregateOutputType | null
+    _max: LeadMaxAggregateOutputType | null
+  }
+
+  export type LeadAvgAggregateOutputType = {
+    id: number | null
+    amount: number | null
+    probability: number | null
+    guests: number | null
+    finalAmount: number | null
+    advanceAmount: number | null
+    contactId: number | null
+    sourceId: number | null
+    assignedTo: number | null
+  }
+
+  export type LeadSumAggregateOutputType = {
+    id: number | null
+    amount: number | null
+    probability: number | null
+    guests: number | null
+    finalAmount: number | null
+    advanceAmount: number | null
+    contactId: number | null
+    sourceId: number | null
+    assignedTo: number | null
+  }
+
+  export type LeadMinAggregateOutputType = {
+    id: number | null
+    title: string | null
+    amount: number | null
+    status: string | null
+    probability: number | null
+    expectedCloseDate: Date | null
+    notes: string | null
+    guests: number | null
+    venue: string | null
+    eventType: string | null
+    eventDate: Date | null
+    finalAmount: number | null
+    advanceAmount: number | null
+    siteVisitDate: Date | null
+    siteVisitTime: string | null
+    bookingNotes: string | null
+    bookedAt: Date | null
+    bookedBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    contactId: number | null
+    sourceId: number | null
+    assignedTo: number | null
+  }
+
+  export type LeadMaxAggregateOutputType = {
+    id: number | null
+    title: string | null
+    amount: number | null
+    status: string | null
+    probability: number | null
+    expectedCloseDate: Date | null
+    notes: string | null
+    guests: number | null
+    venue: string | null
+    eventType: string | null
+    eventDate: Date | null
+    finalAmount: number | null
+    advanceAmount: number | null
+    siteVisitDate: Date | null
+    siteVisitTime: string | null
+    bookingNotes: string | null
+    bookedAt: Date | null
+    bookedBy: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    contactId: number | null
+    sourceId: number | null
+    assignedTo: number | null
+  }
+
+  export type LeadCountAggregateOutputType = {
+    id: number
+    title: number
+    amount: number
+    status: number
+    probability: number
+    expectedCloseDate: number
+    notes: number
+    guests: number
+    venue: number
+    eventType: number
+    eventDate: number
+    finalAmount: number
+    advanceAmount: number
+    siteVisitDate: number
+    siteVisitTime: number
+    bookingNotes: number
+    bookedAt: number
+    bookedBy: number
+    createdAt: number
+    updatedAt: number
+    contactId: number
+    sourceId: number
+    assignedTo: number
+    _all: number
+  }
+
+
+  export type LeadAvgAggregateInputType = {
+    id?: true
+    amount?: true
+    probability?: true
+    guests?: true
+    finalAmount?: true
+    advanceAmount?: true
+    contactId?: true
+    sourceId?: true
+    assignedTo?: true
+  }
+
+  export type LeadSumAggregateInputType = {
+    id?: true
+    amount?: true
+    probability?: true
+    guests?: true
+    finalAmount?: true
+    advanceAmount?: true
+    contactId?: true
+    sourceId?: true
+    assignedTo?: true
+  }
+
+  export type LeadMinAggregateInputType = {
+    id?: true
+    title?: true
+    amount?: true
+    status?: true
+    probability?: true
+    expectedCloseDate?: true
+    notes?: true
+    guests?: true
+    venue?: true
+    eventType?: true
+    eventDate?: true
+    finalAmount?: true
+    advanceAmount?: true
+    siteVisitDate?: true
+    siteVisitTime?: true
+    bookingNotes?: true
+    bookedAt?: true
+    bookedBy?: true
+    createdAt?: true
+    updatedAt?: true
+    contactId?: true
+    sourceId?: true
+    assignedTo?: true
+  }
+
+  export type LeadMaxAggregateInputType = {
+    id?: true
+    title?: true
+    amount?: true
+    status?: true
+    probability?: true
+    expectedCloseDate?: true
+    notes?: true
+    guests?: true
+    venue?: true
+    eventType?: true
+    eventDate?: true
+    finalAmount?: true
+    advanceAmount?: true
+    siteVisitDate?: true
+    siteVisitTime?: true
+    bookingNotes?: true
+    bookedAt?: true
+    bookedBy?: true
+    createdAt?: true
+    updatedAt?: true
+    contactId?: true
+    sourceId?: true
+    assignedTo?: true
+  }
+
+  export type LeadCountAggregateInputType = {
+    id?: true
+    title?: true
+    amount?: true
+    status?: true
+    probability?: true
+    expectedCloseDate?: true
+    notes?: true
+    guests?: true
+    venue?: true
+    eventType?: true
+    eventDate?: true
+    finalAmount?: true
+    advanceAmount?: true
+    siteVisitDate?: true
+    siteVisitTime?: true
+    bookingNotes?: true
+    bookedAt?: true
+    bookedBy?: true
+    createdAt?: true
+    updatedAt?: true
+    contactId?: true
+    sourceId?: true
+    assignedTo?: true
+    _all?: true
+  }
+
+  export type LeadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Lead to aggregate.
+     */
+    where?: LeadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Leads to fetch.
+     */
+    orderBy?: LeadOrderByWithRelationInput | LeadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LeadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Leads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Leads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Leads
+    **/
+    _count?: true | LeadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LeadAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LeadSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LeadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LeadMaxAggregateInputType
+  }
+
+  export type GetLeadAggregateType<T extends LeadAggregateArgs> = {
+        [P in keyof T & keyof AggregateLead]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLead[P]>
+      : GetScalarType<T[P], AggregateLead[P]>
+  }
+
+
+
+
+  export type LeadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LeadWhereInput
+    orderBy?: LeadOrderByWithAggregationInput | LeadOrderByWithAggregationInput[]
+    by: LeadScalarFieldEnum[] | LeadScalarFieldEnum
+    having?: LeadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LeadCountAggregateInputType | true
+    _avg?: LeadAvgAggregateInputType
+    _sum?: LeadSumAggregateInputType
+    _min?: LeadMinAggregateInputType
+    _max?: LeadMaxAggregateInputType
+  }
+
+  export type LeadGroupByOutputType = {
+    id: number
+    title: string | null
+    amount: number
+    status: string
+    probability: number | null
+    expectedCloseDate: Date | null
+    notes: string | null
+    guests: number | null
+    venue: string | null
+    eventType: string | null
+    eventDate: Date | null
+    finalAmount: number | null
+    advanceAmount: number | null
+    siteVisitDate: Date | null
+    siteVisitTime: string | null
+    bookingNotes: string | null
+    bookedAt: Date | null
+    bookedBy: string | null
+    createdAt: Date
+    updatedAt: Date
+    contactId: number
+    sourceId: number | null
+    assignedTo: number | null
+    _count: LeadCountAggregateOutputType | null
+    _avg: LeadAvgAggregateOutputType | null
+    _sum: LeadSumAggregateOutputType | null
+    _min: LeadMinAggregateOutputType | null
+    _max: LeadMaxAggregateOutputType | null
+  }
+
+  type GetLeadGroupByPayload<T extends LeadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LeadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LeadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LeadGroupByOutputType[P]>
+            : GetScalarType<T[P], LeadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LeadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    amount?: boolean
+    status?: boolean
+    probability?: boolean
+    expectedCloseDate?: boolean
+    notes?: boolean
+    guests?: boolean
+    venue?: boolean
+    eventType?: boolean
+    eventDate?: boolean
+    finalAmount?: boolean
+    advanceAmount?: boolean
+    siteVisitDate?: boolean
+    siteVisitTime?: boolean
+    bookingNotes?: boolean
+    bookedAt?: boolean
+    bookedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    contactId?: boolean
+    sourceId?: boolean
+    assignedTo?: boolean
+    contact?: boolean | ContactDefaultArgs<ExtArgs>
+    source?: boolean | Lead$sourceArgs<ExtArgs>
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
+    activities?: boolean | Lead$activitiesArgs<ExtArgs>
+    _count?: boolean | LeadCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["lead"]>
+
+  export type LeadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    amount?: boolean
+    status?: boolean
+    probability?: boolean
+    expectedCloseDate?: boolean
+    notes?: boolean
+    guests?: boolean
+    venue?: boolean
+    eventType?: boolean
+    eventDate?: boolean
+    finalAmount?: boolean
+    advanceAmount?: boolean
+    siteVisitDate?: boolean
+    siteVisitTime?: boolean
+    bookingNotes?: boolean
+    bookedAt?: boolean
+    bookedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    contactId?: boolean
+    sourceId?: boolean
+    assignedTo?: boolean
+    contact?: boolean | ContactDefaultArgs<ExtArgs>
+    source?: boolean | Lead$sourceArgs<ExtArgs>
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
+  }, ExtArgs["result"]["lead"]>
+
+  export type LeadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    amount?: boolean
+    status?: boolean
+    probability?: boolean
+    expectedCloseDate?: boolean
+    notes?: boolean
+    guests?: boolean
+    venue?: boolean
+    eventType?: boolean
+    eventDate?: boolean
+    finalAmount?: boolean
+    advanceAmount?: boolean
+    siteVisitDate?: boolean
+    siteVisitTime?: boolean
+    bookingNotes?: boolean
+    bookedAt?: boolean
+    bookedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    contactId?: boolean
+    sourceId?: boolean
+    assignedTo?: boolean
+    contact?: boolean | ContactDefaultArgs<ExtArgs>
+    source?: boolean | Lead$sourceArgs<ExtArgs>
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
+  }, ExtArgs["result"]["lead"]>
+
+  export type LeadSelectScalar = {
+    id?: boolean
+    title?: boolean
+    amount?: boolean
+    status?: boolean
+    probability?: boolean
+    expectedCloseDate?: boolean
+    notes?: boolean
+    guests?: boolean
+    venue?: boolean
+    eventType?: boolean
+    eventDate?: boolean
+    finalAmount?: boolean
+    advanceAmount?: boolean
+    siteVisitDate?: boolean
+    siteVisitTime?: boolean
+    bookingNotes?: boolean
+    bookedAt?: boolean
+    bookedBy?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    contactId?: boolean
+    sourceId?: boolean
+    assignedTo?: boolean
+  }
+
+  export type LeadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "amount" | "status" | "probability" | "expectedCloseDate" | "notes" | "guests" | "venue" | "eventType" | "eventDate" | "finalAmount" | "advanceAmount" | "siteVisitDate" | "siteVisitTime" | "bookingNotes" | "bookedAt" | "bookedBy" | "createdAt" | "updatedAt" | "contactId" | "sourceId" | "assignedTo", ExtArgs["result"]["lead"]>
+  export type LeadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    contact?: boolean | ContactDefaultArgs<ExtArgs>
+    source?: boolean | Lead$sourceArgs<ExtArgs>
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
+    activities?: boolean | Lead$activitiesArgs<ExtArgs>
+    _count?: boolean | LeadCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type LeadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    contact?: boolean | ContactDefaultArgs<ExtArgs>
+    source?: boolean | Lead$sourceArgs<ExtArgs>
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
+  }
+  export type LeadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    contact?: boolean | ContactDefaultArgs<ExtArgs>
+    source?: boolean | Lead$sourceArgs<ExtArgs>
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
+  }
+
+  export type $LeadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Lead"
+    objects: {
+      contact: Prisma.$ContactPayload<ExtArgs>
+      source: Prisma.$SourcesPayload<ExtArgs> | null
+      assignee: Prisma.$UserPayload<ExtArgs> | null
+      activities: Prisma.$LeadActivityPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      title: string | null
+      amount: number
+      status: string
+      probability: number | null
+      expectedCloseDate: Date | null
+      notes: string | null
+      guests: number | null
+      venue: string | null
+      eventType: string | null
+      eventDate: Date | null
+      finalAmount: number | null
+      advanceAmount: number | null
+      siteVisitDate: Date | null
+      siteVisitTime: string | null
+      bookingNotes: string | null
+      bookedAt: Date | null
+      bookedBy: string | null
+      createdAt: Date
+      updatedAt: Date
+      contactId: number
+      sourceId: number | null
+      assignedTo: number | null
+    }, ExtArgs["result"]["lead"]>
+    composites: {}
+  }
+
+  type LeadGetPayload<S extends boolean | null | undefined | LeadDefaultArgs> = $Result.GetResult<Prisma.$LeadPayload, S>
+
+  type LeadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LeadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LeadCountAggregateInputType | true
+    }
+
+  export interface LeadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Lead'], meta: { name: 'Lead' } }
+    /**
+     * Find zero or one Lead that matches the filter.
+     * @param {LeadFindUniqueArgs} args - Arguments to find a Lead
+     * @example
+     * // Get one Lead
+     * const lead = await prisma.lead.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LeadFindUniqueArgs>(args: SelectSubset<T, LeadFindUniqueArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Lead that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LeadFindUniqueOrThrowArgs} args - Arguments to find a Lead
+     * @example
+     * // Get one Lead
+     * const lead = await prisma.lead.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LeadFindUniqueOrThrowArgs>(args: SelectSubset<T, LeadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Lead that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadFindFirstArgs} args - Arguments to find a Lead
+     * @example
+     * // Get one Lead
+     * const lead = await prisma.lead.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LeadFindFirstArgs>(args?: SelectSubset<T, LeadFindFirstArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Lead that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadFindFirstOrThrowArgs} args - Arguments to find a Lead
+     * @example
+     * // Get one Lead
+     * const lead = await prisma.lead.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LeadFindFirstOrThrowArgs>(args?: SelectSubset<T, LeadFindFirstOrThrowArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Leads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Leads
+     * const leads = await prisma.lead.findMany()
+     * 
+     * // Get first 10 Leads
+     * const leads = await prisma.lead.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const leadWithIdOnly = await prisma.lead.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LeadFindManyArgs>(args?: SelectSubset<T, LeadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Lead.
+     * @param {LeadCreateArgs} args - Arguments to create a Lead.
+     * @example
+     * // Create one Lead
+     * const Lead = await prisma.lead.create({
+     *   data: {
+     *     // ... data to create a Lead
+     *   }
+     * })
+     * 
+     */
+    create<T extends LeadCreateArgs>(args: SelectSubset<T, LeadCreateArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Leads.
+     * @param {LeadCreateManyArgs} args - Arguments to create many Leads.
+     * @example
+     * // Create many Leads
+     * const lead = await prisma.lead.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LeadCreateManyArgs>(args?: SelectSubset<T, LeadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Leads and returns the data saved in the database.
+     * @param {LeadCreateManyAndReturnArgs} args - Arguments to create many Leads.
+     * @example
+     * // Create many Leads
+     * const lead = await prisma.lead.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Leads and only return the `id`
+     * const leadWithIdOnly = await prisma.lead.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LeadCreateManyAndReturnArgs>(args?: SelectSubset<T, LeadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Lead.
+     * @param {LeadDeleteArgs} args - Arguments to delete one Lead.
+     * @example
+     * // Delete one Lead
+     * const Lead = await prisma.lead.delete({
+     *   where: {
+     *     // ... filter to delete one Lead
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LeadDeleteArgs>(args: SelectSubset<T, LeadDeleteArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Lead.
+     * @param {LeadUpdateArgs} args - Arguments to update one Lead.
+     * @example
+     * // Update one Lead
+     * const lead = await prisma.lead.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LeadUpdateArgs>(args: SelectSubset<T, LeadUpdateArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Leads.
+     * @param {LeadDeleteManyArgs} args - Arguments to filter Leads to delete.
+     * @example
+     * // Delete a few Leads
+     * const { count } = await prisma.lead.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LeadDeleteManyArgs>(args?: SelectSubset<T, LeadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Leads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Leads
+     * const lead = await prisma.lead.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LeadUpdateManyArgs>(args: SelectSubset<T, LeadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Leads and returns the data updated in the database.
+     * @param {LeadUpdateManyAndReturnArgs} args - Arguments to update many Leads.
+     * @example
+     * // Update many Leads
+     * const lead = await prisma.lead.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Leads and only return the `id`
+     * const leadWithIdOnly = await prisma.lead.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LeadUpdateManyAndReturnArgs>(args: SelectSubset<T, LeadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Lead.
+     * @param {LeadUpsertArgs} args - Arguments to update or create a Lead.
+     * @example
+     * // Update or create a Lead
+     * const lead = await prisma.lead.upsert({
+     *   create: {
+     *     // ... data to create a Lead
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Lead we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LeadUpsertArgs>(args: SelectSubset<T, LeadUpsertArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Leads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadCountArgs} args - Arguments to filter Leads to count.
+     * @example
+     * // Count the number of Leads
+     * const count = await prisma.lead.count({
+     *   where: {
+     *     // ... the filter for the Leads we want to count
+     *   }
+     * })
+    **/
+    count<T extends LeadCountArgs>(
+      args?: Subset<T, LeadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LeadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Lead.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LeadAggregateArgs>(args: Subset<T, LeadAggregateArgs>): Prisma.PrismaPromise<GetLeadAggregateType<T>>
+
+    /**
+     * Group by Lead.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LeadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LeadGroupByArgs['orderBy'] }
+        : { orderBy?: LeadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LeadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLeadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Lead model
+   */
+  readonly fields: LeadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Lead.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LeadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    contact<T extends ContactDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ContactDefaultArgs<ExtArgs>>): Prisma__ContactClient<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    source<T extends Lead$sourceArgs<ExtArgs> = {}>(args?: Subset<T, Lead$sourceArgs<ExtArgs>>): Prisma__SourcesClient<$Result.GetResult<Prisma.$SourcesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    assignee<T extends Lead$assigneeArgs<ExtArgs> = {}>(args?: Subset<T, Lead$assigneeArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    activities<T extends Lead$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, Lead$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Lead model
+   */
+  interface LeadFieldRefs {
+    readonly id: FieldRef<"Lead", 'Int'>
+    readonly title: FieldRef<"Lead", 'String'>
+    readonly amount: FieldRef<"Lead", 'Float'>
+    readonly status: FieldRef<"Lead", 'String'>
+    readonly probability: FieldRef<"Lead", 'Int'>
+    readonly expectedCloseDate: FieldRef<"Lead", 'DateTime'>
+    readonly notes: FieldRef<"Lead", 'String'>
+    readonly guests: FieldRef<"Lead", 'Int'>
+    readonly venue: FieldRef<"Lead", 'String'>
+    readonly eventType: FieldRef<"Lead", 'String'>
+    readonly eventDate: FieldRef<"Lead", 'DateTime'>
+    readonly finalAmount: FieldRef<"Lead", 'Float'>
+    readonly advanceAmount: FieldRef<"Lead", 'Float'>
+    readonly siteVisitDate: FieldRef<"Lead", 'DateTime'>
+    readonly siteVisitTime: FieldRef<"Lead", 'String'>
+    readonly bookingNotes: FieldRef<"Lead", 'String'>
+    readonly bookedAt: FieldRef<"Lead", 'DateTime'>
+    readonly bookedBy: FieldRef<"Lead", 'String'>
+    readonly createdAt: FieldRef<"Lead", 'DateTime'>
+    readonly updatedAt: FieldRef<"Lead", 'DateTime'>
+    readonly contactId: FieldRef<"Lead", 'Int'>
+    readonly sourceId: FieldRef<"Lead", 'Int'>
+    readonly assignedTo: FieldRef<"Lead", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Lead findUnique
+   */
+  export type LeadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    /**
+     * Filter, which Lead to fetch.
+     */
+    where: LeadWhereUniqueInput
+  }
+
+  /**
+   * Lead findUniqueOrThrow
+   */
+  export type LeadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    /**
+     * Filter, which Lead to fetch.
+     */
+    where: LeadWhereUniqueInput
+  }
+
+  /**
+   * Lead findFirst
+   */
+  export type LeadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    /**
+     * Filter, which Lead to fetch.
+     */
+    where?: LeadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Leads to fetch.
+     */
+    orderBy?: LeadOrderByWithRelationInput | LeadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Leads.
+     */
+    cursor?: LeadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Leads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Leads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Leads.
+     */
+    distinct?: LeadScalarFieldEnum | LeadScalarFieldEnum[]
+  }
+
+  /**
+   * Lead findFirstOrThrow
+   */
+  export type LeadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    /**
+     * Filter, which Lead to fetch.
+     */
+    where?: LeadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Leads to fetch.
+     */
+    orderBy?: LeadOrderByWithRelationInput | LeadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Leads.
+     */
+    cursor?: LeadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Leads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Leads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Leads.
+     */
+    distinct?: LeadScalarFieldEnum | LeadScalarFieldEnum[]
+  }
+
+  /**
+   * Lead findMany
+   */
+  export type LeadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    /**
+     * Filter, which Leads to fetch.
+     */
+    where?: LeadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Leads to fetch.
+     */
+    orderBy?: LeadOrderByWithRelationInput | LeadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Leads.
+     */
+    cursor?: LeadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Leads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Leads.
+     */
+    skip?: number
+    distinct?: LeadScalarFieldEnum | LeadScalarFieldEnum[]
+  }
+
+  /**
+   * Lead create
+   */
+  export type LeadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Lead.
+     */
+    data: XOR<LeadCreateInput, LeadUncheckedCreateInput>
+  }
+
+  /**
+   * Lead createMany
+   */
+  export type LeadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Leads.
+     */
+    data: LeadCreateManyInput | LeadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Lead createManyAndReturn
+   */
+  export type LeadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * The data used to create many Leads.
+     */
+    data: LeadCreateManyInput | LeadCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Lead update
+   */
+  export type LeadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Lead.
+     */
+    data: XOR<LeadUpdateInput, LeadUncheckedUpdateInput>
+    /**
+     * Choose, which Lead to update.
+     */
+    where: LeadWhereUniqueInput
+  }
+
+  /**
+   * Lead updateMany
+   */
+  export type LeadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Leads.
+     */
+    data: XOR<LeadUpdateManyMutationInput, LeadUncheckedUpdateManyInput>
+    /**
+     * Filter which Leads to update
+     */
+    where?: LeadWhereInput
+    /**
+     * Limit how many Leads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Lead updateManyAndReturn
+   */
+  export type LeadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * The data used to update Leads.
+     */
+    data: XOR<LeadUpdateManyMutationInput, LeadUncheckedUpdateManyInput>
+    /**
+     * Filter which Leads to update
+     */
+    where?: LeadWhereInput
+    /**
+     * Limit how many Leads to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Lead upsert
+   */
+  export type LeadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Lead to update in case it exists.
+     */
+    where: LeadWhereUniqueInput
+    /**
+     * In case the Lead found by the `where` argument doesn't exist, create a new Lead with this data.
+     */
+    create: XOR<LeadCreateInput, LeadUncheckedCreateInput>
+    /**
+     * In case the Lead was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LeadUpdateInput, LeadUncheckedUpdateInput>
+  }
+
+  /**
+   * Lead delete
+   */
+  export type LeadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    /**
+     * Filter which Lead to delete.
+     */
+    where: LeadWhereUniqueInput
+  }
+
+  /**
+   * Lead deleteMany
+   */
+  export type LeadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Leads to delete
+     */
+    where?: LeadWhereInput
+    /**
+     * Limit how many Leads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Lead.source
+   */
+  export type Lead$sourceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Sources
+     */
+    select?: SourcesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Sources
+     */
+    omit?: SourcesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
+    where?: SourcesWhereInput
+  }
+
+  /**
+   * Lead.assignee
+   */
+  export type Lead$assigneeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Lead.activities
+   */
+  export type Lead$activitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    where?: LeadActivityWhereInput
+    orderBy?: LeadActivityOrderByWithRelationInput | LeadActivityOrderByWithRelationInput[]
+    cursor?: LeadActivityWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LeadActivityScalarFieldEnum | LeadActivityScalarFieldEnum[]
+  }
+
+  /**
+   * Lead without action
+   */
+  export type LeadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model LeadActivity
+   */
+
+  export type AggregateLeadActivity = {
+    _count: LeadActivityCountAggregateOutputType | null
+    _avg: LeadActivityAvgAggregateOutputType | null
+    _sum: LeadActivitySumAggregateOutputType | null
+    _min: LeadActivityMinAggregateOutputType | null
+    _max: LeadActivityMaxAggregateOutputType | null
+  }
+
+  export type LeadActivityAvgAggregateOutputType = {
+    id: number | null
+    leadId: number | null
+    userId: number | null
+  }
+
+  export type LeadActivitySumAggregateOutputType = {
+    id: number | null
+    leadId: number | null
+    userId: number | null
+  }
+
+  export type LeadActivityMinAggregateOutputType = {
+    id: number | null
+    leadId: number | null
+    userId: number | null
+    type: string | null
+    content: string | null
+    createdAt: Date | null
+  }
+
+  export type LeadActivityMaxAggregateOutputType = {
+    id: number | null
+    leadId: number | null
+    userId: number | null
+    type: string | null
+    content: string | null
+    createdAt: Date | null
+  }
+
+  export type LeadActivityCountAggregateOutputType = {
+    id: number
+    leadId: number
+    userId: number
+    type: number
+    content: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type LeadActivityAvgAggregateInputType = {
+    id?: true
+    leadId?: true
+    userId?: true
+  }
+
+  export type LeadActivitySumAggregateInputType = {
+    id?: true
+    leadId?: true
+    userId?: true
+  }
+
+  export type LeadActivityMinAggregateInputType = {
+    id?: true
+    leadId?: true
+    userId?: true
+    type?: true
+    content?: true
+    createdAt?: true
+  }
+
+  export type LeadActivityMaxAggregateInputType = {
+    id?: true
+    leadId?: true
+    userId?: true
+    type?: true
+    content?: true
+    createdAt?: true
+  }
+
+  export type LeadActivityCountAggregateInputType = {
+    id?: true
+    leadId?: true
+    userId?: true
+    type?: true
+    content?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type LeadActivityAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LeadActivity to aggregate.
+     */
+    where?: LeadActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LeadActivities to fetch.
+     */
+    orderBy?: LeadActivityOrderByWithRelationInput | LeadActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: LeadActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LeadActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LeadActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned LeadActivities
+    **/
+    _count?: true | LeadActivityCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: LeadActivityAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: LeadActivitySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: LeadActivityMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: LeadActivityMaxAggregateInputType
+  }
+
+  export type GetLeadActivityAggregateType<T extends LeadActivityAggregateArgs> = {
+        [P in keyof T & keyof AggregateLeadActivity]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateLeadActivity[P]>
+      : GetScalarType<T[P], AggregateLeadActivity[P]>
+  }
+
+
+
+
+  export type LeadActivityGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LeadActivityWhereInput
+    orderBy?: LeadActivityOrderByWithAggregationInput | LeadActivityOrderByWithAggregationInput[]
+    by: LeadActivityScalarFieldEnum[] | LeadActivityScalarFieldEnum
+    having?: LeadActivityScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: LeadActivityCountAggregateInputType | true
+    _avg?: LeadActivityAvgAggregateInputType
+    _sum?: LeadActivitySumAggregateInputType
+    _min?: LeadActivityMinAggregateInputType
+    _max?: LeadActivityMaxAggregateInputType
+  }
+
+  export type LeadActivityGroupByOutputType = {
+    id: number
+    leadId: number
+    userId: number | null
+    type: string
+    content: string
+    createdAt: Date
+    _count: LeadActivityCountAggregateOutputType | null
+    _avg: LeadActivityAvgAggregateOutputType | null
+    _sum: LeadActivitySumAggregateOutputType | null
+    _min: LeadActivityMinAggregateOutputType | null
+    _max: LeadActivityMaxAggregateOutputType | null
+  }
+
+  type GetLeadActivityGroupByPayload<T extends LeadActivityGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<LeadActivityGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof LeadActivityGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], LeadActivityGroupByOutputType[P]>
+            : GetScalarType<T[P], LeadActivityGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type LeadActivitySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    leadId?: boolean
+    userId?: boolean
+    type?: boolean
+    content?: boolean
+    createdAt?: boolean
+    lead?: boolean | LeadDefaultArgs<ExtArgs>
+    user?: boolean | LeadActivity$userArgs<ExtArgs>
+  }, ExtArgs["result"]["leadActivity"]>
+
+  export type LeadActivitySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    leadId?: boolean
+    userId?: boolean
+    type?: boolean
+    content?: boolean
+    createdAt?: boolean
+    lead?: boolean | LeadDefaultArgs<ExtArgs>
+    user?: boolean | LeadActivity$userArgs<ExtArgs>
+  }, ExtArgs["result"]["leadActivity"]>
+
+  export type LeadActivitySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    leadId?: boolean
+    userId?: boolean
+    type?: boolean
+    content?: boolean
+    createdAt?: boolean
+    lead?: boolean | LeadDefaultArgs<ExtArgs>
+    user?: boolean | LeadActivity$userArgs<ExtArgs>
+  }, ExtArgs["result"]["leadActivity"]>
+
+  export type LeadActivitySelectScalar = {
+    id?: boolean
+    leadId?: boolean
+    userId?: boolean
+    type?: boolean
+    content?: boolean
+    createdAt?: boolean
+  }
+
+  export type LeadActivityOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "leadId" | "userId" | "type" | "content" | "createdAt", ExtArgs["result"]["leadActivity"]>
+  export type LeadActivityInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    lead?: boolean | LeadDefaultArgs<ExtArgs>
+    user?: boolean | LeadActivity$userArgs<ExtArgs>
+  }
+  export type LeadActivityIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    lead?: boolean | LeadDefaultArgs<ExtArgs>
+    user?: boolean | LeadActivity$userArgs<ExtArgs>
+  }
+  export type LeadActivityIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    lead?: boolean | LeadDefaultArgs<ExtArgs>
+    user?: boolean | LeadActivity$userArgs<ExtArgs>
+  }
+
+  export type $LeadActivityPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "LeadActivity"
+    objects: {
+      lead: Prisma.$LeadPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      leadId: number
+      userId: number | null
+      type: string
+      content: string
+      createdAt: Date
+    }, ExtArgs["result"]["leadActivity"]>
+    composites: {}
+  }
+
+  type LeadActivityGetPayload<S extends boolean | null | undefined | LeadActivityDefaultArgs> = $Result.GetResult<Prisma.$LeadActivityPayload, S>
+
+  type LeadActivityCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LeadActivityFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: LeadActivityCountAggregateInputType | true
+    }
+
+  export interface LeadActivityDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['LeadActivity'], meta: { name: 'LeadActivity' } }
+    /**
+     * Find zero or one LeadActivity that matches the filter.
+     * @param {LeadActivityFindUniqueArgs} args - Arguments to find a LeadActivity
+     * @example
+     * // Get one LeadActivity
+     * const leadActivity = await prisma.leadActivity.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends LeadActivityFindUniqueArgs>(args: SelectSubset<T, LeadActivityFindUniqueArgs<ExtArgs>>): Prisma__LeadActivityClient<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one LeadActivity that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {LeadActivityFindUniqueOrThrowArgs} args - Arguments to find a LeadActivity
+     * @example
+     * // Get one LeadActivity
+     * const leadActivity = await prisma.leadActivity.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends LeadActivityFindUniqueOrThrowArgs>(args: SelectSubset<T, LeadActivityFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LeadActivityClient<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LeadActivity that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadActivityFindFirstArgs} args - Arguments to find a LeadActivity
+     * @example
+     * // Get one LeadActivity
+     * const leadActivity = await prisma.leadActivity.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends LeadActivityFindFirstArgs>(args?: SelectSubset<T, LeadActivityFindFirstArgs<ExtArgs>>): Prisma__LeadActivityClient<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first LeadActivity that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadActivityFindFirstOrThrowArgs} args - Arguments to find a LeadActivity
+     * @example
+     * // Get one LeadActivity
+     * const leadActivity = await prisma.leadActivity.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends LeadActivityFindFirstOrThrowArgs>(args?: SelectSubset<T, LeadActivityFindFirstOrThrowArgs<ExtArgs>>): Prisma__LeadActivityClient<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more LeadActivities that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadActivityFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all LeadActivities
+     * const leadActivities = await prisma.leadActivity.findMany()
+     * 
+     * // Get first 10 LeadActivities
+     * const leadActivities = await prisma.leadActivity.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const leadActivityWithIdOnly = await prisma.leadActivity.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends LeadActivityFindManyArgs>(args?: SelectSubset<T, LeadActivityFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a LeadActivity.
+     * @param {LeadActivityCreateArgs} args - Arguments to create a LeadActivity.
+     * @example
+     * // Create one LeadActivity
+     * const LeadActivity = await prisma.leadActivity.create({
+     *   data: {
+     *     // ... data to create a LeadActivity
+     *   }
+     * })
+     * 
+     */
+    create<T extends LeadActivityCreateArgs>(args: SelectSubset<T, LeadActivityCreateArgs<ExtArgs>>): Prisma__LeadActivityClient<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many LeadActivities.
+     * @param {LeadActivityCreateManyArgs} args - Arguments to create many LeadActivities.
+     * @example
+     * // Create many LeadActivities
+     * const leadActivity = await prisma.leadActivity.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends LeadActivityCreateManyArgs>(args?: SelectSubset<T, LeadActivityCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many LeadActivities and returns the data saved in the database.
+     * @param {LeadActivityCreateManyAndReturnArgs} args - Arguments to create many LeadActivities.
+     * @example
+     * // Create many LeadActivities
+     * const leadActivity = await prisma.leadActivity.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many LeadActivities and only return the `id`
+     * const leadActivityWithIdOnly = await prisma.leadActivity.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends LeadActivityCreateManyAndReturnArgs>(args?: SelectSubset<T, LeadActivityCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a LeadActivity.
+     * @param {LeadActivityDeleteArgs} args - Arguments to delete one LeadActivity.
+     * @example
+     * // Delete one LeadActivity
+     * const LeadActivity = await prisma.leadActivity.delete({
+     *   where: {
+     *     // ... filter to delete one LeadActivity
+     *   }
+     * })
+     * 
+     */
+    delete<T extends LeadActivityDeleteArgs>(args: SelectSubset<T, LeadActivityDeleteArgs<ExtArgs>>): Prisma__LeadActivityClient<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one LeadActivity.
+     * @param {LeadActivityUpdateArgs} args - Arguments to update one LeadActivity.
+     * @example
+     * // Update one LeadActivity
+     * const leadActivity = await prisma.leadActivity.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends LeadActivityUpdateArgs>(args: SelectSubset<T, LeadActivityUpdateArgs<ExtArgs>>): Prisma__LeadActivityClient<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more LeadActivities.
+     * @param {LeadActivityDeleteManyArgs} args - Arguments to filter LeadActivities to delete.
+     * @example
+     * // Delete a few LeadActivities
+     * const { count } = await prisma.leadActivity.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends LeadActivityDeleteManyArgs>(args?: SelectSubset<T, LeadActivityDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LeadActivities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadActivityUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many LeadActivities
+     * const leadActivity = await prisma.leadActivity.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends LeadActivityUpdateManyArgs>(args: SelectSubset<T, LeadActivityUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more LeadActivities and returns the data updated in the database.
+     * @param {LeadActivityUpdateManyAndReturnArgs} args - Arguments to update many LeadActivities.
+     * @example
+     * // Update many LeadActivities
+     * const leadActivity = await prisma.leadActivity.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more LeadActivities and only return the `id`
+     * const leadActivityWithIdOnly = await prisma.leadActivity.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends LeadActivityUpdateManyAndReturnArgs>(args: SelectSubset<T, LeadActivityUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one LeadActivity.
+     * @param {LeadActivityUpsertArgs} args - Arguments to update or create a LeadActivity.
+     * @example
+     * // Update or create a LeadActivity
+     * const leadActivity = await prisma.leadActivity.upsert({
+     *   create: {
+     *     // ... data to create a LeadActivity
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the LeadActivity we want to update
+     *   }
+     * })
+     */
+    upsert<T extends LeadActivityUpsertArgs>(args: SelectSubset<T, LeadActivityUpsertArgs<ExtArgs>>): Prisma__LeadActivityClient<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of LeadActivities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadActivityCountArgs} args - Arguments to filter LeadActivities to count.
+     * @example
+     * // Count the number of LeadActivities
+     * const count = await prisma.leadActivity.count({
+     *   where: {
+     *     // ... the filter for the LeadActivities we want to count
+     *   }
+     * })
+    **/
+    count<T extends LeadActivityCountArgs>(
+      args?: Subset<T, LeadActivityCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], LeadActivityCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a LeadActivity.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadActivityAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends LeadActivityAggregateArgs>(args: Subset<T, LeadActivityAggregateArgs>): Prisma.PrismaPromise<GetLeadActivityAggregateType<T>>
+
+    /**
+     * Group by LeadActivity.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {LeadActivityGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends LeadActivityGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: LeadActivityGroupByArgs['orderBy'] }
+        : { orderBy?: LeadActivityGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, LeadActivityGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLeadActivityGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the LeadActivity model
+   */
+  readonly fields: LeadActivityFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for LeadActivity.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__LeadActivityClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    lead<T extends LeadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LeadDefaultArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends LeadActivity$userArgs<ExtArgs> = {}>(args?: Subset<T, LeadActivity$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the LeadActivity model
+   */
+  interface LeadActivityFieldRefs {
+    readonly id: FieldRef<"LeadActivity", 'Int'>
+    readonly leadId: FieldRef<"LeadActivity", 'Int'>
+    readonly userId: FieldRef<"LeadActivity", 'Int'>
+    readonly type: FieldRef<"LeadActivity", 'String'>
+    readonly content: FieldRef<"LeadActivity", 'String'>
+    readonly createdAt: FieldRef<"LeadActivity", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * LeadActivity findUnique
+   */
+  export type LeadActivityFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which LeadActivity to fetch.
+     */
+    where: LeadActivityWhereUniqueInput
+  }
+
+  /**
+   * LeadActivity findUniqueOrThrow
+   */
+  export type LeadActivityFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which LeadActivity to fetch.
+     */
+    where: LeadActivityWhereUniqueInput
+  }
+
+  /**
+   * LeadActivity findFirst
+   */
+  export type LeadActivityFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which LeadActivity to fetch.
+     */
+    where?: LeadActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LeadActivities to fetch.
+     */
+    orderBy?: LeadActivityOrderByWithRelationInput | LeadActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LeadActivities.
+     */
+    cursor?: LeadActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LeadActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LeadActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LeadActivities.
+     */
+    distinct?: LeadActivityScalarFieldEnum | LeadActivityScalarFieldEnum[]
+  }
+
+  /**
+   * LeadActivity findFirstOrThrow
+   */
+  export type LeadActivityFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which LeadActivity to fetch.
+     */
+    where?: LeadActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LeadActivities to fetch.
+     */
+    orderBy?: LeadActivityOrderByWithRelationInput | LeadActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for LeadActivities.
+     */
+    cursor?: LeadActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LeadActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LeadActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of LeadActivities.
+     */
+    distinct?: LeadActivityScalarFieldEnum | LeadActivityScalarFieldEnum[]
+  }
+
+  /**
+   * LeadActivity findMany
+   */
+  export type LeadActivityFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which LeadActivities to fetch.
+     */
+    where?: LeadActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of LeadActivities to fetch.
+     */
+    orderBy?: LeadActivityOrderByWithRelationInput | LeadActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing LeadActivities.
+     */
+    cursor?: LeadActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` LeadActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` LeadActivities.
+     */
+    skip?: number
+    distinct?: LeadActivityScalarFieldEnum | LeadActivityScalarFieldEnum[]
+  }
+
+  /**
+   * LeadActivity create
+   */
+  export type LeadActivityCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    /**
+     * The data needed to create a LeadActivity.
+     */
+    data: XOR<LeadActivityCreateInput, LeadActivityUncheckedCreateInput>
+  }
+
+  /**
+   * LeadActivity createMany
+   */
+  export type LeadActivityCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many LeadActivities.
+     */
+    data: LeadActivityCreateManyInput | LeadActivityCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * LeadActivity createManyAndReturn
+   */
+  export type LeadActivityCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * The data used to create many LeadActivities.
+     */
+    data: LeadActivityCreateManyInput | LeadActivityCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LeadActivity update
+   */
+  export type LeadActivityUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    /**
+     * The data needed to update a LeadActivity.
+     */
+    data: XOR<LeadActivityUpdateInput, LeadActivityUncheckedUpdateInput>
+    /**
+     * Choose, which LeadActivity to update.
+     */
+    where: LeadActivityWhereUniqueInput
+  }
+
+  /**
+   * LeadActivity updateMany
+   */
+  export type LeadActivityUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update LeadActivities.
+     */
+    data: XOR<LeadActivityUpdateManyMutationInput, LeadActivityUncheckedUpdateManyInput>
+    /**
+     * Filter which LeadActivities to update
+     */
+    where?: LeadActivityWhereInput
+    /**
+     * Limit how many LeadActivities to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * LeadActivity updateManyAndReturn
+   */
+  export type LeadActivityUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * The data used to update LeadActivities.
+     */
+    data: XOR<LeadActivityUpdateManyMutationInput, LeadActivityUncheckedUpdateManyInput>
+    /**
+     * Filter which LeadActivities to update
+     */
+    where?: LeadActivityWhereInput
+    /**
+     * Limit how many LeadActivities to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * LeadActivity upsert
+   */
+  export type LeadActivityUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    /**
+     * The filter to search for the LeadActivity to update in case it exists.
+     */
+    where: LeadActivityWhereUniqueInput
+    /**
+     * In case the LeadActivity found by the `where` argument doesn't exist, create a new LeadActivity with this data.
+     */
+    create: XOR<LeadActivityCreateInput, LeadActivityUncheckedCreateInput>
+    /**
+     * In case the LeadActivity was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<LeadActivityUpdateInput, LeadActivityUncheckedUpdateInput>
+  }
+
+  /**
+   * LeadActivity delete
+   */
+  export type LeadActivityDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    /**
+     * Filter which LeadActivity to delete.
+     */
+    where: LeadActivityWhereUniqueInput
+  }
+
+  /**
+   * LeadActivity deleteMany
+   */
+  export type LeadActivityDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which LeadActivities to delete
+     */
+    where?: LeadActivityWhereInput
+    /**
+     * Limit how many LeadActivities to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * LeadActivity.user
+   */
+  export type LeadActivity$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * LeadActivity without action
+   */
+  export type LeadActivityDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
   }
 
 
@@ -4720,6 +7726,8 @@ export namespace Prisma {
     name?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    leads?: boolean | Sources$leadsArgs<ExtArgs>
+    _count?: boolean | SourcesCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sources"]>
 
   export type SourcesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4744,10 +7752,18 @@ export namespace Prisma {
   }
 
   export type SourcesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "createdAt" | "updatedAt", ExtArgs["result"]["sources"]>
+  export type SourcesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    leads?: boolean | Sources$leadsArgs<ExtArgs>
+    _count?: boolean | SourcesCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SourcesIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type SourcesIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $SourcesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Sources"
-    objects: {}
+    objects: {
+      leads: Prisma.$LeadPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       name: string
@@ -5147,6 +8163,7 @@ export namespace Prisma {
    */
   export interface Prisma__SourcesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    leads<T extends Sources$leadsArgs<ExtArgs> = {}>(args?: Subset<T, Sources$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5197,6 +8214,10 @@ export namespace Prisma {
      */
     omit?: SourcesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
+    /**
      * Filter, which Sources to fetch.
      */
     where: SourcesWhereUniqueInput
@@ -5215,6 +8236,10 @@ export namespace Prisma {
      */
     omit?: SourcesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
+    /**
      * Filter, which Sources to fetch.
      */
     where: SourcesWhereUniqueInput
@@ -5232,6 +8257,10 @@ export namespace Prisma {
      * Omit specific fields from the Sources
      */
     omit?: SourcesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
     /**
      * Filter, which Sources to fetch.
      */
@@ -5281,6 +8310,10 @@ export namespace Prisma {
      */
     omit?: SourcesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
+    /**
      * Filter, which Sources to fetch.
      */
     where?: SourcesWhereInput
@@ -5329,6 +8362,10 @@ export namespace Prisma {
      */
     omit?: SourcesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
+    /**
      * Filter, which Sources to fetch.
      */
     where?: SourcesWhereInput
@@ -5371,6 +8408,10 @@ export namespace Prisma {
      * Omit specific fields from the Sources
      */
     omit?: SourcesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
     /**
      * The data needed to create a Sources.
      */
@@ -5419,6 +8460,10 @@ export namespace Prisma {
      * Omit specific fields from the Sources
      */
     omit?: SourcesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
     /**
      * The data needed to update a Sources.
      */
@@ -5486,6 +8531,10 @@ export namespace Prisma {
      */
     omit?: SourcesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
+    /**
      * The filter to search for the Sources to update in case it exists.
      */
     where: SourcesWhereUniqueInput
@@ -5512,6 +8561,10 @@ export namespace Prisma {
      */
     omit?: SourcesOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
+    /**
      * Filter which Sources to delete.
      */
     where: SourcesWhereUniqueInput
@@ -5532,6 +8585,30 @@ export namespace Prisma {
   }
 
   /**
+   * Sources.leads
+   */
+  export type Sources$leadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Lead
+     */
+    select?: LeadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lead
+     */
+    omit?: LeadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadInclude<ExtArgs> | null
+    where?: LeadWhereInput
+    orderBy?: LeadOrderByWithRelationInput | LeadOrderByWithRelationInput[]
+    cursor?: LeadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LeadScalarFieldEnum | LeadScalarFieldEnum[]
+  }
+
+  /**
    * Sources without action
    */
   export type SourcesDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5543,6 +8620,10 @@ export namespace Prisma {
      * Omit specific fields from the Sources
      */
     omit?: SourcesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
   }
 
 
@@ -5600,6 +8681,47 @@ export namespace Prisma {
   };
 
   export type ContactScalarFieldEnum = (typeof ContactScalarFieldEnum)[keyof typeof ContactScalarFieldEnum]
+
+
+  export const LeadScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    amount: 'amount',
+    status: 'status',
+    probability: 'probability',
+    expectedCloseDate: 'expectedCloseDate',
+    notes: 'notes',
+    guests: 'guests',
+    venue: 'venue',
+    eventType: 'eventType',
+    eventDate: 'eventDate',
+    finalAmount: 'finalAmount',
+    advanceAmount: 'advanceAmount',
+    siteVisitDate: 'siteVisitDate',
+    siteVisitTime: 'siteVisitTime',
+    bookingNotes: 'bookingNotes',
+    bookedAt: 'bookedAt',
+    bookedBy: 'bookedBy',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    contactId: 'contactId',
+    sourceId: 'sourceId',
+    assignedTo: 'assignedTo'
+  };
+
+  export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
+
+
+  export const LeadActivityScalarFieldEnum: {
+    id: 'id',
+    leadId: 'leadId',
+    userId: 'userId',
+    type: 'type',
+    content: 'content',
+    createdAt: 'createdAt'
+  };
+
+  export type LeadActivityScalarFieldEnum = (typeof LeadActivityScalarFieldEnum)[keyof typeof LeadActivityScalarFieldEnum]
 
 
   export const SourcesScalarFieldEnum: {
@@ -5735,6 +8857,8 @@ export namespace Prisma {
     last_login_at?: DateTimeFilter<"User"> | Date | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     sessions?: SessionsListRelationFilter
+    leads?: LeadListRelationFilter
+    activities?: LeadActivityListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -5748,6 +8872,8 @@ export namespace Prisma {
     last_login_at?: SortOrder
     role?: SortOrder
     sessions?: SessionsOrderByRelationAggregateInput
+    leads?: LeadOrderByRelationAggregateInput
+    activities?: LeadActivityOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -5764,6 +8890,8 @@ export namespace Prisma {
     last_login_at?: DateTimeFilter<"User"> | Date | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     sessions?: SessionsListRelationFilter
+    leads?: LeadListRelationFilter
+    activities?: LeadActivityListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -5881,6 +9009,7 @@ export namespace Prisma {
     phone?: StringFilter<"Contact"> | string
     createdAt?: DateTimeFilter<"Contact"> | Date | string
     updatedAt?: DateTimeFilter<"Contact"> | Date | string
+    leads?: LeadListRelationFilter
   }
 
   export type ContactOrderByWithRelationInput = {
@@ -5891,6 +9020,7 @@ export namespace Prisma {
     phone?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    leads?: LeadOrderByRelationAggregateInput
   }
 
   export type ContactWhereUniqueInput = Prisma.AtLeast<{
@@ -5904,6 +9034,7 @@ export namespace Prisma {
     lastName?: StringNullableFilter<"Contact"> | string | null
     createdAt?: DateTimeFilter<"Contact"> | Date | string
     updatedAt?: DateTimeFilter<"Contact"> | Date | string
+    leads?: LeadListRelationFilter
   }, "id" | "email" | "phone">
 
   export type ContactOrderByWithAggregationInput = {
@@ -5934,6 +9065,227 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Contact"> | Date | string
   }
 
+  export type LeadWhereInput = {
+    AND?: LeadWhereInput | LeadWhereInput[]
+    OR?: LeadWhereInput[]
+    NOT?: LeadWhereInput | LeadWhereInput[]
+    id?: IntFilter<"Lead"> | number
+    title?: StringNullableFilter<"Lead"> | string | null
+    amount?: FloatFilter<"Lead"> | number
+    status?: StringFilter<"Lead"> | string
+    probability?: IntNullableFilter<"Lead"> | number | null
+    expectedCloseDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    notes?: StringNullableFilter<"Lead"> | string | null
+    guests?: IntNullableFilter<"Lead"> | number | null
+    venue?: StringNullableFilter<"Lead"> | string | null
+    eventType?: StringNullableFilter<"Lead"> | string | null
+    eventDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    finalAmount?: FloatNullableFilter<"Lead"> | number | null
+    advanceAmount?: FloatNullableFilter<"Lead"> | number | null
+    siteVisitDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    siteVisitTime?: StringNullableFilter<"Lead"> | string | null
+    bookingNotes?: StringNullableFilter<"Lead"> | string | null
+    bookedAt?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    bookedBy?: StringNullableFilter<"Lead"> | string | null
+    createdAt?: DateTimeFilter<"Lead"> | Date | string
+    updatedAt?: DateTimeFilter<"Lead"> | Date | string
+    contactId?: IntFilter<"Lead"> | number
+    sourceId?: IntNullableFilter<"Lead"> | number | null
+    assignedTo?: IntNullableFilter<"Lead"> | number | null
+    contact?: XOR<ContactScalarRelationFilter, ContactWhereInput>
+    source?: XOR<SourcesNullableScalarRelationFilter, SourcesWhereInput> | null
+    assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    activities?: LeadActivityListRelationFilter
+  }
+
+  export type LeadOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrderInput | SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    probability?: SortOrderInput | SortOrder
+    expectedCloseDate?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    guests?: SortOrderInput | SortOrder
+    venue?: SortOrderInput | SortOrder
+    eventType?: SortOrderInput | SortOrder
+    eventDate?: SortOrderInput | SortOrder
+    finalAmount?: SortOrderInput | SortOrder
+    advanceAmount?: SortOrderInput | SortOrder
+    siteVisitDate?: SortOrderInput | SortOrder
+    siteVisitTime?: SortOrderInput | SortOrder
+    bookingNotes?: SortOrderInput | SortOrder
+    bookedAt?: SortOrderInput | SortOrder
+    bookedBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    contactId?: SortOrder
+    sourceId?: SortOrderInput | SortOrder
+    assignedTo?: SortOrderInput | SortOrder
+    contact?: ContactOrderByWithRelationInput
+    source?: SourcesOrderByWithRelationInput
+    assignee?: UserOrderByWithRelationInput
+    activities?: LeadActivityOrderByRelationAggregateInput
+  }
+
+  export type LeadWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: LeadWhereInput | LeadWhereInput[]
+    OR?: LeadWhereInput[]
+    NOT?: LeadWhereInput | LeadWhereInput[]
+    title?: StringNullableFilter<"Lead"> | string | null
+    amount?: FloatFilter<"Lead"> | number
+    status?: StringFilter<"Lead"> | string
+    probability?: IntNullableFilter<"Lead"> | number | null
+    expectedCloseDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    notes?: StringNullableFilter<"Lead"> | string | null
+    guests?: IntNullableFilter<"Lead"> | number | null
+    venue?: StringNullableFilter<"Lead"> | string | null
+    eventType?: StringNullableFilter<"Lead"> | string | null
+    eventDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    finalAmount?: FloatNullableFilter<"Lead"> | number | null
+    advanceAmount?: FloatNullableFilter<"Lead"> | number | null
+    siteVisitDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    siteVisitTime?: StringNullableFilter<"Lead"> | string | null
+    bookingNotes?: StringNullableFilter<"Lead"> | string | null
+    bookedAt?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    bookedBy?: StringNullableFilter<"Lead"> | string | null
+    createdAt?: DateTimeFilter<"Lead"> | Date | string
+    updatedAt?: DateTimeFilter<"Lead"> | Date | string
+    contactId?: IntFilter<"Lead"> | number
+    sourceId?: IntNullableFilter<"Lead"> | number | null
+    assignedTo?: IntNullableFilter<"Lead"> | number | null
+    contact?: XOR<ContactScalarRelationFilter, ContactWhereInput>
+    source?: XOR<SourcesNullableScalarRelationFilter, SourcesWhereInput> | null
+    assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    activities?: LeadActivityListRelationFilter
+  }, "id">
+
+  export type LeadOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrderInput | SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    probability?: SortOrderInput | SortOrder
+    expectedCloseDate?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    guests?: SortOrderInput | SortOrder
+    venue?: SortOrderInput | SortOrder
+    eventType?: SortOrderInput | SortOrder
+    eventDate?: SortOrderInput | SortOrder
+    finalAmount?: SortOrderInput | SortOrder
+    advanceAmount?: SortOrderInput | SortOrder
+    siteVisitDate?: SortOrderInput | SortOrder
+    siteVisitTime?: SortOrderInput | SortOrder
+    bookingNotes?: SortOrderInput | SortOrder
+    bookedAt?: SortOrderInput | SortOrder
+    bookedBy?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    contactId?: SortOrder
+    sourceId?: SortOrderInput | SortOrder
+    assignedTo?: SortOrderInput | SortOrder
+    _count?: LeadCountOrderByAggregateInput
+    _avg?: LeadAvgOrderByAggregateInput
+    _max?: LeadMaxOrderByAggregateInput
+    _min?: LeadMinOrderByAggregateInput
+    _sum?: LeadSumOrderByAggregateInput
+  }
+
+  export type LeadScalarWhereWithAggregatesInput = {
+    AND?: LeadScalarWhereWithAggregatesInput | LeadScalarWhereWithAggregatesInput[]
+    OR?: LeadScalarWhereWithAggregatesInput[]
+    NOT?: LeadScalarWhereWithAggregatesInput | LeadScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Lead"> | number
+    title?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    amount?: FloatWithAggregatesFilter<"Lead"> | number
+    status?: StringWithAggregatesFilter<"Lead"> | string
+    probability?: IntNullableWithAggregatesFilter<"Lead"> | number | null
+    expectedCloseDate?: DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
+    notes?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    guests?: IntNullableWithAggregatesFilter<"Lead"> | number | null
+    venue?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    eventType?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    eventDate?: DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
+    finalAmount?: FloatNullableWithAggregatesFilter<"Lead"> | number | null
+    advanceAmount?: FloatNullableWithAggregatesFilter<"Lead"> | number | null
+    siteVisitDate?: DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
+    siteVisitTime?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    bookingNotes?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    bookedAt?: DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
+    bookedBy?: StringNullableWithAggregatesFilter<"Lead"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Lead"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Lead"> | Date | string
+    contactId?: IntWithAggregatesFilter<"Lead"> | number
+    sourceId?: IntNullableWithAggregatesFilter<"Lead"> | number | null
+    assignedTo?: IntNullableWithAggregatesFilter<"Lead"> | number | null
+  }
+
+  export type LeadActivityWhereInput = {
+    AND?: LeadActivityWhereInput | LeadActivityWhereInput[]
+    OR?: LeadActivityWhereInput[]
+    NOT?: LeadActivityWhereInput | LeadActivityWhereInput[]
+    id?: IntFilter<"LeadActivity"> | number
+    leadId?: IntFilter<"LeadActivity"> | number
+    userId?: IntNullableFilter<"LeadActivity"> | number | null
+    type?: StringFilter<"LeadActivity"> | string
+    content?: StringFilter<"LeadActivity"> | string
+    createdAt?: DateTimeFilter<"LeadActivity"> | Date | string
+    lead?: XOR<LeadScalarRelationFilter, LeadWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type LeadActivityOrderByWithRelationInput = {
+    id?: SortOrder
+    leadId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+    lead?: LeadOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type LeadActivityWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: LeadActivityWhereInput | LeadActivityWhereInput[]
+    OR?: LeadActivityWhereInput[]
+    NOT?: LeadActivityWhereInput | LeadActivityWhereInput[]
+    leadId?: IntFilter<"LeadActivity"> | number
+    userId?: IntNullableFilter<"LeadActivity"> | number | null
+    type?: StringFilter<"LeadActivity"> | string
+    content?: StringFilter<"LeadActivity"> | string
+    createdAt?: DateTimeFilter<"LeadActivity"> | Date | string
+    lead?: XOR<LeadScalarRelationFilter, LeadWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type LeadActivityOrderByWithAggregationInput = {
+    id?: SortOrder
+    leadId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+    _count?: LeadActivityCountOrderByAggregateInput
+    _avg?: LeadActivityAvgOrderByAggregateInput
+    _max?: LeadActivityMaxOrderByAggregateInput
+    _min?: LeadActivityMinOrderByAggregateInput
+    _sum?: LeadActivitySumOrderByAggregateInput
+  }
+
+  export type LeadActivityScalarWhereWithAggregatesInput = {
+    AND?: LeadActivityScalarWhereWithAggregatesInput | LeadActivityScalarWhereWithAggregatesInput[]
+    OR?: LeadActivityScalarWhereWithAggregatesInput[]
+    NOT?: LeadActivityScalarWhereWithAggregatesInput | LeadActivityScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"LeadActivity"> | number
+    leadId?: IntWithAggregatesFilter<"LeadActivity"> | number
+    userId?: IntNullableWithAggregatesFilter<"LeadActivity"> | number | null
+    type?: StringWithAggregatesFilter<"LeadActivity"> | string
+    content?: StringWithAggregatesFilter<"LeadActivity"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"LeadActivity"> | Date | string
+  }
+
   export type SourcesWhereInput = {
     AND?: SourcesWhereInput | SourcesWhereInput[]
     OR?: SourcesWhereInput[]
@@ -5942,6 +9294,7 @@ export namespace Prisma {
     name?: StringFilter<"Sources"> | string
     createdAt?: DateTimeFilter<"Sources"> | Date | string
     updatedAt?: DateTimeFilter<"Sources"> | Date | string
+    leads?: LeadListRelationFilter
   }
 
   export type SourcesOrderByWithRelationInput = {
@@ -5949,6 +9302,7 @@ export namespace Prisma {
     name?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    leads?: LeadOrderByRelationAggregateInput
   }
 
   export type SourcesWhereUniqueInput = Prisma.AtLeast<{
@@ -5959,6 +9313,7 @@ export namespace Prisma {
     NOT?: SourcesWhereInput | SourcesWhereInput[]
     createdAt?: DateTimeFilter<"Sources"> | Date | string
     updatedAt?: DateTimeFilter<"Sources"> | Date | string
+    leads?: LeadListRelationFilter
   }, "id" | "name">
 
   export type SourcesOrderByWithAggregationInput = {
@@ -5993,6 +9348,8 @@ export namespace Prisma {
     last_login_at?: Date | string
     role: $Enums.Role
     sessions?: SessionsCreateNestedManyWithoutUserInput
+    leads?: LeadCreateNestedManyWithoutAssigneeInput
+    activities?: LeadActivityCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -6006,6 +9363,8 @@ export namespace Prisma {
     last_login_at?: Date | string
     role: $Enums.Role
     sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
+    leads?: LeadUncheckedCreateNestedManyWithoutAssigneeInput
+    activities?: LeadActivityUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -6018,6 +9377,8 @@ export namespace Prisma {
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     sessions?: SessionsUpdateManyWithoutUserNestedInput
+    leads?: LeadUpdateManyWithoutAssigneeNestedInput
+    activities?: LeadActivityUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -6031,6 +9392,8 @@ export namespace Prisma {
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
+    leads?: LeadUncheckedUpdateManyWithoutAssigneeNestedInput
+    activities?: LeadActivityUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -6148,6 +9511,7 @@ export namespace Prisma {
     phone: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    leads?: LeadCreateNestedManyWithoutContactInput
   }
 
   export type ContactUncheckedCreateInput = {
@@ -6158,6 +9522,7 @@ export namespace Prisma {
     phone: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    leads?: LeadUncheckedCreateNestedManyWithoutContactInput
   }
 
   export type ContactUpdateInput = {
@@ -6167,6 +9532,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    leads?: LeadUpdateManyWithoutContactNestedInput
   }
 
   export type ContactUncheckedUpdateInput = {
@@ -6177,6 +9543,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    leads?: LeadUncheckedUpdateManyWithoutContactNestedInput
   }
 
   export type ContactCreateManyInput = {
@@ -6208,10 +9575,249 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type LeadCreateInput = {
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contact: ContactCreateNestedOneWithoutLeadsInput
+    source?: SourcesCreateNestedOneWithoutLeadsInput
+    assignee?: UserCreateNestedOneWithoutLeadsInput
+    activities?: LeadActivityCreateNestedManyWithoutLeadInput
+  }
+
+  export type LeadUncheckedCreateInput = {
+    id?: number
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contactId: number
+    sourceId?: number | null
+    assignedTo?: number | null
+    activities?: LeadActivityUncheckedCreateNestedManyWithoutLeadInput
+  }
+
+  export type LeadUpdateInput = {
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
+    source?: SourcesUpdateOneWithoutLeadsNestedInput
+    assignee?: UserUpdateOneWithoutLeadsNestedInput
+    activities?: LeadActivityUpdateManyWithoutLeadNestedInput
+  }
+
+  export type LeadUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactId?: IntFieldUpdateOperationsInput | number
+    sourceId?: NullableIntFieldUpdateOperationsInput | number | null
+    assignedTo?: NullableIntFieldUpdateOperationsInput | number | null
+    activities?: LeadActivityUncheckedUpdateManyWithoutLeadNestedInput
+  }
+
+  export type LeadCreateManyInput = {
+    id?: number
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contactId: number
+    sourceId?: number | null
+    assignedTo?: number | null
+  }
+
+  export type LeadUpdateManyMutationInput = {
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LeadUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactId?: IntFieldUpdateOperationsInput | number
+    sourceId?: NullableIntFieldUpdateOperationsInput | number | null
+    assignedTo?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type LeadActivityCreateInput = {
+    type?: string
+    content: string
+    createdAt?: Date | string
+    lead: LeadCreateNestedOneWithoutActivitiesInput
+    user?: UserCreateNestedOneWithoutActivitiesInput
+  }
+
+  export type LeadActivityUncheckedCreateInput = {
+    id?: number
+    leadId: number
+    userId?: number | null
+    type?: string
+    content: string
+    createdAt?: Date | string
+  }
+
+  export type LeadActivityUpdateInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lead?: LeadUpdateOneRequiredWithoutActivitiesNestedInput
+    user?: UserUpdateOneWithoutActivitiesNestedInput
+  }
+
+  export type LeadActivityUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    leadId?: IntFieldUpdateOperationsInput | number
+    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LeadActivityCreateManyInput = {
+    id?: number
+    leadId: number
+    userId?: number | null
+    type?: string
+    content: string
+    createdAt?: Date | string
+  }
+
+  export type LeadActivityUpdateManyMutationInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LeadActivityUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    leadId?: IntFieldUpdateOperationsInput | number
+    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SourcesCreateInput = {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    leads?: LeadCreateNestedManyWithoutSourceInput
   }
 
   export type SourcesUncheckedCreateInput = {
@@ -6219,12 +9825,14 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    leads?: LeadUncheckedCreateNestedManyWithoutSourceInput
   }
 
   export type SourcesUpdateInput = {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    leads?: LeadUpdateManyWithoutSourceNestedInput
   }
 
   export type SourcesUncheckedUpdateInput = {
@@ -6232,6 +9840,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    leads?: LeadUncheckedUpdateManyWithoutSourceNestedInput
   }
 
   export type SourcesCreateManyInput = {
@@ -6309,7 +9918,27 @@ export namespace Prisma {
     none?: SessionsWhereInput
   }
 
+  export type LeadListRelationFilter = {
+    every?: LeadWhereInput
+    some?: LeadWhereInput
+    none?: LeadWhereInput
+  }
+
+  export type LeadActivityListRelationFilter = {
+    every?: LeadActivityWhereInput
+    some?: LeadActivityWhereInput
+    none?: LeadActivityWhereInput
+  }
+
   export type SessionsOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type LeadOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type LeadActivityOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -6547,6 +10176,273 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type ContactScalarRelationFilter = {
+    is?: ContactWhereInput
+    isNot?: ContactWhereInput
+  }
+
+  export type SourcesNullableScalarRelationFilter = {
+    is?: SourcesWhereInput | null
+    isNot?: SourcesWhereInput | null
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type LeadCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    probability?: SortOrder
+    expectedCloseDate?: SortOrder
+    notes?: SortOrder
+    guests?: SortOrder
+    venue?: SortOrder
+    eventType?: SortOrder
+    eventDate?: SortOrder
+    finalAmount?: SortOrder
+    advanceAmount?: SortOrder
+    siteVisitDate?: SortOrder
+    siteVisitTime?: SortOrder
+    bookingNotes?: SortOrder
+    bookedAt?: SortOrder
+    bookedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    contactId?: SortOrder
+    sourceId?: SortOrder
+    assignedTo?: SortOrder
+  }
+
+  export type LeadAvgOrderByAggregateInput = {
+    id?: SortOrder
+    amount?: SortOrder
+    probability?: SortOrder
+    guests?: SortOrder
+    finalAmount?: SortOrder
+    advanceAmount?: SortOrder
+    contactId?: SortOrder
+    sourceId?: SortOrder
+    assignedTo?: SortOrder
+  }
+
+  export type LeadMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    probability?: SortOrder
+    expectedCloseDate?: SortOrder
+    notes?: SortOrder
+    guests?: SortOrder
+    venue?: SortOrder
+    eventType?: SortOrder
+    eventDate?: SortOrder
+    finalAmount?: SortOrder
+    advanceAmount?: SortOrder
+    siteVisitDate?: SortOrder
+    siteVisitTime?: SortOrder
+    bookingNotes?: SortOrder
+    bookedAt?: SortOrder
+    bookedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    contactId?: SortOrder
+    sourceId?: SortOrder
+    assignedTo?: SortOrder
+  }
+
+  export type LeadMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    amount?: SortOrder
+    status?: SortOrder
+    probability?: SortOrder
+    expectedCloseDate?: SortOrder
+    notes?: SortOrder
+    guests?: SortOrder
+    venue?: SortOrder
+    eventType?: SortOrder
+    eventDate?: SortOrder
+    finalAmount?: SortOrder
+    advanceAmount?: SortOrder
+    siteVisitDate?: SortOrder
+    siteVisitTime?: SortOrder
+    bookingNotes?: SortOrder
+    bookedAt?: SortOrder
+    bookedBy?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    contactId?: SortOrder
+    sourceId?: SortOrder
+    assignedTo?: SortOrder
+  }
+
+  export type LeadSumOrderByAggregateInput = {
+    id?: SortOrder
+    amount?: SortOrder
+    probability?: SortOrder
+    guests?: SortOrder
+    finalAmount?: SortOrder
+    advanceAmount?: SortOrder
+    contactId?: SortOrder
+    sourceId?: SortOrder
+    assignedTo?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type LeadScalarRelationFilter = {
+    is?: LeadWhereInput
+    isNot?: LeadWhereInput
+  }
+
+  export type LeadActivityCountOrderByAggregateInput = {
+    id?: SortOrder
+    leadId?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LeadActivityAvgOrderByAggregateInput = {
+    id?: SortOrder
+    leadId?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type LeadActivityMaxOrderByAggregateInput = {
+    id?: SortOrder
+    leadId?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LeadActivityMinOrderByAggregateInput = {
+    id?: SortOrder
+    leadId?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    content?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type LeadActivitySumOrderByAggregateInput = {
+    id?: SortOrder
+    leadId?: SortOrder
+    userId?: SortOrder
+  }
+
   export type SourcesCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -6583,11 +10479,39 @@ export namespace Prisma {
     connect?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
   }
 
+  export type LeadCreateNestedManyWithoutAssigneeInput = {
+    create?: XOR<LeadCreateWithoutAssigneeInput, LeadUncheckedCreateWithoutAssigneeInput> | LeadCreateWithoutAssigneeInput[] | LeadUncheckedCreateWithoutAssigneeInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutAssigneeInput | LeadCreateOrConnectWithoutAssigneeInput[]
+    createMany?: LeadCreateManyAssigneeInputEnvelope
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+  }
+
+  export type LeadActivityCreateNestedManyWithoutUserInput = {
+    create?: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput> | LeadActivityCreateWithoutUserInput[] | LeadActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutUserInput | LeadActivityCreateOrConnectWithoutUserInput[]
+    createMany?: LeadActivityCreateManyUserInputEnvelope
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+  }
+
   export type SessionsUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput> | SessionsCreateWithoutUserInput[] | SessionsUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionsCreateOrConnectWithoutUserInput | SessionsCreateOrConnectWithoutUserInput[]
     createMany?: SessionsCreateManyUserInputEnvelope
     connect?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
+  }
+
+  export type LeadUncheckedCreateNestedManyWithoutAssigneeInput = {
+    create?: XOR<LeadCreateWithoutAssigneeInput, LeadUncheckedCreateWithoutAssigneeInput> | LeadCreateWithoutAssigneeInput[] | LeadUncheckedCreateWithoutAssigneeInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutAssigneeInput | LeadCreateOrConnectWithoutAssigneeInput[]
+    createMany?: LeadCreateManyAssigneeInputEnvelope
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+  }
+
+  export type LeadActivityUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput> | LeadActivityCreateWithoutUserInput[] | LeadActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutUserInput | LeadActivityCreateOrConnectWithoutUserInput[]
+    createMany?: LeadActivityCreateManyUserInputEnvelope
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -6620,6 +10544,34 @@ export namespace Prisma {
     deleteMany?: SessionsScalarWhereInput | SessionsScalarWhereInput[]
   }
 
+  export type LeadUpdateManyWithoutAssigneeNestedInput = {
+    create?: XOR<LeadCreateWithoutAssigneeInput, LeadUncheckedCreateWithoutAssigneeInput> | LeadCreateWithoutAssigneeInput[] | LeadUncheckedCreateWithoutAssigneeInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutAssigneeInput | LeadCreateOrConnectWithoutAssigneeInput[]
+    upsert?: LeadUpsertWithWhereUniqueWithoutAssigneeInput | LeadUpsertWithWhereUniqueWithoutAssigneeInput[]
+    createMany?: LeadCreateManyAssigneeInputEnvelope
+    set?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    disconnect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    delete?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    update?: LeadUpdateWithWhereUniqueWithoutAssigneeInput | LeadUpdateWithWhereUniqueWithoutAssigneeInput[]
+    updateMany?: LeadUpdateManyWithWhereWithoutAssigneeInput | LeadUpdateManyWithWhereWithoutAssigneeInput[]
+    deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
+  }
+
+  export type LeadActivityUpdateManyWithoutUserNestedInput = {
+    create?: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput> | LeadActivityCreateWithoutUserInput[] | LeadActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutUserInput | LeadActivityCreateOrConnectWithoutUserInput[]
+    upsert?: LeadActivityUpsertWithWhereUniqueWithoutUserInput | LeadActivityUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: LeadActivityCreateManyUserInputEnvelope
+    set?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    disconnect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    delete?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    update?: LeadActivityUpdateWithWhereUniqueWithoutUserInput | LeadActivityUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: LeadActivityUpdateManyWithWhereWithoutUserInput | LeadActivityUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -6642,6 +10594,34 @@ export namespace Prisma {
     deleteMany?: SessionsScalarWhereInput | SessionsScalarWhereInput[]
   }
 
+  export type LeadUncheckedUpdateManyWithoutAssigneeNestedInput = {
+    create?: XOR<LeadCreateWithoutAssigneeInput, LeadUncheckedCreateWithoutAssigneeInput> | LeadCreateWithoutAssigneeInput[] | LeadUncheckedCreateWithoutAssigneeInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutAssigneeInput | LeadCreateOrConnectWithoutAssigneeInput[]
+    upsert?: LeadUpsertWithWhereUniqueWithoutAssigneeInput | LeadUpsertWithWhereUniqueWithoutAssigneeInput[]
+    createMany?: LeadCreateManyAssigneeInputEnvelope
+    set?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    disconnect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    delete?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    update?: LeadUpdateWithWhereUniqueWithoutAssigneeInput | LeadUpdateWithWhereUniqueWithoutAssigneeInput[]
+    updateMany?: LeadUpdateManyWithWhereWithoutAssigneeInput | LeadUpdateManyWithWhereWithoutAssigneeInput[]
+    deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
+  }
+
+  export type LeadActivityUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput> | LeadActivityCreateWithoutUserInput[] | LeadActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutUserInput | LeadActivityCreateOrConnectWithoutUserInput[]
+    upsert?: LeadActivityUpsertWithWhereUniqueWithoutUserInput | LeadActivityUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: LeadActivityCreateManyUserInputEnvelope
+    set?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    disconnect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    delete?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    update?: LeadActivityUpdateWithWhereUniqueWithoutUserInput | LeadActivityUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: LeadActivityUpdateManyWithWhereWithoutUserInput | LeadActivityUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutSessionsInput = {
     create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
@@ -6656,8 +10636,238 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionsInput, UserUpdateWithoutSessionsInput>, UserUncheckedUpdateWithoutSessionsInput>
   }
 
+  export type LeadCreateNestedManyWithoutContactInput = {
+    create?: XOR<LeadCreateWithoutContactInput, LeadUncheckedCreateWithoutContactInput> | LeadCreateWithoutContactInput[] | LeadUncheckedCreateWithoutContactInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutContactInput | LeadCreateOrConnectWithoutContactInput[]
+    createMany?: LeadCreateManyContactInputEnvelope
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+  }
+
+  export type LeadUncheckedCreateNestedManyWithoutContactInput = {
+    create?: XOR<LeadCreateWithoutContactInput, LeadUncheckedCreateWithoutContactInput> | LeadCreateWithoutContactInput[] | LeadUncheckedCreateWithoutContactInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutContactInput | LeadCreateOrConnectWithoutContactInput[]
+    createMany?: LeadCreateManyContactInputEnvelope
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+  }
+
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type LeadUpdateManyWithoutContactNestedInput = {
+    create?: XOR<LeadCreateWithoutContactInput, LeadUncheckedCreateWithoutContactInput> | LeadCreateWithoutContactInput[] | LeadUncheckedCreateWithoutContactInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutContactInput | LeadCreateOrConnectWithoutContactInput[]
+    upsert?: LeadUpsertWithWhereUniqueWithoutContactInput | LeadUpsertWithWhereUniqueWithoutContactInput[]
+    createMany?: LeadCreateManyContactInputEnvelope
+    set?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    disconnect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    delete?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    update?: LeadUpdateWithWhereUniqueWithoutContactInput | LeadUpdateWithWhereUniqueWithoutContactInput[]
+    updateMany?: LeadUpdateManyWithWhereWithoutContactInput | LeadUpdateManyWithWhereWithoutContactInput[]
+    deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
+  }
+
+  export type LeadUncheckedUpdateManyWithoutContactNestedInput = {
+    create?: XOR<LeadCreateWithoutContactInput, LeadUncheckedCreateWithoutContactInput> | LeadCreateWithoutContactInput[] | LeadUncheckedCreateWithoutContactInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutContactInput | LeadCreateOrConnectWithoutContactInput[]
+    upsert?: LeadUpsertWithWhereUniqueWithoutContactInput | LeadUpsertWithWhereUniqueWithoutContactInput[]
+    createMany?: LeadCreateManyContactInputEnvelope
+    set?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    disconnect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    delete?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    update?: LeadUpdateWithWhereUniqueWithoutContactInput | LeadUpdateWithWhereUniqueWithoutContactInput[]
+    updateMany?: LeadUpdateManyWithWhereWithoutContactInput | LeadUpdateManyWithWhereWithoutContactInput[]
+    deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
+  }
+
+  export type ContactCreateNestedOneWithoutLeadsInput = {
+    create?: XOR<ContactCreateWithoutLeadsInput, ContactUncheckedCreateWithoutLeadsInput>
+    connectOrCreate?: ContactCreateOrConnectWithoutLeadsInput
+    connect?: ContactWhereUniqueInput
+  }
+
+  export type SourcesCreateNestedOneWithoutLeadsInput = {
+    create?: XOR<SourcesCreateWithoutLeadsInput, SourcesUncheckedCreateWithoutLeadsInput>
+    connectOrCreate?: SourcesCreateOrConnectWithoutLeadsInput
+    connect?: SourcesWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutLeadsInput = {
+    create?: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLeadsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type LeadActivityCreateNestedManyWithoutLeadInput = {
+    create?: XOR<LeadActivityCreateWithoutLeadInput, LeadActivityUncheckedCreateWithoutLeadInput> | LeadActivityCreateWithoutLeadInput[] | LeadActivityUncheckedCreateWithoutLeadInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutLeadInput | LeadActivityCreateOrConnectWithoutLeadInput[]
+    createMany?: LeadActivityCreateManyLeadInputEnvelope
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+  }
+
+  export type LeadActivityUncheckedCreateNestedManyWithoutLeadInput = {
+    create?: XOR<LeadActivityCreateWithoutLeadInput, LeadActivityUncheckedCreateWithoutLeadInput> | LeadActivityCreateWithoutLeadInput[] | LeadActivityUncheckedCreateWithoutLeadInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutLeadInput | LeadActivityCreateOrConnectWithoutLeadInput[]
+    createMany?: LeadActivityCreateManyLeadInputEnvelope
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type ContactUpdateOneRequiredWithoutLeadsNestedInput = {
+    create?: XOR<ContactCreateWithoutLeadsInput, ContactUncheckedCreateWithoutLeadsInput>
+    connectOrCreate?: ContactCreateOrConnectWithoutLeadsInput
+    upsert?: ContactUpsertWithoutLeadsInput
+    connect?: ContactWhereUniqueInput
+    update?: XOR<XOR<ContactUpdateToOneWithWhereWithoutLeadsInput, ContactUpdateWithoutLeadsInput>, ContactUncheckedUpdateWithoutLeadsInput>
+  }
+
+  export type SourcesUpdateOneWithoutLeadsNestedInput = {
+    create?: XOR<SourcesCreateWithoutLeadsInput, SourcesUncheckedCreateWithoutLeadsInput>
+    connectOrCreate?: SourcesCreateOrConnectWithoutLeadsInput
+    upsert?: SourcesUpsertWithoutLeadsInput
+    disconnect?: SourcesWhereInput | boolean
+    delete?: SourcesWhereInput | boolean
+    connect?: SourcesWhereUniqueInput
+    update?: XOR<XOR<SourcesUpdateToOneWithWhereWithoutLeadsInput, SourcesUpdateWithoutLeadsInput>, SourcesUncheckedUpdateWithoutLeadsInput>
+  }
+
+  export type UserUpdateOneWithoutLeadsNestedInput = {
+    create?: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLeadsInput
+    upsert?: UserUpsertWithoutLeadsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLeadsInput, UserUpdateWithoutLeadsInput>, UserUncheckedUpdateWithoutLeadsInput>
+  }
+
+  export type LeadActivityUpdateManyWithoutLeadNestedInput = {
+    create?: XOR<LeadActivityCreateWithoutLeadInput, LeadActivityUncheckedCreateWithoutLeadInput> | LeadActivityCreateWithoutLeadInput[] | LeadActivityUncheckedCreateWithoutLeadInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutLeadInput | LeadActivityCreateOrConnectWithoutLeadInput[]
+    upsert?: LeadActivityUpsertWithWhereUniqueWithoutLeadInput | LeadActivityUpsertWithWhereUniqueWithoutLeadInput[]
+    createMany?: LeadActivityCreateManyLeadInputEnvelope
+    set?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    disconnect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    delete?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    update?: LeadActivityUpdateWithWhereUniqueWithoutLeadInput | LeadActivityUpdateWithWhereUniqueWithoutLeadInput[]
+    updateMany?: LeadActivityUpdateManyWithWhereWithoutLeadInput | LeadActivityUpdateManyWithWhereWithoutLeadInput[]
+    deleteMany?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+  }
+
+  export type LeadActivityUncheckedUpdateManyWithoutLeadNestedInput = {
+    create?: XOR<LeadActivityCreateWithoutLeadInput, LeadActivityUncheckedCreateWithoutLeadInput> | LeadActivityCreateWithoutLeadInput[] | LeadActivityUncheckedCreateWithoutLeadInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutLeadInput | LeadActivityCreateOrConnectWithoutLeadInput[]
+    upsert?: LeadActivityUpsertWithWhereUniqueWithoutLeadInput | LeadActivityUpsertWithWhereUniqueWithoutLeadInput[]
+    createMany?: LeadActivityCreateManyLeadInputEnvelope
+    set?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    disconnect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    delete?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    update?: LeadActivityUpdateWithWhereUniqueWithoutLeadInput | LeadActivityUpdateWithWhereUniqueWithoutLeadInput[]
+    updateMany?: LeadActivityUpdateManyWithWhereWithoutLeadInput | LeadActivityUpdateManyWithWhereWithoutLeadInput[]
+    deleteMany?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+  }
+
+  export type LeadCreateNestedOneWithoutActivitiesInput = {
+    create?: XOR<LeadCreateWithoutActivitiesInput, LeadUncheckedCreateWithoutActivitiesInput>
+    connectOrCreate?: LeadCreateOrConnectWithoutActivitiesInput
+    connect?: LeadWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutActivitiesInput = {
+    create?: XOR<UserCreateWithoutActivitiesInput, UserUncheckedCreateWithoutActivitiesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActivitiesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type LeadUpdateOneRequiredWithoutActivitiesNestedInput = {
+    create?: XOR<LeadCreateWithoutActivitiesInput, LeadUncheckedCreateWithoutActivitiesInput>
+    connectOrCreate?: LeadCreateOrConnectWithoutActivitiesInput
+    upsert?: LeadUpsertWithoutActivitiesInput
+    connect?: LeadWhereUniqueInput
+    update?: XOR<XOR<LeadUpdateToOneWithWhereWithoutActivitiesInput, LeadUpdateWithoutActivitiesInput>, LeadUncheckedUpdateWithoutActivitiesInput>
+  }
+
+  export type UserUpdateOneWithoutActivitiesNestedInput = {
+    create?: XOR<UserCreateWithoutActivitiesInput, UserUncheckedCreateWithoutActivitiesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActivitiesInput
+    upsert?: UserUpsertWithoutActivitiesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutActivitiesInput, UserUpdateWithoutActivitiesInput>, UserUncheckedUpdateWithoutActivitiesInput>
+  }
+
+  export type LeadCreateNestedManyWithoutSourceInput = {
+    create?: XOR<LeadCreateWithoutSourceInput, LeadUncheckedCreateWithoutSourceInput> | LeadCreateWithoutSourceInput[] | LeadUncheckedCreateWithoutSourceInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutSourceInput | LeadCreateOrConnectWithoutSourceInput[]
+    createMany?: LeadCreateManySourceInputEnvelope
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+  }
+
+  export type LeadUncheckedCreateNestedManyWithoutSourceInput = {
+    create?: XOR<LeadCreateWithoutSourceInput, LeadUncheckedCreateWithoutSourceInput> | LeadCreateWithoutSourceInput[] | LeadUncheckedCreateWithoutSourceInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutSourceInput | LeadCreateOrConnectWithoutSourceInput[]
+    createMany?: LeadCreateManySourceInputEnvelope
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+  }
+
+  export type LeadUpdateManyWithoutSourceNestedInput = {
+    create?: XOR<LeadCreateWithoutSourceInput, LeadUncheckedCreateWithoutSourceInput> | LeadCreateWithoutSourceInput[] | LeadUncheckedCreateWithoutSourceInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutSourceInput | LeadCreateOrConnectWithoutSourceInput[]
+    upsert?: LeadUpsertWithWhereUniqueWithoutSourceInput | LeadUpsertWithWhereUniqueWithoutSourceInput[]
+    createMany?: LeadCreateManySourceInputEnvelope
+    set?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    disconnect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    delete?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    update?: LeadUpdateWithWhereUniqueWithoutSourceInput | LeadUpdateWithWhereUniqueWithoutSourceInput[]
+    updateMany?: LeadUpdateManyWithWhereWithoutSourceInput | LeadUpdateManyWithWhereWithoutSourceInput[]
+    deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
+  }
+
+  export type LeadUncheckedUpdateManyWithoutSourceNestedInput = {
+    create?: XOR<LeadCreateWithoutSourceInput, LeadUncheckedCreateWithoutSourceInput> | LeadCreateWithoutSourceInput[] | LeadUncheckedCreateWithoutSourceInput[]
+    connectOrCreate?: LeadCreateOrConnectWithoutSourceInput | LeadCreateOrConnectWithoutSourceInput[]
+    upsert?: LeadUpsertWithWhereUniqueWithoutSourceInput | LeadUpsertWithWhereUniqueWithoutSourceInput[]
+    createMany?: LeadCreateManySourceInputEnvelope
+    set?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    disconnect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    delete?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
+    update?: LeadUpdateWithWhereUniqueWithoutSourceInput | LeadUpdateWithWhereUniqueWithoutSourceInput[]
+    updateMany?: LeadUpdateManyWithWhereWithoutSourceInput | LeadUpdateManyWithWhereWithoutSourceInput[]
+    deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -6826,6 +11036,90 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type SessionsCreateWithoutUserInput = {
     session_token: string
     ip_address: string
@@ -6852,6 +11146,92 @@ export namespace Prisma {
 
   export type SessionsCreateManyUserInputEnvelope = {
     data: SessionsCreateManyUserInput | SessionsCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LeadCreateWithoutAssigneeInput = {
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contact: ContactCreateNestedOneWithoutLeadsInput
+    source?: SourcesCreateNestedOneWithoutLeadsInput
+    activities?: LeadActivityCreateNestedManyWithoutLeadInput
+  }
+
+  export type LeadUncheckedCreateWithoutAssigneeInput = {
+    id?: number
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contactId: number
+    sourceId?: number | null
+    activities?: LeadActivityUncheckedCreateNestedManyWithoutLeadInput
+  }
+
+  export type LeadCreateOrConnectWithoutAssigneeInput = {
+    where: LeadWhereUniqueInput
+    create: XOR<LeadCreateWithoutAssigneeInput, LeadUncheckedCreateWithoutAssigneeInput>
+  }
+
+  export type LeadCreateManyAssigneeInputEnvelope = {
+    data: LeadCreateManyAssigneeInput | LeadCreateManyAssigneeInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LeadActivityCreateWithoutUserInput = {
+    type?: string
+    content: string
+    createdAt?: Date | string
+    lead: LeadCreateNestedOneWithoutActivitiesInput
+  }
+
+  export type LeadActivityUncheckedCreateWithoutUserInput = {
+    id?: number
+    leadId: number
+    type?: string
+    content: string
+    createdAt?: Date | string
+  }
+
+  export type LeadActivityCreateOrConnectWithoutUserInput = {
+    where: LeadActivityWhereUniqueInput
+    create: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput>
+  }
+
+  export type LeadActivityCreateManyUserInputEnvelope = {
+    data: LeadActivityCreateManyUserInput | LeadActivityCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -6885,6 +11265,79 @@ export namespace Prisma {
     user_id?: IntFilter<"Sessions"> | number
   }
 
+  export type LeadUpsertWithWhereUniqueWithoutAssigneeInput = {
+    where: LeadWhereUniqueInput
+    update: XOR<LeadUpdateWithoutAssigneeInput, LeadUncheckedUpdateWithoutAssigneeInput>
+    create: XOR<LeadCreateWithoutAssigneeInput, LeadUncheckedCreateWithoutAssigneeInput>
+  }
+
+  export type LeadUpdateWithWhereUniqueWithoutAssigneeInput = {
+    where: LeadWhereUniqueInput
+    data: XOR<LeadUpdateWithoutAssigneeInput, LeadUncheckedUpdateWithoutAssigneeInput>
+  }
+
+  export type LeadUpdateManyWithWhereWithoutAssigneeInput = {
+    where: LeadScalarWhereInput
+    data: XOR<LeadUpdateManyMutationInput, LeadUncheckedUpdateManyWithoutAssigneeInput>
+  }
+
+  export type LeadScalarWhereInput = {
+    AND?: LeadScalarWhereInput | LeadScalarWhereInput[]
+    OR?: LeadScalarWhereInput[]
+    NOT?: LeadScalarWhereInput | LeadScalarWhereInput[]
+    id?: IntFilter<"Lead"> | number
+    title?: StringNullableFilter<"Lead"> | string | null
+    amount?: FloatFilter<"Lead"> | number
+    status?: StringFilter<"Lead"> | string
+    probability?: IntNullableFilter<"Lead"> | number | null
+    expectedCloseDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    notes?: StringNullableFilter<"Lead"> | string | null
+    guests?: IntNullableFilter<"Lead"> | number | null
+    venue?: StringNullableFilter<"Lead"> | string | null
+    eventType?: StringNullableFilter<"Lead"> | string | null
+    eventDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    finalAmount?: FloatNullableFilter<"Lead"> | number | null
+    advanceAmount?: FloatNullableFilter<"Lead"> | number | null
+    siteVisitDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    siteVisitTime?: StringNullableFilter<"Lead"> | string | null
+    bookingNotes?: StringNullableFilter<"Lead"> | string | null
+    bookedAt?: DateTimeNullableFilter<"Lead"> | Date | string | null
+    bookedBy?: StringNullableFilter<"Lead"> | string | null
+    createdAt?: DateTimeFilter<"Lead"> | Date | string
+    updatedAt?: DateTimeFilter<"Lead"> | Date | string
+    contactId?: IntFilter<"Lead"> | number
+    sourceId?: IntNullableFilter<"Lead"> | number | null
+    assignedTo?: IntNullableFilter<"Lead"> | number | null
+  }
+
+  export type LeadActivityUpsertWithWhereUniqueWithoutUserInput = {
+    where: LeadActivityWhereUniqueInput
+    update: XOR<LeadActivityUpdateWithoutUserInput, LeadActivityUncheckedUpdateWithoutUserInput>
+    create: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput>
+  }
+
+  export type LeadActivityUpdateWithWhereUniqueWithoutUserInput = {
+    where: LeadActivityWhereUniqueInput
+    data: XOR<LeadActivityUpdateWithoutUserInput, LeadActivityUncheckedUpdateWithoutUserInput>
+  }
+
+  export type LeadActivityUpdateManyWithWhereWithoutUserInput = {
+    where: LeadActivityScalarWhereInput
+    data: XOR<LeadActivityUpdateManyMutationInput, LeadActivityUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type LeadActivityScalarWhereInput = {
+    AND?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+    OR?: LeadActivityScalarWhereInput[]
+    NOT?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+    id?: IntFilter<"LeadActivity"> | number
+    leadId?: IntFilter<"LeadActivity"> | number
+    userId?: IntNullableFilter<"LeadActivity"> | number | null
+    type?: StringFilter<"LeadActivity"> | string
+    content?: StringFilter<"LeadActivity"> | string
+    createdAt?: DateTimeFilter<"LeadActivity"> | Date | string
+  }
+
   export type UserCreateWithoutSessionsInput = {
     username: string
     email: string
@@ -6894,6 +11347,8 @@ export namespace Prisma {
     updated_at?: Date | string
     last_login_at?: Date | string
     role: $Enums.Role
+    leads?: LeadCreateNestedManyWithoutAssigneeInput
+    activities?: LeadActivityCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -6906,6 +11361,8 @@ export namespace Prisma {
     updated_at?: Date | string
     last_login_at?: Date | string
     role: $Enums.Role
+    leads?: LeadUncheckedCreateNestedManyWithoutAssigneeInput
+    activities?: LeadActivityUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -6933,6 +11390,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    leads?: LeadUpdateManyWithoutAssigneeNestedInput
+    activities?: LeadActivityUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -6945,6 +11404,557 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    leads?: LeadUncheckedUpdateManyWithoutAssigneeNestedInput
+    activities?: LeadActivityUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type LeadCreateWithoutContactInput = {
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    source?: SourcesCreateNestedOneWithoutLeadsInput
+    assignee?: UserCreateNestedOneWithoutLeadsInput
+    activities?: LeadActivityCreateNestedManyWithoutLeadInput
+  }
+
+  export type LeadUncheckedCreateWithoutContactInput = {
+    id?: number
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sourceId?: number | null
+    assignedTo?: number | null
+    activities?: LeadActivityUncheckedCreateNestedManyWithoutLeadInput
+  }
+
+  export type LeadCreateOrConnectWithoutContactInput = {
+    where: LeadWhereUniqueInput
+    create: XOR<LeadCreateWithoutContactInput, LeadUncheckedCreateWithoutContactInput>
+  }
+
+  export type LeadCreateManyContactInputEnvelope = {
+    data: LeadCreateManyContactInput | LeadCreateManyContactInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LeadUpsertWithWhereUniqueWithoutContactInput = {
+    where: LeadWhereUniqueInput
+    update: XOR<LeadUpdateWithoutContactInput, LeadUncheckedUpdateWithoutContactInput>
+    create: XOR<LeadCreateWithoutContactInput, LeadUncheckedCreateWithoutContactInput>
+  }
+
+  export type LeadUpdateWithWhereUniqueWithoutContactInput = {
+    where: LeadWhereUniqueInput
+    data: XOR<LeadUpdateWithoutContactInput, LeadUncheckedUpdateWithoutContactInput>
+  }
+
+  export type LeadUpdateManyWithWhereWithoutContactInput = {
+    where: LeadScalarWhereInput
+    data: XOR<LeadUpdateManyMutationInput, LeadUncheckedUpdateManyWithoutContactInput>
+  }
+
+  export type ContactCreateWithoutLeadsInput = {
+    firstName: string
+    lastName?: string | null
+    email?: string | null
+    phone: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ContactUncheckedCreateWithoutLeadsInput = {
+    id?: number
+    firstName: string
+    lastName?: string | null
+    email?: string | null
+    phone: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ContactCreateOrConnectWithoutLeadsInput = {
+    where: ContactWhereUniqueInput
+    create: XOR<ContactCreateWithoutLeadsInput, ContactUncheckedCreateWithoutLeadsInput>
+  }
+
+  export type SourcesCreateWithoutLeadsInput = {
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SourcesUncheckedCreateWithoutLeadsInput = {
+    id?: number
+    name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SourcesCreateOrConnectWithoutLeadsInput = {
+    where: SourcesWhereUniqueInput
+    create: XOR<SourcesCreateWithoutLeadsInput, SourcesUncheckedCreateWithoutLeadsInput>
+  }
+
+  export type UserCreateWithoutLeadsInput = {
+    username: string
+    email: string
+    password_hash: string
+    is_active: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    last_login_at?: Date | string
+    role: $Enums.Role
+    sessions?: SessionsCreateNestedManyWithoutUserInput
+    activities?: LeadActivityCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutLeadsInput = {
+    id?: number
+    username: string
+    email: string
+    password_hash: string
+    is_active: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    last_login_at?: Date | string
+    role: $Enums.Role
+    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
+    activities?: LeadActivityUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutLeadsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
+  }
+
+  export type LeadActivityCreateWithoutLeadInput = {
+    type?: string
+    content: string
+    createdAt?: Date | string
+    user?: UserCreateNestedOneWithoutActivitiesInput
+  }
+
+  export type LeadActivityUncheckedCreateWithoutLeadInput = {
+    id?: number
+    userId?: number | null
+    type?: string
+    content: string
+    createdAt?: Date | string
+  }
+
+  export type LeadActivityCreateOrConnectWithoutLeadInput = {
+    where: LeadActivityWhereUniqueInput
+    create: XOR<LeadActivityCreateWithoutLeadInput, LeadActivityUncheckedCreateWithoutLeadInput>
+  }
+
+  export type LeadActivityCreateManyLeadInputEnvelope = {
+    data: LeadActivityCreateManyLeadInput | LeadActivityCreateManyLeadInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ContactUpsertWithoutLeadsInput = {
+    update: XOR<ContactUpdateWithoutLeadsInput, ContactUncheckedUpdateWithoutLeadsInput>
+    create: XOR<ContactCreateWithoutLeadsInput, ContactUncheckedCreateWithoutLeadsInput>
+    where?: ContactWhereInput
+  }
+
+  export type ContactUpdateToOneWithWhereWithoutLeadsInput = {
+    where?: ContactWhereInput
+    data: XOR<ContactUpdateWithoutLeadsInput, ContactUncheckedUpdateWithoutLeadsInput>
+  }
+
+  export type ContactUpdateWithoutLeadsInput = {
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContactUncheckedUpdateWithoutLeadsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SourcesUpsertWithoutLeadsInput = {
+    update: XOR<SourcesUpdateWithoutLeadsInput, SourcesUncheckedUpdateWithoutLeadsInput>
+    create: XOR<SourcesCreateWithoutLeadsInput, SourcesUncheckedCreateWithoutLeadsInput>
+    where?: SourcesWhereInput
+  }
+
+  export type SourcesUpdateToOneWithWhereWithoutLeadsInput = {
+    where?: SourcesWhereInput
+    data: XOR<SourcesUpdateWithoutLeadsInput, SourcesUncheckedUpdateWithoutLeadsInput>
+  }
+
+  export type SourcesUpdateWithoutLeadsInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SourcesUncheckedUpdateWithoutLeadsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpsertWithoutLeadsInput = {
+    update: XOR<UserUpdateWithoutLeadsInput, UserUncheckedUpdateWithoutLeadsInput>
+    create: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutLeadsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutLeadsInput, UserUncheckedUpdateWithoutLeadsInput>
+  }
+
+  export type UserUpdateWithoutLeadsInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    sessions?: SessionsUpdateManyWithoutUserNestedInput
+    activities?: LeadActivityUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutLeadsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
+    activities?: LeadActivityUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type LeadActivityUpsertWithWhereUniqueWithoutLeadInput = {
+    where: LeadActivityWhereUniqueInput
+    update: XOR<LeadActivityUpdateWithoutLeadInput, LeadActivityUncheckedUpdateWithoutLeadInput>
+    create: XOR<LeadActivityCreateWithoutLeadInput, LeadActivityUncheckedCreateWithoutLeadInput>
+  }
+
+  export type LeadActivityUpdateWithWhereUniqueWithoutLeadInput = {
+    where: LeadActivityWhereUniqueInput
+    data: XOR<LeadActivityUpdateWithoutLeadInput, LeadActivityUncheckedUpdateWithoutLeadInput>
+  }
+
+  export type LeadActivityUpdateManyWithWhereWithoutLeadInput = {
+    where: LeadActivityScalarWhereInput
+    data: XOR<LeadActivityUpdateManyMutationInput, LeadActivityUncheckedUpdateManyWithoutLeadInput>
+  }
+
+  export type LeadCreateWithoutActivitiesInput = {
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contact: ContactCreateNestedOneWithoutLeadsInput
+    source?: SourcesCreateNestedOneWithoutLeadsInput
+    assignee?: UserCreateNestedOneWithoutLeadsInput
+  }
+
+  export type LeadUncheckedCreateWithoutActivitiesInput = {
+    id?: number
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contactId: number
+    sourceId?: number | null
+    assignedTo?: number | null
+  }
+
+  export type LeadCreateOrConnectWithoutActivitiesInput = {
+    where: LeadWhereUniqueInput
+    create: XOR<LeadCreateWithoutActivitiesInput, LeadUncheckedCreateWithoutActivitiesInput>
+  }
+
+  export type UserCreateWithoutActivitiesInput = {
+    username: string
+    email: string
+    password_hash: string
+    is_active: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    last_login_at?: Date | string
+    role: $Enums.Role
+    sessions?: SessionsCreateNestedManyWithoutUserInput
+    leads?: LeadCreateNestedManyWithoutAssigneeInput
+  }
+
+  export type UserUncheckedCreateWithoutActivitiesInput = {
+    id?: number
+    username: string
+    email: string
+    password_hash: string
+    is_active: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    last_login_at?: Date | string
+    role: $Enums.Role
+    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
+    leads?: LeadUncheckedCreateNestedManyWithoutAssigneeInput
+  }
+
+  export type UserCreateOrConnectWithoutActivitiesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutActivitiesInput, UserUncheckedCreateWithoutActivitiesInput>
+  }
+
+  export type LeadUpsertWithoutActivitiesInput = {
+    update: XOR<LeadUpdateWithoutActivitiesInput, LeadUncheckedUpdateWithoutActivitiesInput>
+    create: XOR<LeadCreateWithoutActivitiesInput, LeadUncheckedCreateWithoutActivitiesInput>
+    where?: LeadWhereInput
+  }
+
+  export type LeadUpdateToOneWithWhereWithoutActivitiesInput = {
+    where?: LeadWhereInput
+    data: XOR<LeadUpdateWithoutActivitiesInput, LeadUncheckedUpdateWithoutActivitiesInput>
+  }
+
+  export type LeadUpdateWithoutActivitiesInput = {
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
+    source?: SourcesUpdateOneWithoutLeadsNestedInput
+    assignee?: UserUpdateOneWithoutLeadsNestedInput
+  }
+
+  export type LeadUncheckedUpdateWithoutActivitiesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactId?: IntFieldUpdateOperationsInput | number
+    sourceId?: NullableIntFieldUpdateOperationsInput | number | null
+    assignedTo?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type UserUpsertWithoutActivitiesInput = {
+    update: XOR<UserUpdateWithoutActivitiesInput, UserUncheckedUpdateWithoutActivitiesInput>
+    create: XOR<UserCreateWithoutActivitiesInput, UserUncheckedCreateWithoutActivitiesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutActivitiesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutActivitiesInput, UserUncheckedUpdateWithoutActivitiesInput>
+  }
+
+  export type UserUpdateWithoutActivitiesInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    sessions?: SessionsUpdateManyWithoutUserNestedInput
+    leads?: LeadUpdateManyWithoutAssigneeNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutActivitiesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
+    leads?: LeadUncheckedUpdateManyWithoutAssigneeNestedInput
+  }
+
+  export type LeadCreateWithoutSourceInput = {
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contact: ContactCreateNestedOneWithoutLeadsInput
+    assignee?: UserCreateNestedOneWithoutLeadsInput
+    activities?: LeadActivityCreateNestedManyWithoutLeadInput
+  }
+
+  export type LeadUncheckedCreateWithoutSourceInput = {
+    id?: number
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contactId: number
+    assignedTo?: number | null
+    activities?: LeadActivityUncheckedCreateNestedManyWithoutLeadInput
+  }
+
+  export type LeadCreateOrConnectWithoutSourceInput = {
+    where: LeadWhereUniqueInput
+    create: XOR<LeadCreateWithoutSourceInput, LeadUncheckedCreateWithoutSourceInput>
+  }
+
+  export type LeadCreateManySourceInputEnvelope = {
+    data: LeadCreateManySourceInput | LeadCreateManySourceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type LeadUpsertWithWhereUniqueWithoutSourceInput = {
+    where: LeadWhereUniqueInput
+    update: XOR<LeadUpdateWithoutSourceInput, LeadUncheckedUpdateWithoutSourceInput>
+    create: XOR<LeadCreateWithoutSourceInput, LeadUncheckedCreateWithoutSourceInput>
+  }
+
+  export type LeadUpdateWithWhereUniqueWithoutSourceInput = {
+    where: LeadWhereUniqueInput
+    data: XOR<LeadUpdateWithoutSourceInput, LeadUncheckedUpdateWithoutSourceInput>
+  }
+
+  export type LeadUpdateManyWithWhereWithoutSourceInput = {
+    where: LeadScalarWhereInput
+    data: XOR<LeadUpdateManyMutationInput, LeadUncheckedUpdateManyWithoutSourceInput>
   }
 
   export type SessionsCreateManyUserInput = {
@@ -6955,6 +11965,39 @@ export namespace Prisma {
     created_at?: Date | string
     expires_at: Date | string
     revoked_at: Date | string
+  }
+
+  export type LeadCreateManyAssigneeInput = {
+    id?: number
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contactId: number
+    sourceId?: number | null
+  }
+
+  export type LeadActivityCreateManyUserInput = {
+    id?: number
+    leadId: number
+    type?: string
+    content: string
+    createdAt?: Date | string
   }
 
   export type SessionsUpdateWithoutUserInput = {
@@ -6984,6 +12027,338 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
     revoked_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LeadUpdateWithoutAssigneeInput = {
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
+    source?: SourcesUpdateOneWithoutLeadsNestedInput
+    activities?: LeadActivityUpdateManyWithoutLeadNestedInput
+  }
+
+  export type LeadUncheckedUpdateWithoutAssigneeInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactId?: IntFieldUpdateOperationsInput | number
+    sourceId?: NullableIntFieldUpdateOperationsInput | number | null
+    activities?: LeadActivityUncheckedUpdateManyWithoutLeadNestedInput
+  }
+
+  export type LeadUncheckedUpdateManyWithoutAssigneeInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactId?: IntFieldUpdateOperationsInput | number
+    sourceId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type LeadActivityUpdateWithoutUserInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lead?: LeadUpdateOneRequiredWithoutActivitiesNestedInput
+  }
+
+  export type LeadActivityUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    leadId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LeadActivityUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    leadId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LeadCreateManyContactInput = {
+    id?: number
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sourceId?: number | null
+    assignedTo?: number | null
+  }
+
+  export type LeadUpdateWithoutContactInput = {
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    source?: SourcesUpdateOneWithoutLeadsNestedInput
+    assignee?: UserUpdateOneWithoutLeadsNestedInput
+    activities?: LeadActivityUpdateManyWithoutLeadNestedInput
+  }
+
+  export type LeadUncheckedUpdateWithoutContactInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceId?: NullableIntFieldUpdateOperationsInput | number | null
+    assignedTo?: NullableIntFieldUpdateOperationsInput | number | null
+    activities?: LeadActivityUncheckedUpdateManyWithoutLeadNestedInput
+  }
+
+  export type LeadUncheckedUpdateManyWithoutContactInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sourceId?: NullableIntFieldUpdateOperationsInput | number | null
+    assignedTo?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type LeadActivityCreateManyLeadInput = {
+    id?: number
+    userId?: number | null
+    type?: string
+    content: string
+    createdAt?: Date | string
+  }
+
+  export type LeadActivityUpdateWithoutLeadInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutActivitiesNestedInput
+  }
+
+  export type LeadActivityUncheckedUpdateWithoutLeadInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LeadActivityUncheckedUpdateManyWithoutLeadInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LeadCreateManySourceInput = {
+    id?: number
+    title?: string | null
+    amount?: number
+    status?: string
+    probability?: number | null
+    expectedCloseDate?: Date | string | null
+    notes?: string | null
+    guests?: number | null
+    venue?: string | null
+    eventType?: string | null
+    eventDate?: Date | string | null
+    finalAmount?: number | null
+    advanceAmount?: number | null
+    siteVisitDate?: Date | string | null
+    siteVisitTime?: string | null
+    bookingNotes?: string | null
+    bookedAt?: Date | string | null
+    bookedBy?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contactId: number
+    assignedTo?: number | null
+  }
+
+  export type LeadUpdateWithoutSourceInput = {
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
+    assignee?: UserUpdateOneWithoutLeadsNestedInput
+    activities?: LeadActivityUpdateManyWithoutLeadNestedInput
+  }
+
+  export type LeadUncheckedUpdateWithoutSourceInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactId?: IntFieldUpdateOperationsInput | number
+    assignedTo?: NullableIntFieldUpdateOperationsInput | number | null
+    activities?: LeadActivityUncheckedUpdateManyWithoutLeadNestedInput
+  }
+
+  export type LeadUncheckedUpdateManyWithoutSourceInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    probability?: NullableIntFieldUpdateOperationsInput | number | null
+    expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    guests?: NullableIntFieldUpdateOperationsInput | number | null
+    venue?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: NullableStringFieldUpdateOperationsInput | string | null
+    eventDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    finalAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    advanceAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    siteVisitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    siteVisitTime?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    bookedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contactId?: IntFieldUpdateOperationsInput | number
+    assignedTo?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
 

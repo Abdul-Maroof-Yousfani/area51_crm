@@ -153,6 +153,41 @@ exports.Prisma.ContactScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.LeadScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  amount: 'amount',
+  status: 'status',
+  probability: 'probability',
+  expectedCloseDate: 'expectedCloseDate',
+  notes: 'notes',
+  guests: 'guests',
+  venue: 'venue',
+  eventType: 'eventType',
+  eventDate: 'eventDate',
+  finalAmount: 'finalAmount',
+  advanceAmount: 'advanceAmount',
+  siteVisitDate: 'siteVisitDate',
+  siteVisitTime: 'siteVisitTime',
+  bookingNotes: 'bookingNotes',
+  bookedAt: 'bookedAt',
+  bookedBy: 'bookedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  contactId: 'contactId',
+  sourceId: 'sourceId',
+  assignedTo: 'assignedTo'
+};
+
+exports.Prisma.LeadActivityScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  userId: 'userId',
+  type: 'type',
+  content: 'content',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SourcesScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -185,6 +220,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Sessions: 'Sessions',
   Contact: 'Contact',
+  Lead: 'Lead',
+  LeadActivity: 'LeadActivity',
   Sources: 'Sources'
 };
 

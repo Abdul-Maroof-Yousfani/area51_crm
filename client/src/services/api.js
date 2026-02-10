@@ -177,4 +177,101 @@ export const sourcesService = {
     }
 };
 
+export const leadsService = {
+    async getAll(params = {}) {
+        const query = new URLSearchParams(params).toString();
+        const response = await fetch(`${API_BASE_URL}/leads?${query}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to fetch leads');
+        return data;
+    },
+
+    async getById(id) {
+        const response = await fetch(`${API_BASE_URL}/leads/${id}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to fetch lead');
+        return data.data;
+    },
+
+    async create(leadData) {
+        const response = await fetch(`${API_BASE_URL}/leads`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(leadData)
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to create lead');
+        return data.data;
+    },
+
+    async update(id, leadData) {
+        const response = await fetch(`${API_BASE_URL}/leads/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(leadData)
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to update lead');
+        return data.data;
+    },
+
+    async delete(id) {
+        const response = await fetch(`${API_BASE_URL}/leads/${id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to delete lead');
+        return data;
+    },
+
+    async deleteAll() {
+        const response = await fetch(`${API_BASE_URL}/leads/all`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to delete all leads');
+        return data;
+    },
+
+    async addNote(id, noteData) {
+        const response = await fetch(`${API_BASE_URL}/leads/${id}/timeline`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(noteData)
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to add note');
+        return data.data;
+    },
+
+    async getTimeline(id) {
+        const response = await fetch(`${API_BASE_URL}/leads/${id}/timeline`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to fetch timeline');
+        return data.data;
+    }
+};
+
+export const userService = {
+    async getAll() {
+        const response = await fetch(`${API_BASE_URL}/users`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to fetch users');
+        return data.data;
+    }
+};
+
 export default authService;

@@ -10,7 +10,7 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
   const [showContactCreator, setShowContactCreator] = useState(false);
   const [formData, setFormData] = useState({
     manager: 'Unassigned',
-    stage: 'New Lead',
+    stage: 'New',
     amount: '',
     eventType: '',
     eventDate: '',

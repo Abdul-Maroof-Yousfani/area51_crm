@@ -20,6 +20,6 @@ router.use(contactRoutes);
 router.use(sourcesRoutes);
 
 // Leads routes
-router.use(leadsRoutes);
+router.use('/leads', leadsRoutes);
 
 export default router;
