@@ -2,14 +2,14 @@ import express from 'express';
 const router = express.Router();
 import user from '../controllers/user.js';
 
-router.get('/api/users/:id', user.getUserById);
+router.get('/users/:id', user.getUserById);
 
-router.get('/api/users', user.getUsers);
+router.get('/users', user.getUsers);
 
-router.post('/api/users', user.newUser);
+router.post('/users', user.newUser);
 
 router.delete('/users/:id', user.deleteUser);
 
-router.put('/api/users', user.updateUser);
+router.put('/users', user.updateUser);
 
 export default router;

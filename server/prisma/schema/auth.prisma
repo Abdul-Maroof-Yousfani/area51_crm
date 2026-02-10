@@ -20,6 +20,7 @@ model User {
   last_login_at DateTime   @default(now())
   role          Role
   sessions      Sessions[]
+  leads         Lead[]
 }
 
 enum Role {

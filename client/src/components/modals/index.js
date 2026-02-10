@@ -10,3 +10,5 @@ export { default as ContactModal } from './ContactModal';
 export { default as NewLeadModal } from './NewLeadModal';
 export { default as SourceDetailModal } from './SourceDetailModal';
 export { default as UserSettingsPanel } from './UserSettingsPanel';
+export { default as ContactsMigrationPanel } from './ContactsMigrationPanel';
+

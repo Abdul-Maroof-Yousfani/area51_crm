@@ -13,7 +13,8 @@ import {
   PhoneCall,
   MessageCircle,
   Brain,
-  UserCircle
+  UserCircle,
+  Database
 } from 'lucide-react';
 
 // Navigation items by role
@@ -60,6 +61,7 @@ export default function RoleSidebar({
   onShowAdmin,
   onShowIntegrations,
   onShowUserSettings,
+  onShowMigration,
   isMobile = false
 }) {
   const navItems = getNavItems(userRole);
@@ -72,13 +74,12 @@ export default function RoleSidebar({
         {/* Role Badge */}
         <div className="px-3 py-2 mb-2">
           <span
-            className={`px-3 py-1 rounded-full text-xs font-bold ${
-              userRole === 'Owner' || userRole === 'Admin'
-                ? 'bg-purple-100 text-purple-700'
-                : userRole === 'Sales'
+            className={`px-3 py-1 rounded-full text-xs font-bold ${userRole === 'Owner' || userRole === 'Admin'
+              ? 'bg-purple-100 text-purple-700'
+              : userRole === 'Sales'
                 ? 'bg-green-100 text-green-700'
                 : 'bg-amber-100 text-amber-700'
-            }`}
+              }`}
           >
             {userRole}
           </span>
@@ -90,16 +91,14 @@ export default function RoleSidebar({
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-2 px-3 py-3 rounded-xl text-left transition-all ${
-                activeTab === item.id
-                  ? 'bg-blue-100 text-blue-700 font-semibold'
-                  : 'bg-gray-50 text-gray-600 active:bg-gray-100'
-              }`}
+              className={`flex items-center gap-2 px-3 py-3 rounded-xl text-left transition-all ${activeTab === item.id
+                ? 'bg-blue-100 text-blue-700 font-semibold'
+                : 'bg-gray-50 text-gray-600 active:bg-gray-100'
+                }`}
             >
               <item.icon
-                className={`w-5 h-5 flex-shrink-0 ${
-                  activeTab === item.id ? 'text-blue-600' : 'text-gray-400'
-                }`}
+                className={`w-5 h-5 flex-shrink-0 ${activeTab === item.id ? 'text-blue-600' : 'text-gray-400'
+                  }`}
               />
               <span className="text-sm font-medium truncate">{item.label}</span>
             </button>
@@ -161,13 +160,12 @@ export default function RoleSidebar({
       {/* Role Badge */}
       <div className="px-5 py-3 bg-gray-50 border-b">
         <span
-          className={`px-3 py-1 rounded-full text-xs font-bold ${
-            userRole === 'Owner' || userRole === 'Admin'
-              ? 'bg-purple-100 text-purple-700'
-              : userRole === 'Sales'
+          className={`px-3 py-1 rounded-full text-xs font-bold ${userRole === 'Owner' || userRole === 'Admin'
+            ? 'bg-purple-100 text-purple-700'
+            : userRole === 'Sales'
               ? 'bg-green-100 text-green-700'
               : 'bg-amber-100 text-amber-700'
-          }`}
+            }`}
         >
           {userRole}
         </span>
@@ -179,16 +177,14 @@ export default function RoleSidebar({
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${
-              activeTab === item.id
-                ? 'bg-blue-50 text-blue-700 font-semibold'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${activeTab === item.id
+              ? 'bg-blue-50 text-blue-700 font-semibold'
+              : 'text-gray-600 hover:bg-gray-50'
+              }`}
           >
             <item.icon
-              className={`w-5 h-5 ${
-                activeTab === item.id ? 'text-blue-600' : 'text-gray-400'
-              }`}
+              className={`w-5 h-5 ${activeTab === item.id ? 'text-blue-600' : 'text-gray-400'
+                }`}
             />
             <div>
               <p className="text-sm font-medium">{item.label}</p>
@@ -224,6 +220,16 @@ export default function RoleSidebar({
               <div>
                 <p className="text-sm font-medium">Integrations</p>
                 <p className="text-[10px] text-gray-400">WhatsApp, Meta, AI</p>
+              </div>
+            </button>
+            <button
+              onClick={onShowMigration}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-gray-600 hover:bg-orange-50 hover:text-orange-700 transition-all font-medium"
+            >
+              <Database className="w-5 h-5 text-orange-500" />
+              <div>
+                <p className="text-sm font-medium">Data Migration</p>
+                <p className="text-[10px] text-gray-400">Firebase to SQL</p>
               </div>
             </button>
           </>

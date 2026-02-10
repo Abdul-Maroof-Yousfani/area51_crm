@@ -15,8 +15,6 @@ import router from './routes/router.js';
 // Patches
 inject(); // Patch express in order to use async / await syntax
 
-const { PORT } = process.env;
-
 // Instantiate an Express Application
 const app = express();
 
@@ -28,7 +26,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(logger.dev, logger.combined);
 
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:3000'],
+    credentials: true
+}));
 app.use(helmet());
 
 // This middleware adds the json header to every response
@@ -51,7 +52,14 @@ app.use('*', (req, res) => {
 })
 
 // Open Server on selected Port
-app.listen(
-    PORT || 3005,
-    () => console.info('Server listening on port ', PORT)
-);
+const PORT = process.env.PORT || 3006;
+const server = app.listen(PORT, () => console.info('Server listening on port ', PORT));
+
+server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} is already in use. Run: taskkill /F /IM node.exe`);
+        process.exit(1);
+    } else {
+        console.error('❌ Server error:', error);
+    }
+});

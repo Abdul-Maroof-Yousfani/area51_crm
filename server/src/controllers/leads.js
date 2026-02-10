@@ -1,0 +1,212 @@
+import prisma from '../util/prisma.js';
+import Joi from 'joi';
+
+// Validation schemas
+const leadSchema = Joi.object({
+    title: Joi.string().max(200).allow('', null),
+    amount: Joi.number().min(0).default(0),
+    status: Joi.string().valid('New Lead', 'Proposal', 'Negotiation', 'Won', 'Lost').default('New Lead'),
+    probability: Joi.number().min(0).max(100).default(0),
+    expectedCloseDate: Joi.date().iso().allow(null),
+    notes: Joi.string().allow('', null),
+    contactId: Joi.number().required(),
+    sourceId: Joi.number().allow(null),
+    assignedTo: Joi.number().allow(null)
+});
+
+const updateLeadSchema = Joi.object({
+    title: Joi.string().max(200).allow('', null),
+    amount: Joi.number().min(0),
+    status: Joi.string().valid('New Lead', 'Proposal', 'Negotiation', 'Won', 'Lost'),
+    probability: Joi.number().min(0).max(100),
+    expectedCloseDate: Joi.date().iso().allow(null),
+    notes: Joi.string().allow('', null),
+    contactId: Joi.number(),
+    sourceId: Joi.number().allow(null),
+    assignedTo: Joi.number().allow(null)
+}).min(1);
+
+// Get all leads with pagination and filtering
+export const getLeads = async (req, res) => {
+    try {
+        const { page = 1, limit = 10, status, assignedTo, search, startDate, endDate } = req.query;
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+        const take = parseInt(limit);
+
+        // Build where clause
+        const where = {};
+        if (status) where.status = status;
+        if (assignedTo) where.assignedTo = parseInt(assignedTo);
+
+        if (search) {
+            where.OR = [
+                { title: { contains: search, mode: 'insensitive' } },
+                { contact: { firstName: { contains: search, mode: 'insensitive' } } },
+                { contact: { lastName: { contains: search, mode: 'insensitive' } } },
+                { contact: { phone: { contains: search, mode: 'insensitive' } } }
+            ];
+        }
+
+        if (startDate && endDate) {
+            where.createdAt = {
+                gte: new Date(startDate),
+                lte: new Date(endDate)
+            };
+        }
+
+        // Get leads
+        const [leads, total] = await Promise.all([
+            prisma.lead.findMany({
+                where,
+                skip,
+                take,
+                include: {
+                    contact: true,
+                    source: true,
+                    assignee: {
+                        select: { id: true, username: true, email: true }
+                    }
+                },
+                orderBy: { createdAt: 'desc' }
+            }),
+            prisma.lead.count({ where })
+        ]);
+
+        return res.status(200).json({
+            status: true,
+            data: leads,
+            pagination: {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                total,
+                totalPages: Math.ceil(total / take)
+            }
+        });
+    } catch (error) {
+        console.error('Get Leads Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Get lead by ID
+export const getLeadById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const lead = await prisma.lead.findUnique({
+            where: { id: parseInt(id) },
+            include: {
+                contact: true,
+                source: true,
+                assignee: {
+                    select: { id: true, username: true, email: true }
+                }
+            }
+        });
+
+        if (!lead) {
+            return res.status(404).json({ status: false, message: 'Lead not found' });
+        }
+
+        return res.status(200).json({ status: true, data: lead });
+    } catch (error) {
+        console.error('Get Lead Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Create new lead
+export const createLead = async (req, res) => {
+    try {
+        const { error, value } = leadSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json({ status: false, message: error.details[0].message });
+        }
+
+        // Verify contact exists
+        const contactExists = await prisma.contact.findUnique({
+            where: { id: value.contactId }
+        });
+        if (!contactExists) {
+            return res.status(404).json({ status: false, message: 'Contact not found' });
+        }
+
+        // Create lead
+        const newLead = await prisma.lead.create({
+            data: value,
+            include: {
+                contact: true,
+                source: true,
+                assignee: {
+                    select: { id: true, username: true }
+                }
+            }
+        });
+
+        return res.status(201).json({ status: true, message: 'Lead created successfully', data: newLead });
+    } catch (error) {
+        console.error('Create Lead Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Update lead
+export const updateLead = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { error, value } = updateLeadSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json({ status: false, message: error.details[0].message });
+        }
+
+        // Check if lead exists
+        const existingLead = await prisma.lead.findUnique({
+            where: { id: parseInt(id) }
+        });
+
+        if (!existingLead) {
+            return res.status(404).json({ status: false, message: 'Lead not found' });
+        }
+
+        // Update lead
+        const updatedLead = await prisma.lead.update({
+            where: { id: parseInt(id) },
+            data: value,
+            include: {
+                contact: true,
+                source: true,
+                assignee: {
+                    select: { id: true, username: true }
+                }
+            }
+        });
+
+        return res.status(200).json({ status: true, message: 'Lead updated successfully', data: updatedLead });
+    } catch (error) {
+        console.error('Update Lead Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Delete lead
+export const deleteLead = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const existingLead = await prisma.lead.findUnique({
+            where: { id: parseInt(id) }
+        });
+
+        if (!existingLead) {
+            return res.status(404).json({ status: false, message: 'Lead not found' });
+        }
+
+        await prisma.lead.delete({
+            where: { id: parseInt(id) }
+        });
+
+        return res.status(200).json({ status: true, message: 'Lead deleted successfully' });
+    } catch (error) {
+        console.error('Delete Lead Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};

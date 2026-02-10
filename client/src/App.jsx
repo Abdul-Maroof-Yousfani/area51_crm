@@ -5,7 +5,7 @@ import { db, appId } from './lib/firebase';
 import { createActivityEntry, ACTIVITY_TYPES } from './utils/helpers';
 
 // Hooks
-import { useAuth, useFirestoreData, useAutoMigrateContacts, useCsvUpload, useNotifications, useAppSettings } from './hooks';
+import { useAuth, useFirestoreData, useAutoMigrateContacts, useCsvUpload, useNotifications, useAppSettings, useContacts, useSources } from './hooks';
 
 // UI Components
 import { Toast, DebugPanel, AuthScreen, NotificationBell, LanguageToggle } from './components/ui';
@@ -20,7 +20,8 @@ import {
   IntegrationsPanel,
   NewLeadModal,
   SourceDetailModal,
-  UserSettingsPanel
+  UserSettingsPanel,
+  ContactsMigrationPanel
 } from './components/modals';
 
 // View Components
@@ -41,7 +42,7 @@ import {
 
 export default function App() {
   // Auth state
-  const { user, activeUser, setActiveUser, authLoading, authError, forceAdminLogin } = useAuth();
+  const { user, activeUser, setActiveUser, authLoading, authError, login, signup, logout } = useAuth();
 
   // Firestore data
   const {
@@ -67,6 +68,24 @@ export default function App() {
   // App settings (managers, event types from Firestore)
   const { managers, eventTypes } = useAppSettings();
 
+  // Contacts from API
+  const {
+    contacts: apiContacts,
+    loading: contactsLoading,
+    addContact,
+    updateContact,
+    deleteContact,
+    deleteAllContacts
+  } = useContacts();
+
+  // Sources from API
+  const {
+    sources: apiSources,
+    addSource,
+    updateSource,
+    deleteSource
+  } = useSources();
+
   // Notifications
   const {
     notifications,
@@ -86,6 +105,7 @@ export default function App() {
   const [showNewLead, setShowNewLead] = useState(false);
   const [selectedSource, setSelectedSource] = useState(null);
   const [showUserSettings, setShowUserSettings] = useState(false);
+  const [showMigrationPanel, setShowMigrationPanel] = useState(false);
   const [toast, setToast] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -190,8 +210,8 @@ export default function App() {
   if (!user || !activeUser || authError) {
     return (
       <>
-        <AuthScreen onLogin={setActiveUser} isLoading={authLoading} authError={authError} />
-        <DebugPanel logs={debugLogs} onForceLogin={forceAdminLogin} />
+        <AuthScreen onLogin={setActiveUser} isLoading={authLoading} authError={authError} login={login} signup={signup} logout={logout} />
+        <DebugPanel logs={debugLogs} />
       </>
     );
   }
@@ -199,7 +219,7 @@ export default function App() {
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
       <PWAUpdatePrompt />
-      <DebugPanel logs={debugLogs} onForceLogin={forceAdminLogin} />
+      {/* <DebugPanel logs={debugLogs} /> */}
 
       {/* Toast */}
       {toast && (
@@ -250,9 +270,10 @@ export default function App() {
         <UserSettingsPanel
           currentUser={activeUser}
           onClose={() => setShowUserSettings(false)}
-          onLogout={() => setActiveUser(null)}
+          onLogout={logout}
         />
       )}
+      {showMigrationPanel && <ContactsMigrationPanel onClose={() => setShowMigrationPanel(false)} />}
 
       {/* Desktop Sidebar - Hidden on mobile */}
       <div className="hidden md:block">
@@ -263,6 +284,7 @@ export default function App() {
           onShowAdmin={() => setShowAdmin(true)}
           onShowIntegrations={() => setShowIntegrationsPanel(true)}
           onShowUserSettings={() => setShowUserSettings(true)}
+          onShowMigration={() => setShowMigrationPanel(true)}
         />
       </div>
 
@@ -318,6 +340,7 @@ export default function App() {
               onShowAdmin={() => { setShowAdmin(true); setMobileMenuOpen(false); }}
               onShowIntegrations={() => { setShowIntegrationsPanel(true); setMobileMenuOpen(false); }}
               onShowUserSettings={() => { setShowUserSettings(true); setMobileMenuOpen(false); }}
+              onShowMigration={() => { setShowMigrationPanel(true); setMobileMenuOpen(false); }}
               isMobile={true}
             />
           </div>
@@ -394,21 +417,23 @@ export default function App() {
         {/* Contacts */}
         {activeTab === 'contacts' && (
           <ContactsView
-            contacts={contacts}
-            onAddContact={handleAddContact}
-            onUpdateContact={handleUpdateContact}
-            onDeleteAllContacts={handleDeleteAllContacts}
+            contacts={apiContacts}
+            loading={contactsLoading}
+            onAddContact={addContact}
+            onUpdateContact={updateContact}
+            onDeleteContact={deleteContact}
+            onDeleteAllContacts={deleteAllContacts}
           />
         )}
 
         {/* Sources */}
         {activeTab === 'sources' && (
           <SourcesView
-            sources={sources}
+            sources={apiSources}
             leads={data}
-            onAdd={handleAddSource}
-            onUpdate={handleUpdateSource}
-            onDelete={handleDeleteSource}
+            onAdd={addSource}
+            onUpdate={updateSource}
+            onDelete={deleteSource}
             onSourceClick={setSelectedSource}
           />
         )}
@@ -424,10 +449,10 @@ export default function App() {
         )}
 
         {/* Debug Footer - Hidden on mobile */}
-        <div className="hidden md:block fixed bottom-0 left-0 w-full bg-black text-white text-xs p-1 text-center opacity-50 pointer-events-none">
+        {/* <div className="hidden md:block fixed bottom-0 left-0 w-full bg-black text-white text-xs p-1 text-center opacity-50 pointer-events-none">
           Debug: {data.length} Leads | {contacts.length} Contacts | Rev: {stats.revenue} |
           User: {activeUser ? `${activeUser.name} (${activeUser.role})` : 'Loading...'}
-        </div>
+        </div> */}
       </main>
     </div>
   );
