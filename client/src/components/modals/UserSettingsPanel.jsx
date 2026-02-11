@@ -170,11 +170,10 @@ export default function UserSettingsPanel({ currentUser, onClose, onLogout }) {
             <button
               key={tab.id}
               onClick={() => { setActiveTab(tab.id); setMessage(null); }}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium transition-colors ${
-                activeTab === tab.id
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium transition-colors ${activeTab === tab.id
                   ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-              }`}
+                }`}
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
@@ -186,11 +185,10 @@ export default function UserSettingsPanel({ currentUser, onClose, onLogout }) {
         <div className="flex-1 overflow-y-auto p-6">
           {/* Message */}
           {message && (
-            <div className={`mb-4 p-3 rounded-lg text-sm flex items-center gap-2 ${
-              message.type === 'success'
+            <div className={`mb-4 p-3 rounded-lg text-sm flex items-center gap-2 ${message.type === 'success'
                 ? 'bg-green-50 text-green-700 border border-green-200'
                 : 'bg-red-50 text-red-700 border border-red-200'
-            }`}>
+              }`}>
               {message.type === 'success' ? (
                 <Check className="w-4 h-4" />
               ) : (

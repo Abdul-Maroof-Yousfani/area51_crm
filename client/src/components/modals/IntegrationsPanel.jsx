@@ -234,11 +234,10 @@ Area 51 Team`,
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 px-4 py-3 text-sm font-medium flex items-center justify-center gap-2 border-b-2 transition-colors ${
-                activeTab === tab.id
-                  ? 'border-blue-600 text-blue-600 bg-white'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`flex-1 px-4 py-3 text-sm font-medium flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === tab.id
+                ? 'border-blue-600 text-blue-600 bg-white'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
@@ -388,7 +387,7 @@ Area 51 Team`,
                     <Sparkles className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-bold text-gray-900">Auto Greeting for New Leads</h3>
+                    <h3 className="font-bold text-gray-900">{t('autoGreetingTitle')}</h3>
                     <p className="text-xs text-gray-500">Automatically send WhatsApp greeting to new leads</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
@@ -1003,6 +1002,6 @@ Area 51 Team`,
           </button>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

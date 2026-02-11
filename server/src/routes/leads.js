@@ -7,7 +7,9 @@ import {
     deleteLead,
     addNote,
     getLeadTimeline,
-    deleteAllLeads
+    deleteAllLeads,
+    addPayment,
+    deletePayment
 } from '../controllers/leads.js';
 
 const router = express.Router();
@@ -24,6 +26,9 @@ router.post('/', createLead);
 // PUT /:id - Update lead
 router.put('/:id', updateLead);
 
+// DELETE /all - Delete all leads
+router.delete('/all', deleteAllLeads);
+
 // DELETE /:id - Delete lead
 router.delete('/:id', deleteLead);
 
@@ -33,7 +38,10 @@ router.post('/:id/timeline', addNote);
 // GET /:id/timeline - Get timeline
 router.get('/:id/timeline', getLeadTimeline);
 
-// DELETE /all - Delete all leads
-router.delete('/all', deleteAllLeads);
+// POST /:id/payments - Add payment
+router.post('/:id/payments', addPayment);
+
+// DELETE /:id/payments/:paymentId - Delete payment
+router.delete('/:id/payments/:paymentId', deletePayment);
 
 export default router;

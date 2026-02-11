@@ -62,7 +62,7 @@ export default function RevenueDetailModal({ data, onClose }) {
       const year = date.getFullYear();
       const month = date.getMonth();
       const key = `${year}-${String(month + 1).padStart(2, '0')}`;
-      const displayKey = date.toLocaleString('default', { month: 'short', year: '2-digit' });
+      const displayKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
 
       if (!trendMap[key]) trendMap[key] = { name: displayKey, value: 0, rawDate: key };
       trendMap[key].value += safeAmount(d.finalAmount || d.amount);

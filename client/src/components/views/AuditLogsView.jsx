@@ -15,9 +15,11 @@ import {
 } from 'lucide-react';
 import { collection, query, orderBy, limit, getDocs, where, Timestamp } from 'firebase/firestore';
 import { db, appId } from '../../lib/firebase';
+import { useLanguage } from '../../hooks';
 
 // eslint-disable-next-line no-unused-vars
 export default function AuditLogsView({ leads, currentUser }) {
+  const { t } = useLanguage();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -69,12 +71,12 @@ export default function AuditLogsView({ leads, currentUser }) {
 
   // Get interaction types
   const interactionTypes = [
-    { value: 'all', label: 'All Types' },
-    { value: 'query', label: 'AI Query' },
-    { value: 'suggestion', label: 'AI Suggestion' },
-    { value: 'auto_greeting', label: 'Auto Greeting' },
-    { value: 'quote_reminder', label: 'Quote Reminder' },
-    { value: 'lead_summary', label: 'Lead Summary' }
+    { value: 'all', label: t('allTypes') },
+    { value: 'query', label: t('aiQuery') },
+    { value: 'suggestion', label: t('aiSuggestion') },
+    { value: 'auto_greeting', label: t('autoGreeting') },
+    { value: 'quote_reminder', label: t('quoteReminder') },
+    { value: 'lead_summary', label: t('leadSummary') }
   ];
 
   // Filter logs
@@ -135,10 +137,10 @@ export default function AuditLogsView({ leads, currentUser }) {
       <div className="mb-4">
         <h1 className="text-xl md:text-2xl font-bold text-gray-900 flex items-center gap-2">
           <Brain className="w-6 h-6 text-purple-600" />
-          AI Audit Logs
+          {t('aiAuditLogs')}
         </h1>
         <p className="text-xs md:text-sm text-gray-500">
-          View history of all AI interactions across the system
+          {t('viewAiHistory')}
         </p>
       </div>
 
@@ -150,7 +152,7 @@ export default function AuditLogsView({ leads, currentUser }) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search queries, responses, users..."
+              placeholder={t('searchLogs')}
               className="w-full pl-9 pr-3 py-2 text-sm border rounded-lg outline-none focus:border-purple-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -179,7 +181,7 @@ export default function AuditLogsView({ leads, currentUser }) {
               value={filterUser}
               onChange={(e) => setFilterUser(e.target.value)}
             >
-              <option value="all">All Users</option>
+              <option value="all">{t('allUsers')}</option>
               {users.map(user => (
                 <option key={user} value={user}>{user}</option>
               ))}
@@ -194,10 +196,10 @@ export default function AuditLogsView({ leads, currentUser }) {
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
             >
-              <option value="1">Last 24 hours</option>
-              <option value="7">Last 7 days</option>
-              <option value="30">Last 30 days</option>
-              <option value="90">Last 90 days</option>
+              <option value="1">{t('last24Hours')}</option>
+              <option value="7">{t('last7Days')}</option>
+              <option value="30">{t('last30Days')}</option>
+              <option value="90">{t('last90Days')}</option>
             </select>
           </div>
         </div>
@@ -212,8 +214,8 @@ export default function AuditLogsView({ leads, currentUser }) {
         ) : filteredLogs.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
             <AlertCircle className="w-12 h-12 mb-3 opacity-30" />
-            <p className="text-lg font-medium">No audit logs found</p>
-            <p className="text-sm">AI interactions will appear here</p>
+            <p className="text-lg font-medium">{t('noAuditLogs')}</p>
+            <p className="text-sm">{t('auditLogsPlaceholder')}</p>
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto">
@@ -241,7 +243,7 @@ export default function AuditLogsView({ leads, currentUser }) {
                         </span>
                         {log.leadName && (
                           <span className="text-xs text-gray-500">
-                            Lead: {log.leadName}
+                            {t('lead')}: {log.leadName}
                           </span>
                         )}
                       </div>
@@ -284,7 +286,7 @@ export default function AuditLogsView({ leads, currentUser }) {
                     {/* Query */}
                     {log.query && (
                       <div className="bg-blue-50 rounded-lg p-3">
-                        <p className="text-xs font-medium text-blue-700 mb-1">Query / Input</p>
+                        <p className="text-xs font-medium text-blue-700 mb-1">{t('queryInput')}</p>
                         <p className="text-sm text-blue-900 whitespace-pre-wrap">{log.query}</p>
                       </div>
                     )}
@@ -292,7 +294,7 @@ export default function AuditLogsView({ leads, currentUser }) {
                     {/* Response */}
                     {log.response && (
                       <div className="bg-purple-50 rounded-lg p-3">
-                        <p className="text-xs font-medium text-purple-700 mb-1">AI Response</p>
+                        <p className="text-xs font-medium text-purple-700 mb-1">{t('aiResponse')}</p>
                         <p className="text-sm text-purple-900 whitespace-pre-wrap">{log.response}</p>
                       </div>
                     )}
@@ -300,7 +302,7 @@ export default function AuditLogsView({ leads, currentUser }) {
                     {/* Context/Metadata */}
                     {(log.context || log.metadata) && (
                       <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-xs font-medium text-gray-700 mb-1">Context / Metadata</p>
+                        <p className="text-xs font-medium text-gray-700 mb-1">{t('contextMetadata')}</p>
                         <pre className="text-xs text-gray-600 overflow-x-auto">
                           {JSON.stringify(log.context || log.metadata, null, 2)}
                         </pre>
@@ -311,17 +313,17 @@ export default function AuditLogsView({ leads, currentUser }) {
                     <div className="flex flex-wrap gap-2 text-xs">
                       {log.model && (
                         <span className="px-2 py-1 bg-gray-100 rounded text-gray-600">
-                          Model: {log.model}
+                          {t('model')}: {log.model}
                         </span>
                       )}
                       {log.latencyMs && (
                         <span className="px-2 py-1 bg-gray-100 rounded text-gray-600">
-                          Latency: {log.latencyMs}ms
+                          {t('latency')}: {log.latencyMs}ms
                         </span>
                       )}
                       {log.success !== undefined && (
                         <span className={`px-2 py-1 rounded ${log.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {log.success ? 'Success' : 'Failed'}
+                          {log.success ? t('success') : t('failed')}
                         </span>
                       )}
                     </div>
@@ -334,7 +336,7 @@ export default function AuditLogsView({ leads, currentUser }) {
 
         {/* Footer */}
         <div className="p-3 border-t bg-gray-50 text-xs text-gray-500 text-center">
-          {filteredLogs.length} audit log entries
+          {filteredLogs.length} {t('auditLogEntries')}
         </div>
       </div>
     </div>

@@ -179,6 +179,17 @@ exports.Prisma.LeadScalarFieldEnum = {
   assignedTo: 'assignedTo'
 };
 
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  date: 'date',
+  type: 'type',
+  notes: 'notes',
+  leadId: 'leadId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.LeadActivityScalarFieldEnum = {
   id: 'id',
   leadId: 'leadId',
@@ -221,6 +232,7 @@ exports.Prisma.ModelName = {
   Sessions: 'Sessions',
   Contact: 'Contact',
   Lead: 'Lead',
+  Payment: 'Payment',
   LeadActivity: 'LeadActivity',
   Sources: 'Sources'
 };

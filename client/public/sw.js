@@ -31,11 +31,11 @@ self.addEventListener('activate', (event) => {
 
 // Fetch - network first, fall back to cache
 self.addEventListener('fetch', (event) => {
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') return;
+  // Skip non-GET requests and non-HTTP(S) schemes (e.g., chrome-extension)
+  const url = new URL(event.request.url);
+  if (event.request.method !== 'GET' || !url.protocol.startsWith('http')) return;
 
   // Skip Firebase/API requests (always need fresh data)
-  const url = new URL(event.request.url);
   if (
     url.hostname.includes('firebase') ||
     url.hostname.includes('googleapis') ||

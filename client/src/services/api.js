@@ -260,6 +260,28 @@ export const leadsService = {
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Failed to fetch timeline');
         return data.data;
+    },
+
+    async addPayment(id, paymentData) {
+        const response = await fetch(`${API_BASE_URL}/leads/${id}/payments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(paymentData)
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to add payment');
+        return data; // Return full response { status, message, data }
+    },
+
+    async deletePayment(id, paymentId) {
+        const response = await fetch(`${API_BASE_URL}/leads/${id}/payments/${paymentId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to delete payment');
+        return data;
     }
 };
 

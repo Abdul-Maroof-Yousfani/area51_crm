@@ -82,7 +82,7 @@ export default function CallListView({
         neverCalled.push({
           ...lead,
           callPriority: 'new',
-          callStatus: 'New Lead - Never Called'
+          callStatus: t('newLeadNeverCalled')
         });
         return;
       }
@@ -92,19 +92,19 @@ export default function CallListView({
         overdue.push({
           ...lead,
           callPriority: 'overdue',
-          callStatus: `Overdue: ${nextCallDate}`
+          callStatus: `${t('overdue')}: ${nextCallDate}`
         });
       } else if (nextCallDate === today) {
         todayCalls.push({
           ...lead,
           callPriority: 'today',
-          callStatus: lead.nextCallTime ? `Today at ${lead.nextCallTime}` : 'Today'
+          callStatus: lead.nextCallTime ? `${t('todayAt')} ${lead.nextCallTime}` : t('today')
         });
       } else {
         upcoming.push({
           ...lead,
           callPriority: 'upcoming',
-          callStatus: `${nextCallDate}${lead.nextCallTime ? ` at ${lead.nextCallTime}` : ''}`
+          callStatus: `${nextCallDate}${lead.nextCallTime ? ` ${t('at')} ${lead.nextCallTime}` : ''}`
         });
       }
     });
@@ -128,7 +128,7 @@ export default function CallListView({
     );
 
     return { overdue, today: todayCalls, upcoming, neverCalled };
-  }, [leads, currentUser, today]);
+  }, [leads, currentUser, today, t]);
 
   // Get filtered list based on filter type
   const filteredList = useMemo(() => {
@@ -235,13 +235,10 @@ export default function CallListView({
           <div>
             <h1 className="text-xl font-bold flex items-center gap-2">
               <Phone className="w-5 h-5" />
-              {language === 'ur' ? 'کال لسٹ' : 'Call List'}
+              {t('callList')}
             </h1>
             <p className="text-orange-100 text-sm mt-1">
-              {language === 'ur'
-                ? `آج ${stats.today} کالز، ${stats.overdue} بقایا`
-                : `${stats.today} calls today, ${stats.overdue} overdue`
-              }
+              {t('callsStatsSummary').replace('{today}', stats.today).replace('{overdue}', stats.overdue)}
             </p>
           </div>
         </div>
@@ -251,47 +248,43 @@ export default function CallListView({
       <div className="grid grid-cols-4 gap-2 mb-4">
         <button
           onClick={() => setFilterType('all')}
-          className={`p-3 rounded-xl text-center transition-all ${
-            filterType === 'all'
-              ? 'bg-gray-800 text-white'
-              : 'bg-white border hover:border-gray-400'
-          }`}
+          className={`p-3 rounded-xl text-center transition-all ${filterType === 'all'
+            ? 'bg-gray-800 text-white'
+            : 'bg-white border hover:border-gray-400'
+            }`}
         >
           <p className="text-xl font-bold">{stats.total}</p>
-          <p className="text-[10px] opacity-80">{language === 'ur' ? 'کل' : 'Total'}</p>
+          <p className="text-[10px] opacity-80">{t('total')}</p>
         </button>
         <button
           onClick={() => setFilterType('overdue')}
-          className={`p-3 rounded-xl text-center transition-all ${
-            filterType === 'overdue'
-              ? 'bg-red-600 text-white'
-              : 'bg-white border hover:border-red-400'
-          }`}
+          className={`p-3 rounded-xl text-center transition-all ${filterType === 'overdue'
+            ? 'bg-red-600 text-white'
+            : 'bg-white border hover:border-red-400'
+            }`}
         >
           <p className="text-xl font-bold">{stats.overdue}</p>
-          <p className="text-[10px] opacity-80">{language === 'ur' ? 'بقایا' : 'Overdue'}</p>
+          <p className="text-[10px] opacity-80">{t('overdue')}</p>
         </button>
         <button
           onClick={() => setFilterType('today')}
-          className={`p-3 rounded-xl text-center transition-all ${
-            filterType === 'today'
-              ? 'bg-blue-600 text-white'
-              : 'bg-white border hover:border-blue-400'
-          }`}
+          className={`p-3 rounded-xl text-center transition-all ${filterType === 'today'
+            ? 'bg-blue-600 text-white'
+            : 'bg-white border hover:border-blue-400'
+            }`}
         >
           <p className="text-xl font-bold">{stats.today}</p>
-          <p className="text-[10px] opacity-80">{language === 'ur' ? 'آج' : 'Today'}</p>
+          <p className="text-[10px] opacity-80">{t('today')}</p>
         </button>
         <button
           onClick={() => setFilterType('upcoming')}
-          className={`p-3 rounded-xl text-center transition-all ${
-            filterType === 'upcoming'
-              ? 'bg-green-600 text-white'
-              : 'bg-white border hover:border-green-400'
-          }`}
+          className={`p-3 rounded-xl text-center transition-all ${filterType === 'upcoming'
+            ? 'bg-green-600 text-white'
+            : 'bg-white border hover:border-green-400'
+            }`}
         >
           <p className="text-xl font-bold">{stats.upcoming}</p>
-          <p className="text-[10px] opacity-80">{language === 'ur' ? 'آنے والی' : 'Upcoming'}</p>
+          <p className="text-[10px] opacity-80">{t('upcoming')}</p>
         </button>
       </div>
 
@@ -300,19 +293,19 @@ export default function CallListView({
         <div className="p-3 border-b bg-gray-50 flex items-center justify-between">
           <h2 className="font-bold text-gray-800 flex items-center gap-2">
             <PhoneCall className="w-4 h-4" />
-            {filterType === 'all' && (language === 'ur' ? 'تمام کالز' : 'All Calls')}
-            {filterType === 'overdue' && (language === 'ur' ? 'بقایا کالز' : 'Overdue Calls')}
-            {filterType === 'today' && (language === 'ur' ? 'آج کی کالز' : "Today's Calls")}
-            {filterType === 'upcoming' && (language === 'ur' ? 'آنے والی کالز' : 'Upcoming Calls')}
+            {filterType === 'all' && t('allCalls')}
+            {filterType === 'overdue' && t('overdueCalls')}
+            {filterType === 'today' && t('todayCalls')}
+            {filterType === 'upcoming' && t('upcomingCalls')}
           </h2>
-          <span className="text-sm text-gray-500">{filteredList.length} leads</span>
+          <span className="text-sm text-gray-500">{filteredList.length} {t('leads')}</span>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           {filteredList.length === 0 ? (
             <div className="p-8 text-center text-gray-400">
               <Phone className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>{language === 'ur' ? 'کوئی کال نہیں' : 'No calls scheduled'}</p>
+              <p>{t('noCallsScheduled')}</p>
             </div>
           ) : (
             filteredList.map((lead) => (
@@ -322,12 +315,11 @@ export default function CallListView({
               >
                 <div className="flex items-center gap-3">
                   {/* Priority Icon */}
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    lead.callPriority === 'overdue' ? 'bg-red-100' :
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${lead.callPriority === 'overdue' ? 'bg-red-100' :
                     lead.callPriority === 'new' ? 'bg-amber-100' :
-                    lead.callPriority === 'today' ? 'bg-blue-100' :
-                    'bg-gray-100'
-                  }`}>
+                      lead.callPriority === 'today' ? 'bg-blue-100' :
+                        'bg-gray-100'
+                    }`}>
                     {lead.callPriority === 'overdue' && <AlertCircle className="w-5 h-5 text-red-600" />}
                     {lead.callPriority === 'new' && <User className="w-5 h-5 text-amber-600" />}
                     {lead.callPriority === 'today' && <Clock className="w-5 h-5 text-blue-600" />}
@@ -338,29 +330,27 @@ export default function CallListView({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-bold text-gray-900 truncate">{lead.clientName}</p>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        getStageColor(lead.stage).bg
-                      } ${getStageColor(lead.stage).text}`}>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${getStageColor(lead.stage).bg
+                        } ${getStageColor(lead.stage).text}`}>
                         {lead.stage}
                       </span>
                     </div>
                     <p className="text-sm text-gray-500 flex items-center gap-2 mt-0.5">
                       <Phone className="w-3 h-3" /> {lead.phone}
                     </p>
-                    <p className={`text-xs mt-1 ${
-                      lead.callPriority === 'overdue' ? 'text-red-600 font-medium' :
+                    <p className={`text-xs mt-1 ${lead.callPriority === 'overdue' ? 'text-red-600 font-medium' :
                       lead.callPriority === 'new' ? 'text-amber-600 font-medium' :
-                      lead.callPriority === 'today' ? 'text-blue-600 font-medium' :
-                      'text-gray-400'
-                    }`}>
+                        lead.callPriority === 'today' ? 'text-blue-600 font-medium' :
+                          'text-gray-400'
+                      }`}>
                       {lead.callPriority === 'new'
-                        ? (language === 'ur' ? 'نیا لیڈ - پہلی کال کریں' : 'New Lead - Make First Call')
+                        ? t('newLeadMakeFirstCall')
                         : lead.callStatus
                       }
                     </p>
                     {lead.lastCallOutcome && (
                       <p className="text-xs text-gray-400 mt-1">
-                        Last: {lead.lastCallOutcome} ({lead.lastCallDate})
+                        {t('last')}: {lead.lastCallOutcome} ({lead.lastCallDate})
                       </p>
                     )}
                   </div>
@@ -372,7 +362,7 @@ export default function CallListView({
                       <button
                         onClick={() => openInGoogleCalendar(generateCallCalendarUrl(lead))}
                         className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200"
-                        title={language === 'ur' ? 'کیلنڈر میں شامل کریں' : 'Add to Calendar'}
+                        title={t('addToCalendar')}
                       >
                         <CalendarPlus className="w-4 h-4" />
                       </button>
@@ -391,12 +381,12 @@ export default function CallListView({
                       className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1 text-sm font-medium"
                     >
                       <Phone className="w-4 h-4" />
-                      {language === 'ur' ? 'کال' : 'Call'}
+                      {t('call')}
                     </button>
                     <button
                       onClick={() => onSelectLead(lead)}
                       className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
-                      title="View Details"
+                      title={t('viewDetails')}
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -458,11 +448,10 @@ export default function CallListView({
                       <button
                         key={outcome.id}
                         onClick={() => setCallLog({ ...callLog, outcome: outcome.id })}
-                        className={`p-2 rounded-lg border text-left text-sm flex items-center gap-2 transition-all ${
-                          isSelected
-                            ? `border-${outcome.color}-500 bg-${outcome.color}-50 text-${outcome.color}-700`
-                            : 'border-gray-200 hover:border-gray-400'
-                        }`}
+                        className={`p-2 rounded-lg border text-left text-sm flex items-center gap-2 transition-all ${isSelected
+                          ? `border-${outcome.color}-500 bg-${outcome.color}-50 text-${outcome.color}-700`
+                          : 'border-gray-200 hover:border-gray-400'
+                          }`}
                       >
                         <Icon className={`w-4 h-4 ${isSelected ? `text-${outcome.color}-600` : 'text-gray-400'}`} />
                         <span className="truncate">{language === 'ur' ? outcome.labelUr : outcome.label}</span>
@@ -475,11 +464,11 @@ export default function CallListView({
               {/* Notes */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1">
-                  {language === 'ur' ? 'نوٹس' : 'Notes'}
+                  {t('notes')}
                 </label>
                 <textarea
                   className="w-full p-3 border rounded-lg text-sm outline-none focus:border-blue-400 h-20 resize-none"
-                  placeholder={language === 'ur' ? 'کال کی تفصیلات...' : 'Call details...'}
+                  placeholder={t('callDetailsPlaceholder')}
                   value={callLog.notes}
                   onChange={(e) => setCallLog({ ...callLog, notes: e.target.value })}
                 />
@@ -487,9 +476,9 @@ export default function CallListView({
 
               {/* Schedule Next Call */}
               <div className="border-t pt-4">
-                <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
                   <CalendarClock className="w-4 h-4" />
-                  {language === 'ur' ? 'اگلی کال شیڈول کریں' : 'Schedule Next Call'}
+                  {t('scheduleNextCall')}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
@@ -518,7 +507,7 @@ export default function CallListView({
                     className="mt-2 w-full py-2 px-3 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 flex items-center justify-center gap-2 border border-blue-200"
                   >
                     <CalendarPlus className="w-4 h-4" />
-                    {language === 'ur' ? 'گوگل کیلنڈر میں شامل کریں' : 'Add to Google Calendar'}
+                    {t('addToGoogleCalendar')}
                   </button>
                 )}
               </div>
@@ -533,17 +522,14 @@ export default function CallListView({
                 }}
                 className="flex-1 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100"
               >
-                {language === 'ur' ? 'منسوخ' : 'Cancel'}
+                {t('cancel')}
               </button>
               <button
                 onClick={handleSaveCall}
                 disabled={!callLog.outcome || saving}
                 className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {saving
-                  ? (language === 'ur' ? 'محفوظ ہو رہا ہے...' : 'Saving...')
-                  : (language === 'ur' ? 'محفوظ کریں' : 'Save & Next')
-                }
+                {saving ? t('saving') : t('saveAndNext')}
               </button>
             </div>
           </div>

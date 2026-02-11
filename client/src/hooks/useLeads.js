@@ -103,7 +103,6 @@ export function useLeads() {
 
     return {
         leads,
-        stats,
         loading,
         error,
         pagination,
@@ -112,6 +111,7 @@ export function useLeads() {
         updateLead,
         deleteLead,
         deleteAllLeads,
-        addLeadNote
+        addLeadNote,
+        stats
     };
 }

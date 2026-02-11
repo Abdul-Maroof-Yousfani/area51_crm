@@ -10,6 +10,7 @@ import {
 import { Search, Upload, Plus, Loader, Phone, Calendar, ChevronRight, Trash2, ChevronUp, ChevronDown, ChevronsLeft, ChevronLeft, ChevronsRight } from 'lucide-react';
 import { safeAmount, formatCurrency } from '../../utils/helpers';
 import { STAGES, STAGE_COLORS } from '../../lib/constants';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function LeadsView({
   data,
@@ -19,6 +20,7 @@ export default function LeadsView({
   onFileUpload,
   onTruncateLeads
 }) {
+  const { t } = useLanguage();
   const [globalFilter, setGlobalFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [managerFilter, setManagerFilter] = useState('All');
@@ -54,7 +56,7 @@ export default function LeadsView({
     {
       id: 'clientName',
       accessorKey: 'clientName',
-      header: 'Client',
+      header: t('client'),
       cell: ({ row }) => (
         <button
           onClick={() => onSelectLead(row.original)}
@@ -66,7 +68,7 @@ export default function LeadsView({
     },
     {
       accessorKey: 'stage',
-      header: 'Stage',
+      header: t('stage'),
       cell: ({ getValue }) => {
         const stage = getValue();
         const color = STAGE_COLORS[stage] || STAGE_COLORS['New'];
@@ -79,7 +81,7 @@ export default function LeadsView({
     },
     {
       accessorKey: 'amount',
-      header: 'Amount',
+      header: t('amount'),
       cell: ({ getValue }) => formatCurrency(getValue()),
       sortingFn: (rowA, rowB, columnId) => {
         return safeAmount(rowA.getValue(columnId)) - safeAmount(rowB.getValue(columnId));
@@ -87,7 +89,7 @@ export default function LeadsView({
     },
     {
       accessorKey: 'source',
-      header: 'Source',
+      header: t('source'),
       cell: ({ getValue }) => {
         const source = getValue();
         return source ? (
@@ -99,12 +101,12 @@ export default function LeadsView({
     },
     {
       accessorKey: 'inquiryDate',
-      header: 'Date',
+      header: t('date'),
       cell: ({ getValue }) => (
         <span className="text-gray-500">{getValue()}</span>
       ),
     },
-  ], [onSelectLead]);
+  ], [onSelectLead, t]);
 
   // Initialize table
   const table = useReactTable({
@@ -137,26 +139,26 @@ export default function LeadsView({
         {/* Top row */}
         <div className="flex flex-col sm:flex-row justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">All Leads</h2>
-            <p className="text-sm text-gray-500">{data.length} total leads</p>
+            <h2 className="text-xl font-bold text-gray-900">{t('allLeads')}</h2>
+            <p className="text-sm text-gray-500">{data.length} {t('leads').toLowerCase()}</p>
           </div>
           <div className="flex gap-2 sm:gap-3">
             <div className="relative flex-1 sm:flex-none">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 className="w-full sm:w-64 pl-10 pr-4 py-2.5 bg-slate-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                placeholder="Search leads..."
+                placeholder={t('searchLeads')}
                 value={globalFilter ?? ''}
                 onChange={(e) => setGlobalFilter(e.target.value)}
               />
             </div>
             {uploading ? (
               <span className="text-sm text-gray-500 flex items-center gap-2">
-                <Loader className="w-4 h-4 animate-spin" /> Importing...
+                <Loader className="w-4 h-4 animate-spin" /> {t('importing')}
               </span>
             ) : (
               <label className="bg-green-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-green-700 transition-colors whitespace-nowrap cursor-pointer">
-                <Upload className="w-4 h-4" /> <span className="hidden sm:inline">Import CSV</span>
+                <Upload className="w-4 h-4" /> <span className="hidden sm:inline">{t('importCsv')}</span>
                 <input type="file" className="hidden" onChange={onFileUpload} />
               </label>
             )}
@@ -165,14 +167,14 @@ export default function LeadsView({
                 onClick={onTruncateLeads}
                 className="bg-red-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-red-700 transition-colors whitespace-nowrap"
               >
-                <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Delete All</span>
+                <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">{t('deleteAll')}</span>
               </button>
             )}
             <button
               onClick={onShowNewLead}
               className="bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-blue-700 transition-colors whitespace-nowrap"
             >
-              <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Add Lead</span>
+              <Plus className="w-4 h-4" /> <span className="hidden sm:inline">{t('addLead')}</span>
             </button>
           </div>
         </div>
@@ -184,20 +186,20 @@ export default function LeadsView({
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="All">All Stages</option>
+            <option value="All">{t('allStages')}</option>
             {STAGES.map((s) => (
               <option key={s} value={s}>
                 {s}
               </option>
             ))}
-            <option value="Pipeline">Pipeline</option>
+            <option value="Pipeline">{t('pipeline')}</option>
           </select>
           <select
             className="bg-slate-50 border border-gray-200 rounded-lg text-sm px-3 py-2"
             value={managerFilter}
             onChange={(e) => setManagerFilter(e.target.value)}
           >
-            <option value="All">All Managers</option>
+            <option value="All">{t('allManagers')}</option>
             {uniqueManagers.map((m) => (
               <option key={m} value={m}>
                 {m}
@@ -228,7 +230,7 @@ export default function LeadsView({
                 }}
                 className="text-xs text-red-500 px-2"
               >
-                Clear
+                {t('clear')}
               </button>
             )}
           </div>
@@ -317,7 +319,7 @@ export default function LeadsView({
         <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50">
           {/* Page Size Selector */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Show</span>
+            <span className="text-sm text-gray-600">{t('show')}</span>
             <select
               value={table.getState().pagination.pageSize}
               onChange={(e) => {
@@ -331,22 +333,22 @@ export default function LeadsView({
                 </option>
               ))}
             </select>
-            <span className="text-sm text-gray-600">per page</span>
+            <span className="text-sm text-gray-600">{t('perPage')}</span>
           </div>
 
           {/* Page Info */}
           <div className="text-sm text-gray-600">
-            Page{' '}
+            {t('page')}{' '}
             <span className="font-semibold text-gray-900">
               {table.getState().pagination.pageIndex + 1}
             </span>{' '}
-            of{' '}
+            {t('of')}{' '}
             <span className="font-semibold text-gray-900">
               {table.getPageCount()}
             </span>
             {' · '}
             <span className="text-gray-500">
-              {table.getFilteredRowModel().rows.length} results
+              {table.getFilteredRowModel().rows.length} {t('results')}
             </span>
           </div>
 

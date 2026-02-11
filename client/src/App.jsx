@@ -95,6 +95,7 @@ export default function App() {
     leads: apiLeads,
     stats: leadsStats,
     loading: leadsLoading,
+    fetchLeads,
     addLead,
     updateLead,
     deleteLead,
@@ -498,7 +499,7 @@ export default function App() {
         )}
 
         {/* Finance View */}
-        {activeTab === 'finance' && <FinanceView leads={apiLeads} onSyncPayments={() => { }} />}
+        {activeTab === 'finance' && <FinanceView leads={apiLeads} onSyncPayments={fetchLeads} />}
 
         {/* Call List View */}
         {activeTab === 'call-list' && (

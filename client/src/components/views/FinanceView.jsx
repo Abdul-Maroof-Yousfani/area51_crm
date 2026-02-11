@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   DollarSign,
   AlertTriangle,
@@ -13,15 +13,36 @@ import {
   CreditCard,
   Banknote,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
+  ChevronLeft,
+  ChevronsLeft,
+  ChevronsRight
 } from 'lucide-react';
 import { safeAmount, formatCurrency } from '../../utils/helpers';
 import { PAYMENT_MILESTONES } from '../../lib/constants';
 import { syncAllPaymentStatuses, calculatePaymentMilestones } from '../../services/invoicing';
+import PaymentDetailModal from '../modals/PaymentDetailModal';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function FinanceView({ leads, onSyncPayments }) {
+  const { t, language } = useLanguage();
   const [filter, setFilter] = useState('all');
   const [syncing, setSyncing] = useState(false);
+  const [selectedLeadForPayment, setSelectedLeadForPayment] = useState(null);
+
+  // Pagination State
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
+  // Keep selected lead in sync with updates
+  useEffect(() => {
+    if (selectedLeadForPayment) {
+      const updatedLead = leads.find(l => l.id === selectedLeadForPayment.id);
+      if (updatedLead) {
+        setSelectedLeadForPayment(updatedLead);
+      }
+    }
+  }, [leads]);
 
   // Filter booked leads and calculate derived fields
   const bookedLeads = useMemo(() => {
@@ -42,7 +63,15 @@ export default function FinanceView({ leads, onSyncPayments }) {
         // Calculate financial fields dynamically
         // Use finalAmount if available, otherwise amount. Ensure numbers.
         const totalValue = safeAmount(l.finalAmount !== undefined && l.finalAmount !== null ? l.finalAmount : l.amount);
-        const totalPaid = safeAmount(l.advanceAmount); // Currently only advance is tracked
+
+        // Calculate total paid from payments array if available, else fallback to advanceAmount
+        let totalPaid = 0;
+        if (l.payments && Array.isArray(l.payments) && l.payments.length > 0) {
+          totalPaid = l.payments.reduce((sum, p) => sum + safeAmount(p.amount), 0);
+        } else {
+          totalPaid = safeAmount(l.advanceAmount);
+        }
+
         const totalDue = Math.max(0, totalValue - totalPaid);
 
         // Determine status
@@ -74,10 +103,19 @@ export default function FinanceView({ leads, onSyncPayments }) {
 
   // Filtered data
   const filteredLeads = useMemo(() => {
+    // Reset to first page when filter changes
+    setPageIndex(0);
     if (filter === 'all') return bookedLeads;
     // Use the calculated paymentStatus
     return bookedLeads.filter((l) => l.paymentStatus === 'overdue' ? filter === 'overdue' : l.paymentStatus === filter);
   }, [bookedLeads, filter]);
+
+  const paginatedLeads = useMemo(() => {
+    const start = pageIndex * pageSize;
+    return filteredLeads.slice(start, start + pageSize);
+  }, [filteredLeads, pageIndex, pageSize]);
+
+  const totalPages = Math.ceil(filteredLeads.length / pageSize);
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -119,29 +157,31 @@ export default function FinanceView({ leads, onSyncPayments }) {
   };
 
   const getPaymentStatusBadge = (status) => {
+    const baseClasses = "px-2.5 py-0.5 rounded-full text-xs font-medium border flex items-center gap-1.5 w-fit mx-auto";
+
     switch (status) {
       case 'paid':
         return (
-          <span className="px-2 py-1 bg-green-100 text-green-700 text-[10px] md:text-xs font-bold rounded-full flex items-center gap-1">
-            <CheckCircle className="w-3 h-3" /> Paid
+          <span className={`${baseClasses} bg-emerald-50 text-emerald-700 border-emerald-200`}>
+            <CheckCircle className="w-3.5 h-3.5" /> {t('paid')}
           </span>
         );
       case 'partial':
         return (
-          <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-[10px] md:text-xs font-bold rounded-full flex items-center gap-1">
-            <Clock className="w-3 h-3" /> Partial
+          <span className={`${baseClasses} bg-amber-50 text-amber-700 border-amber-200`}>
+            <Clock className="w-3.5 h-3.5" /> {t('partial')}
           </span>
         );
       case 'overdue':
         return (
-          <span className="px-2 py-1 bg-red-100 text-red-700 text-[10px] md:text-xs font-bold rounded-full flex items-center gap-1">
-            <AlertTriangle className="w-3 h-3" /> Overdue
+          <span className={`${baseClasses} bg-red-50 text-red-700 border-red-200`}>
+            <AlertTriangle className="w-3.5 h-3.5" /> {t('overdue')}
           </span>
         );
       default:
         return (
-          <span className="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] md:text-xs font-bold rounded-full">
-            Pending
+          <span className={`${baseClasses} bg-slate-50 text-slate-600 border-slate-200`}>
+            {t('pending')}
           </span>
         );
     }
@@ -152,8 +192,8 @@ export default function FinanceView({ leads, onSyncPayments }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between gap-3">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Finance Dashboard</h1>
-          <p className="text-xs md:text-sm text-gray-500">Booking payments & invoicing</p>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">{t('financeDashboard')}</h1>
+          <p className="text-xs md:text-sm text-gray-500">{t('bookingPaymentsInvoicing')}</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -162,11 +202,11 @@ export default function FinanceView({ leads, onSyncPayments }) {
             className="px-3 md:px-4 py-2 bg-blue-600 text-white rounded-lg text-xs md:text-sm font-medium flex items-center gap-1 md:gap-2 hover:bg-blue-700 disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Sync</span>
+            <span className="hidden sm:inline">{t('sync')}</span>
           </button>
           <button className="px-3 md:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs md:text-sm font-medium flex items-center gap-1 md:gap-2 hover:bg-gray-200">
             <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">Export</span>
+            <span className="hidden sm:inline">{t('export')}</span>
           </button>
         </div>
       </div>
@@ -178,7 +218,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
             <CreditCard className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
           </div>
           <p className="text-lg md:text-2xl font-bold mt-2 md:mt-3">{stats.totalBookings}</p>
-          <p className="text-[10px] md:text-xs text-gray-500 mt-1">Total Bookings</p>
+          <p className="text-[10px] md:text-xs text-gray-500 mt-1">{t('totalBookings')}</p>
         </div>
 
         <div className="bg-white p-3 md:p-5 rounded-xl border shadow-sm">
@@ -186,7 +226,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
             <DollarSign className="w-4 h-4 md:w-5 md:h-5 text-green-600" />
           </div>
           <p className="text-lg md:text-2xl font-bold mt-2 md:mt-3 truncate">{formatCurrency(stats.totalValue)}</p>
-          <p className="text-[10px] md:text-xs text-gray-500 mt-1">Total Value</p>
+          <p className="text-[10px] md:text-xs text-gray-500 mt-1">{t('totalValue')}</p>
         </div>
 
         <div className="bg-white p-3 md:p-5 rounded-xl border shadow-sm">
@@ -194,7 +234,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
             <Banknote className="w-4 h-4 md:w-5 md:h-5 text-emerald-600" />
           </div>
           <p className="text-lg md:text-2xl font-bold mt-2 md:mt-3 truncate">{formatCurrency(stats.totalPaid)}</p>
-          <p className="text-[10px] md:text-xs text-gray-500 mt-1">Collected</p>
+          <p className="text-[10px] md:text-xs text-gray-500 mt-1">{t('collected')}</p>
         </div>
 
         <div className="bg-white p-3 md:p-5 rounded-xl border shadow-sm">
@@ -202,7 +242,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
             <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-amber-600" />
           </div>
           <p className="text-lg md:text-2xl font-bold mt-2 md:mt-3">{stats.collectionRate}%</p>
-          <p className="text-[10px] md:text-xs text-gray-500 mt-1">Collection Rate</p>
+          <p className="text-[10px] md:text-xs text-gray-500 mt-1">{t('collectionRate')}</p>
         </div>
 
         <div className="bg-white p-3 md:p-5 rounded-xl border shadow-sm border-red-200 col-span-2 sm:col-span-1">
@@ -210,7 +250,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
             <AlertTriangle className="w-4 h-4 md:w-5 md:h-5 text-red-600" />
           </div>
           <p className="text-lg md:text-2xl font-bold mt-2 md:mt-3 text-red-600">{stats.overdueCount}</p>
-          <p className="text-[10px] md:text-xs text-gray-500 mt-1">Overdue</p>
+          <p className="text-[10px] md:text-xs text-gray-500 mt-1">{t('overdue')}</p>
         </div>
       </div>
 
@@ -218,11 +258,11 @@ export default function FinanceView({ leads, onSyncPayments }) {
       <div className="flex gap-2 bg-white p-2 md:p-3 rounded-xl border overflow-x-auto">
         <Filter className="w-4 h-4 text-gray-400 my-auto flex-shrink-0" />
         {[
-          { key: 'all', label: 'All' },
-          { key: 'pending', label: 'Pending' },
-          { key: 'partial', label: 'Partial' },
-          { key: 'paid', label: 'Paid' },
-          { key: 'overdue', label: 'Overdue' }
+          { key: 'all', label: t('all') },
+          { key: 'pending', label: t('pending') },
+          { key: 'partial', label: t('partial') },
+          { key: 'paid', label: t('paid') },
+          { key: 'overdue', label: t('overdue') }
         ].map((f) => (
           <button
             key={f.key}
@@ -239,12 +279,12 @@ export default function FinanceView({ leads, onSyncPayments }) {
 
       {/* Mobile Card View */}
       <div className="md:hidden space-y-2">
-        {filteredLeads.length === 0 ? (
+        {paginatedLeads.length === 0 ? (
           <div className="text-center py-8 text-gray-400 bg-white rounded-xl border">
-            No bookings found
+            {t('noBookingsFound')}
           </div>
         ) : (
-          filteredLeads.map((lead) => (
+          paginatedLeads.map((lead) => (
             <div key={lead.id} className="bg-white p-3 rounded-xl border shadow-sm">
               <div className="flex justify-between items-start">
                 <div className="min-w-0 flex-1">
@@ -257,15 +297,15 @@ export default function FinanceView({ leads, onSyncPayments }) {
               </div>
               <div className="flex justify-between items-center mt-3 pt-2 border-t">
                 <div>
-                  <p className="text-[10px] text-gray-400">Total</p>
+                  <p className="text-[10px] text-gray-400">{t('total')}</p>
                   <p className="text-sm font-bold">{formatCurrency(lead.totalValue)}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[10px] text-gray-400">Paid</p>
+                  <p className="text-[10px] text-gray-400">{t('collected')}</p>
                   <p className="text-sm font-bold text-green-600">{formatCurrency(lead.totalPaid)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] text-gray-400">Due</p>
+                  <p className="text-[10px] text-gray-400">{t('due')}</p>
                   <p className="text-sm font-bold text-red-600">{formatCurrency(lead.totalDue)}</p>
                 </div>
               </div>
@@ -280,25 +320,25 @@ export default function FinanceView({ leads, onSyncPayments }) {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-600 font-medium border-b">
               <tr>
-                <th className="text-left px-4 py-3">Client</th>
-                <th className="text-left px-4 py-3">Event Date</th>
-                <th className="text-left px-4 py-3 hidden lg:table-cell">Event Type</th>
-                <th className="text-right px-4 py-3">Total</th>
-                <th className="text-right px-4 py-3">Paid</th>
-                <th className="text-right px-4 py-3">Due</th>
-                <th className="text-center px-4 py-3">Status</th>
+                <th className="text-left px-4 py-3">{t('client')}</th>
+                <th className="text-left px-4 py-3">{t('eventDate')}</th>
+                <th className="text-left px-4 py-3 hidden lg:table-cell">{t('eventType')}</th>
+                <th className="text-right px-4 py-3">{t('total')}</th>
+                <th className="text-right px-4 py-3">{t('collected')}</th>
+                <th className="text-right px-4 py-3">{t('due')}</th>
+                <th className="text-center px-4 py-3">{t('status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y">
-              {filteredLeads.length === 0 ? (
+              {paginatedLeads.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="text-center py-8 text-gray-400">
                     No bookings found
                   </td>
                 </tr>
               ) : (
-                filteredLeads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-gray-50">
+                paginatedLeads.map((lead) => (
+                  <tr key={lead.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedLeadForPayment(lead)}>
                     <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">{lead.clientName}</div>
                       <div className="text-xs text-gray-500 flex items-center gap-1">
@@ -331,6 +371,113 @@ export default function FinanceView({ leads, onSyncPayments }) {
           </table>
         </div>
       </div>
+
+      {/* Pagination Controls */}
+      {filteredLeads.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+          {/* Page Size Selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Show</span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPageIndex(0);
+              }}
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {[10, 20, 50].map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+            <span className="text-sm text-gray-600">per page</span>
+          </div>
+
+          {/* Page Info */}
+          <div className="text-sm text-gray-600">
+            Page{' '}
+            <span className="font-semibold text-gray-900">
+              {pageIndex + 1}
+            </span>{' '}
+            of{' '}
+            <span className="font-semibold text-gray-900">
+              {totalPages}
+            </span>
+            {' · '}
+            <span className="text-gray-500">
+              {filteredLeads.length} results
+            </span>
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setPageIndex(0)}
+              disabled={pageIndex === 0}
+              className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="First page"
+            >
+              <ChevronsLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setPageIndex(p => Math.max(0, p - 1))}
+              disabled={pageIndex === 0}
+              className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Previous page"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {/* Page Number Buttons */}
+            <div className="hidden sm:flex items-center gap-1 mx-2">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i;
+                } else if (pageIndex <= 2) {
+                  pageNum = i;
+                } else if (pageIndex >= totalPages - 3) {
+                  pageNum = totalPages - 5 + i;
+                } else {
+                  pageNum = pageIndex - 2 + i;
+                }
+
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setPageIndex(pageNum)}
+                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${pageIndex === pageNum
+                      ? 'bg-blue-600 text-white'
+                      : 'border border-gray-200 hover:bg-gray-50 text-gray-700'
+                      }`}
+                  >
+                    {pageNum + 1}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => setPageIndex(p => Math.min(totalPages - 1, p + 1))}
+              disabled={pageIndex >= totalPages - 1}
+              className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Next page"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setPageIndex(totalPages - 1)}
+              disabled={pageIndex >= totalPages - 1}
+              className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Last page"
+            >
+              <ChevronsRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Payment Milestones Info - Hidden on mobile */}
       <div className="hidden md:block bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-5">
@@ -369,6 +516,15 @@ export default function FinanceView({ leads, onSyncPayments }) {
             </div>
           </div>
         </div>
+      )}
+      {selectedLeadForPayment && (
+        <PaymentDetailModal
+          lead={selectedLeadForPayment}
+          onClose={() => setSelectedLeadForPayment(null)}
+          onUpdate={(leadId, updates) => {
+            if (onSyncPayments) onSyncPayments();
+          }}
+        />
       )}
     </div>
   );

@@ -87,6 +87,7 @@ export const getLeads = async (req, res) => {
                 include: {
                     contact: true,
                     source: true,
+                    payments: true,
                     assignee: {
                         select: { id: true, username: true, email: true }
                     }
@@ -121,6 +122,7 @@ export const getLeadById = async (req, res) => {
             include: {
                 contact: true,
                 source: true,
+                payments: true,
                 assignee: {
                     select: { id: true, username: true, email: true }
                 }
@@ -303,6 +305,65 @@ export const getLeadTimeline = async (req, res) => {
         return res.status(200).json({ status: true, data: activities });
     } catch (error) {
         console.error('Get Timeline Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Add payment to lead
+export const addPayment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { amount, date, type, notes } = req.body;
+
+        if (!amount || !date || !type) {
+            return res.status(400).json({ status: false, message: 'Amount, Date and Type are required' });
+        }
+
+        const lead = await prisma.lead.findUnique({
+            where: { id: parseInt(id) }
+        });
+
+        if (!lead) {
+            return res.status(404).json({ status: false, message: 'Lead not found' });
+        }
+
+        const payment = await prisma.payment.create({
+            data: {
+                leadId: parseInt(id),
+                amount: parseFloat(amount),
+                date: new Date(date),
+                type,
+                notes
+            }
+        });
+
+        return res.status(201).json({ status: true, message: 'Payment added successfully', data: payment });
+    } catch (error) {
+        console.error('Add Payment Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Delete payment
+export const deletePayment = async (req, res) => {
+    try {
+        const { id, paymentId } = req.params;
+
+        const payment = await prisma.payment.findUnique({
+            where: { id: parseInt(paymentId) }
+        });
+
+        if (!payment) {
+            return res.status(404).json({ status: false, message: 'Payment not found' });
+        }
+
+        await prisma.payment.delete({
+            where: { id: parseInt(paymentId) }
+        });
+
+        return res.status(200).json({ status: true, message: 'Payment deleted successfully' });
+    } catch (error) {
+        console.error('Delete Payment Error:', error);
         return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
     }
 };

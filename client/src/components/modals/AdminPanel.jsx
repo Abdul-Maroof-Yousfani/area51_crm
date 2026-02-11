@@ -622,8 +622,8 @@ export default function AdminPanel({ onClose }) {
                         key={opt.value}
                         onClick={() => setAssignmentConfig((prev) => ({ ...prev, mode: opt.value }))}
                         className={`p-3 rounded-lg border text-left transition-all ${assignmentConfig.mode === opt.value
-                            ? 'border-purple-500 bg-purple-100'
-                            : 'border-gray-200 bg-white hover:border-purple-300'
+                          ? 'border-purple-500 bg-purple-100'
+                          : 'border-gray-200 bg-white hover:border-purple-300'
                           }`}
                       >
                         <div className="font-medium text-sm">{opt.label}</div>
@@ -840,8 +840,8 @@ export default function AdminPanel({ onClose }) {
                               <button
                                 onClick={() => toggleAutomation('_default', field)}
                                 className={`w-10 h-5 rounded-full transition-colors relative ${getAutomationRule('_default')[field]
-                                    ? 'bg-blue-500'
-                                    : 'bg-gray-300'
+                                  ? 'bg-blue-500'
+                                  : 'bg-gray-300'
                                   }`}
                               >
                                 <span
@@ -878,8 +878,8 @@ export default function AdminPanel({ onClose }) {
                                     <button
                                       onClick={() => toggleAutomation(sourceKey, field)}
                                       className={`w-10 h-5 rounded-full transition-colors relative ${getAutomationRule(sourceKey)[field]
-                                          ? 'bg-blue-500'
-                                          : 'bg-gray-300'
+                                        ? 'bg-blue-500'
+                                        : 'bg-gray-300'
                                         }`}
                                     >
                                       <span
@@ -1139,8 +1139,8 @@ export default function AdminPanel({ onClose }) {
                     <td className="px-6 py-3">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-bold ${u.role === 'Admin'
-                            ? 'bg-purple-100 text-purple-700'
-                            : 'bg-blue-100 text-blue-700'
+                          ? 'bg-purple-100 text-purple-700'
+                          : 'bg-blue-100 text-blue-700'
                           }`}
                       >
                         {u.role}
