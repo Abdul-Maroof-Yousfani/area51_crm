@@ -206,6 +206,18 @@ exports.Prisma.SourcesScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  message: 'message',
+  read: 'read',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  leadId: 'leadId',
+  priority: 'priority',
+  assignedTo: 'assignedTo'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -234,7 +246,8 @@ exports.Prisma.ModelName = {
   Lead: 'Lead',
   Payment: 'Payment',
   LeadActivity: 'LeadActivity',
-  Sources: 'Sources'
+  Sources: 'Sources',
+  Notification: 'Notification'
 };
 
 /**

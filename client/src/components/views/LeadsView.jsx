@@ -18,7 +18,9 @@ export default function LeadsView({
   onShowNewLead,
   uploading,
   onFileUpload,
-  onTruncateLeads
+  onTruncateLeads,
+  newLeadIds = [],
+  viewedLeadIds = []
 }) {
   const { t } = useLanguage();
   const [globalFilter, setGlobalFilter] = useState('');
@@ -302,15 +304,27 @@ export default function LeadsView({
               ))}
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-6 py-4 whitespace-nowrap text-sm">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              {table.getRowModel().rows.map((row) => {
+                const isNew = newLeadIds.includes(row.original.id);
+                const isViewed = viewedLeadIds.includes(row.original.id);
+
+                return (
+                  <tr
+                    key={row.id}
+                    className={`
+                        transition-colors 
+                        ${isNew ? 'bg-yellow-50 hover:bg-yellow-100 border-l-4 border-l-yellow-400' : ''}
+                        ${isViewed ? 'opacity-60 hover:opacity-100' : 'hover:bg-slate-50'}
+                    `}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-6 py-4 whitespace-nowrap text-sm">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

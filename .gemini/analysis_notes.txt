@@ -1,0 +1,5 @@
+@useNotifications.js @useLeads.js @leads.js
+I'm analyzing the current notification and lead creation logic.
+1. `server/src/controllers/leads.js`: Need to find `createLead` to inject `io.emit`.
+2. `client/src/hooks/useNotifications.js`: Need to see if I can integrate socket listeners here.
+3. `client/src/hooks/useLeads.js`: Need to see how leads are fetched/updated.

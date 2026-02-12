@@ -1,0 +1,16 @@
+model Notification {
+    id        Int      @id @default(autoincrement())
+    type      String
+    message   String
+    read      Boolean  @default(false)
+    createdAt DateTime @default(now())
+
+    userId Int?
+    user   User? @relation(fields: [userId], references: [id])
+
+    leadId Int?
+    lead   Lead? @relation(fields: [leadId], references: [id])
+
+    priority   String  @default("normal")
+    assignedTo String? // for 'all' or specific role logic if not by userId
+}

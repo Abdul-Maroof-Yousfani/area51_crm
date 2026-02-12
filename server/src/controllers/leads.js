@@ -1,5 +1,6 @@
 import prisma from '../util/prisma.js';
 import Joi from 'joi';
+import { getIO } from '../util/socket.js';
 
 // Validation schemas
 const leadSchema = Joi.object({
@@ -167,6 +168,29 @@ export const createLead = async (req, res) => {
                 }
             }
         });
+
+        // Create Notification in DB
+        const notification = await prisma.notification.create({
+            data: {
+                type: 'lead_assigned',
+                message: `New Lead: ${newLead.title || 'Received'}`,
+                leadId: newLead.id,
+                userId: newLead.assignedTo || null, // Specific user or null
+                assignedTo: newLead.assignedTo ? null : 'all', // If no specific user, assign to all
+                priority: 'high'
+            }
+        });
+
+        // Emit new lead event (and include notification data if possible, or emit separate event)
+        try {
+            const io = getIO();
+            console.log('📢 Emitting new-lead event for lead:', newLead.id);
+            // We emit the lead, and also the notification so frontend can add it to state immediately
+            io.emit('new-lead', { lead: newLead, notification });
+        } catch (socketError) {
+            console.error('Socket emit error:', socketError);
+            // Don't fail the request if socket fails
+        }
 
         return res.status(201).json({ status: true, message: 'Lead created successfully', data: newLead });
     } catch (error) {

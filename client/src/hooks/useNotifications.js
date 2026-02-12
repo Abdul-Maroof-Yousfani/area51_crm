@@ -1,20 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  onSnapshot,
-  doc,
-  updateDoc,
-  deleteDoc,
-  writeBatch,
-  limit
-} from 'firebase/firestore';
-import { db, appId } from '../lib/firebase';
+import { useSocket } from './useSocket';
+import { notificationsService } from '../services/api';
 
 /**
- * Hook for managing real-time notifications from Firestore
+ * Hook for managing real-time notifications from API (Postgres)
  * @param {Object} currentUser - The current logged-in user
  * @param {Object} options - Configuration options
  * @returns {Object} Notifications state and handlers
@@ -72,10 +61,8 @@ export function useNotifications(currentUser, options = {}) {
         setTimeout(() => browserNotif.close(), 5000);
       }
 
-      // Track that we've shown this notification
       setShownNotificationIds(prev => new Set([...prev, notification.id]));
 
-      // Handle click
       browserNotif.onclick = () => {
         window.focus();
         browserNotif.close();
@@ -101,133 +88,90 @@ export function useNotifications(currentUser, options = {}) {
     }
   };
 
-  // Subscribe to real-time notifications
-  useEffect(() => {
-    if (!currentUser?.name) {
-      setLoading(false);
-      return;
-    }
-
+  // Fetch notifications from API
+  const fetchNotifications = useCallback(async () => {
+    const userId = currentUser?.id || currentUser?.uid;
+    if (!userId) return;
     setLoading(true);
+    try {
+      // Pass userId and role to API (although API might infer role if auth was strict, here we pass what we have)
+      const data = await notificationsService.getAll({
+        userId: userId,
+        role: currentUser.role,
+        limit: maxNotifications
+      });
+      setNotifications(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUser, maxNotifications]);
 
-    const notificationsRef = collection(
-      db,
-      'artifacts',
-      appId,
-      'public',
-      'data',
-      'notifications'
-    );
-
-    // Query notifications for this user, ordered by creation time
-    const q = query(
-      notificationsRef,
-      where('assignedTo', 'in', [currentUser.name, 'all']),
-      orderBy('createdAt', 'desc'),
-      limit(maxNotifications)
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const notifs = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        // Check for new unread notifications and show browser notification
-        if (enableBrowserNotifications) {
-          notifs.forEach((notif) => {
-            if (!notif.read && !shownNotificationIds.has(notif.id)) {
-              // Check if this is a recent notification (within last 30 seconds)
-              const createdAt = notif.createdAt?.toDate?.() || new Date(notif.createdAt);
-              const isRecent = Date.now() - createdAt.getTime() < 30000;
-              if (isRecent) {
-                showBrowserNotification(notif);
-              }
-            }
-          });
-        }
-
-        setNotifications(notifs);
-        setLoading(false);
-        setError(null);
-      },
-      (err) => {
-        console.error('Error fetching notifications:', err);
-        setError(err.message);
-        setLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [currentUser?.name, maxNotifications, enableBrowserNotifications, showBrowserNotification, shownNotificationIds]);
+  // Initial fetch
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
 
   // Mark a notification as read
   const markAsRead = useCallback(async (notificationId) => {
+    // Optimistic update
+    setNotifications(prev => prev.map(n =>
+      n.id === notificationId ? { ...n, read: true } : n
+    ));
+
     try {
-      const notifRef = doc(
-        db,
-        'artifacts',
-        appId,
-        'public',
-        'data',
-        'notifications',
-        notificationId
-      );
-      await updateDoc(notifRef, { read: true });
+      await notificationsService.markAsRead(notificationId);
     } catch (err) {
       console.error('Error marking notification as read:', err);
-      throw err;
+      // Revert if failed? For now, just log.
     }
   }, []);
 
   // Mark all notifications as read
   const markAllAsRead = useCallback(async () => {
+    // Optimistic update
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+
     try {
-      const batch = writeBatch(db);
-      const unreadNotifs = notifications.filter((n) => !n.read);
-
-      unreadNotifs.forEach((notif) => {
-        const notifRef = doc(
-          db,
-          'artifacts',
-          appId,
-          'public',
-          'data',
-          'notifications',
-          notif.id
-        );
-        batch.update(notifRef, { read: true });
+      const userId = currentUser?.id || currentUser?.uid;
+      await notificationsService.markAllAsRead({
+        userId: userId,
+        role: currentUser.role
       });
-
-      await batch.commit();
     } catch (err) {
       console.error('Error marking all notifications as read:', err);
-      throw err;
     }
-  }, [notifications]);
+  }, [currentUser]);
 
   // Delete a notification
   const deleteNotification = useCallback(async (notificationId) => {
+    // Optimistic update
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+
     try {
-      const notifRef = doc(
-        db,
-        'artifacts',
-        appId,
-        'public',
-        'data',
-        'notifications',
-        notificationId
-      );
-      await deleteDoc(notifRef);
+      await notificationsService.delete(notificationId);
     } catch (err) {
       console.error('Error deleting notification:', err);
-      throw err;
     }
   }, []);
 
-  // Get unread count
+  // Add a local notification (e.g. from Socket.IO)
+  // This just adds to state, assuming server already saved it.
+  const handleNewNotification = useCallback((notification) => {
+    setNotifications(prev => {
+      // Avoid duplicates if ID exists
+      if (prev.some(n => n.id === notification.id)) return prev;
+      return [notification, ...prev];
+    });
+
+    if (enableBrowserNotifications) {
+      showBrowserNotification(notification);
+    }
+  }, [enableBrowserNotifications, showBrowserNotification]);
+
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return {
@@ -239,8 +183,42 @@ export function useNotifications(currentUser, options = {}) {
     markAllAsRead,
     deleteNotification,
     browserPermission,
-    requestBrowserPermission
+    requestBrowserPermission,
+    handleNewNotification,
+    refreshNotifications: fetchNotifications
   };
+}
+
+// Helper for sound
+const playNotificationSound = () => {
+  try {
+    const audio = new Audio('/notification.mp3.mp3');
+    audio.play().catch(e => console.error('Audio play error', e));
+  } catch (e) {
+    console.error('Audio setup error', e);
+  }
+};
+
+export function useSocketNotifications(onNewLead) {
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewLead = (payload) => {
+      // Payload can be just lead object OR { lead, notification }
+      console.log('🔔 Received new-lead event:', payload);
+      playNotificationSound();
+      if (onNewLead) onNewLead(payload);
+    };
+
+    console.log('👂 Listening for new-lead events');
+    socket.on('new-lead', handleNewLead);
+
+    return () => {
+      socket.off('new-lead', handleNewLead);
+    };
+  }, [socket, onNewLead]);
 }
 
 export default useNotifications;

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   useReactTable,
   getCoreRowModel,
@@ -12,8 +13,40 @@ import { getWhatsappLink } from '../../utils/helpers';
 import { ContactModal } from '../modals';
 
 export default function ContactsView({ contacts, loading, onAddContact, onUpdateContact, onDeleteContact, onDeleteAllContacts }) {
-  const [showModal, setShowModal] = useState(false);
-  const [selectedContact, setSelectedContact] = useState(null);
+  // URL State
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showModal = searchParams.get('modal') === 'new-contact';
+
+  const selectedContactId = searchParams.get('contactId');
+  const isEditing = searchParams.get('modal') === 'edit-contact';
+
+  const selectedContact = useMemo(() => {
+    if (!isEditing || !selectedContactId) return null;
+    return contacts.find(c => c.id == selectedContactId) || null;
+  }, [contacts, selectedContactId, isEditing]);
+
+  const setShowModal = (show) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      if (show) newParams.set('modal', 'new-contact');
+      else if (newParams.get('modal') === 'new-contact') newParams.delete('modal');
+      return newParams;
+    });
+  };
+
+  const setSelectedContact = (contact) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      if (contact) {
+        newParams.set('modal', 'edit-contact');
+        newParams.set('contactId', contact.id);
+      } else {
+        if (newParams.get('modal') === 'edit-contact') newParams.delete('modal');
+        newParams.delete('contactId');
+      }
+      return newParams;
+    });
+  };
   const [globalFilter, setGlobalFilter] = useState('');
   const [sorting, setSorting] = useState([]);
 

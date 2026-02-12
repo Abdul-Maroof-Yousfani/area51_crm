@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   DollarSign,
   AlertTriangle,
@@ -27,22 +28,38 @@ import { useLanguage } from '../../contexts/LanguageContext';
 export default function FinanceView({ leads, onSyncPayments }) {
   const { t, language } = useLanguage();
   const [filter, setFilter] = useState('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [syncing, setSyncing] = useState(false);
-  const [selectedLeadForPayment, setSelectedLeadForPayment] = useState(null);
+
+  // URL State for Modal
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedLeadId = searchParams.get('clientId');
+
+  // Derived state (replaces useState + useEffect)
+  // Use loose equality (==) to handle string/number mismatch for IDs
+  const selectedLeadForPayment = useMemo(() => {
+    if (!selectedLeadId) return null;
+    return leads.find(l => l.id == selectedLeadId) || null;
+  }, [leads, selectedLeadId]);
+
+  const setSelectedLeadForPayment = (lead) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      if (lead) {
+        newParams.set('modal', 'payment-history');
+        newParams.set('clientId', lead.id);
+      } else {
+        newParams.delete('modal');
+        newParams.delete('clientId');
+      }
+      return newParams;
+    });
+  };
 
   // Pagination State
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-
-  // Keep selected lead in sync with updates
-  useEffect(() => {
-    if (selectedLeadForPayment) {
-      const updatedLead = leads.find(l => l.id === selectedLeadForPayment.id);
-      if (updatedLead) {
-        setSelectedLeadForPayment(updatedLead);
-      }
-    }
-  }, [leads]);
 
   // Filter booked leads and calculate derived fields
   const bookedLeads = useMemo(() => {
@@ -105,10 +122,30 @@ export default function FinanceView({ leads, onSyncPayments }) {
   const filteredLeads = useMemo(() => {
     // Reset to first page when filter changes
     setPageIndex(0);
-    if (filter === 'all') return bookedLeads;
-    // Use the calculated paymentStatus
-    return bookedLeads.filter((l) => l.paymentStatus === 'overdue' ? filter === 'overdue' : l.paymentStatus === filter);
-  }, [bookedLeads, filter]);
+
+    let result = bookedLeads;
+
+    // 1. Filter by Date Range (Event Date)
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+
+      result = result.filter(l => {
+        if (!l.eventDate) return false;
+        const d = new Date(l.eventDate);
+        return d >= start && d <= end;
+      });
+    }
+
+    // 2. Filter by Status
+    if (filter !== 'all') {
+      result = result.filter((l) => l.paymentStatus === 'overdue' ? filter === 'overdue' : l.paymentStatus === filter);
+    }
+
+    return result;
+  }, [bookedLeads, filter, startDate, endDate]);
 
   const paginatedLeads = useMemo(() => {
     const start = pageIndex * pageSize;
@@ -118,19 +155,43 @@ export default function FinanceView({ leads, onSyncPayments }) {
   const totalPages = Math.ceil(filteredLeads.length / pageSize);
 
   // Calculate stats
+  // Calculate stats based on FILTERED data (so users see stats for the selected period)
+  // OR based on ALL booked leads? Usually stats are for the view. 
+  // Let's make stats reflect the date range but NOT the status filter (so you see totals for that month)
+
+  const statsLeads = useMemo(() => {
+    let result = bookedLeads;
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+
+      result = result.filter(l => {
+        if (!l.eventDate) return false;
+        const d = new Date(l.eventDate);
+        return d >= start && d <= end;
+      });
+    }
+    return result;
+  }, [bookedLeads, startDate, endDate]);
+
   const stats = useMemo(() => {
-    const totalBookings = bookedLeads.length;
-    const totalValue = bookedLeads.reduce((sum, l) => sum + l.totalValue, 0);
-    const totalPaid = bookedLeads.reduce((sum, l) => sum + l.totalPaid, 0);
-    const totalDue = bookedLeads.reduce((sum, l) => sum + l.totalDue, 0);
-    const overdueCount = bookedLeads.filter((l) => l.paymentStatus === 'overdue').length;
-    const overdueAmount = bookedLeads
+    // Use leads filtered by date, but NOT by status filter
+    const sourceData = statsLeads;
+
+    const totalBookings = sourceData.length;
+    const totalValue = sourceData.reduce((sum, l) => sum + l.totalValue, 0);
+    const totalPaid = sourceData.reduce((sum, l) => sum + l.totalPaid, 0);
+    const totalDue = sourceData.reduce((sum, l) => sum + l.totalDue, 0);
+    const overdueCount = sourceData.filter((l) => l.paymentStatus === 'overdue').length;
+    const overdueAmount = sourceData
       .filter((l) => l.paymentStatus === 'overdue')
       .reduce((sum, l) => sum + l.totalDue, 0);
 
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    const upcomingThisMonth = bookedLeads.filter((l) => {
+    const upcomingThisMonth = sourceData.filter((l) => {
       // Ensure date exists
       if (!l.eventDate) return false;
       const eventDate = new Date(l.eventDate);
@@ -147,7 +208,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
       upcomingThisMonth: upcomingThisMonth.length,
       collectionRate: totalValue > 0 ? ((totalPaid / totalValue) * 100).toFixed(1) : 0
     };
-  }, [bookedLeads]);
+  }, [statsLeads]);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -254,8 +315,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-2 bg-white p-2 md:p-3 rounded-xl border overflow-x-auto">
+      <div className="flex flex-wrap items-center gap-2 bg-white p-2 md:p-3 rounded-xl border">
         <Filter className="w-4 h-4 text-gray-400 my-auto flex-shrink-0" />
         {[
           { key: 'all', label: t('all') },
@@ -275,6 +335,35 @@ export default function FinanceView({ leads, onSyncPayments }) {
             {f.label}
           </button>
         ))}
+
+        <div className="h-6 w-px bg-gray-200 mx-2 hidden sm:block"></div>
+
+        <div className="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg text-sm px-2 py-1">
+          <input
+            type="date"
+            className="bg-transparent border-none text-xs md:text-sm p-1 w-24 md:w-auto"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <span className="text-gray-400">-</span>
+          <input
+            type="date"
+            className="bg-transparent border-none text-xs md:text-sm p-1 w-24 md:w-auto"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+          {(startDate || endDate) && (
+            <button
+              onClick={() => {
+                setStartDate('');
+                setEndDate('');
+              }}
+              className="text-xs text-red-500 px-1 hover:text-red-700 font-medium"
+            >
+              {t('clear')}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Mobile Card View */}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -20,25 +21,25 @@ import {
 // Navigation items by role
 const getNavItems = (role) => {
   const ownerItems = [
-    { id: 'owner-dashboard', label: 'Dashboard', icon: BarChart3, description: 'Analytics & KPIs' },
-    { id: 'leads', label: 'All Leads', icon: Users, description: 'Manage leads' },
-    { id: 'employee', label: 'Sales View', icon: MessageSquare, description: 'Employee interface' },
-    { id: 'call-list', label: 'Call List', icon: PhoneCall, description: 'Scheduled calls' },
-    { id: 'conversation-logs', label: 'Conversations', icon: MessageCircle, description: 'WhatsApp history' },
-    { id: 'finance', label: 'Finance', icon: CreditCard, description: 'Payments & invoicing' },
-    { id: 'contacts', label: 'Contacts', icon: Contact, description: 'Contact directory' },
-    { id: 'sources', label: 'Sources', icon: Globe, description: 'Lead sources' },
-    { id: 'audit-logs', label: 'AI Audit', icon: Brain, description: 'AI interaction logs' }
+    { id: 'owner-dashboard', path: '/', label: 'Dashboard', icon: BarChart3, description: 'Analytics & KPIs' },
+    { id: 'leads', path: '/leads', label: 'All Leads', icon: Users, description: 'Manage leads' },
+    { id: 'employee', path: '/employee', label: 'Sales View', icon: MessageSquare, description: 'Employee interface' },
+    { id: 'call-list', path: '/call-list', label: 'Call List', icon: PhoneCall, description: 'Scheduled calls' },
+    { id: 'conversation-logs', path: '/conversation-logs', label: 'Conversations', icon: MessageCircle, description: 'WhatsApp history' },
+    { id: 'finance', path: '/finance', label: 'Finance', icon: CreditCard, description: 'Payments & invoicing' },
+    { id: 'contacts', path: '/contacts', label: 'Contacts', icon: Contact, description: 'Contact directory' },
+    { id: 'sources', path: '/sources', label: 'Sources', icon: Globe, description: 'Lead sources' },
+    { id: 'audit-logs', path: '/audit-logs', label: 'AI Audit', icon: Brain, description: 'AI interaction logs' }
   ];
 
   const salesItems = [
-    { id: 'employee', label: 'میرے لیڈز', icon: MessageSquare, description: 'My inbox' },
-    { id: 'call-list', label: 'کال لسٹ', icon: PhoneCall, description: 'Scheduled calls' },
-    { id: 'contacts', label: 'رابطے', icon: Contact, description: 'Contacts' }
+    { id: 'employee', path: '/employee', label: 'میرے لیڈز', icon: MessageSquare, description: 'My inbox' },
+    { id: 'call-list', path: '/call-list', label: 'کال لسٹ', icon: PhoneCall, description: 'Scheduled calls' },
+    { id: 'contacts', path: '/contacts', label: 'رابطے', icon: Contact, description: 'Contacts' }
   ];
 
   const financeItems = [
-    { id: 'finance', label: 'Finance', icon: CreditCard, description: 'Payments & invoicing' }
+    { id: 'finance', path: '/finance', label: 'Finance', icon: CreditCard, description: 'Payments & invoicing' }
   ];
 
   switch (role) {
@@ -55,8 +56,8 @@ const getNavItems = (role) => {
 };
 
 export default function RoleSidebar({
-  activeTab,
-  setActiveTab,
+  activeTab, // Now unused/deprecated, keeping for prop compatibility if needed
+  setActiveTab, // Now strictly for mobile menu closing if passed
   userRole,
   onShowAdmin,
   onShowIntegrations,
@@ -66,6 +67,12 @@ export default function RoleSidebar({
 }) {
   const navItems = getNavItems(userRole);
   const isOwnerOrAdmin = ['Owner', 'Admin'].includes(userRole);
+
+  const handleNavClick = () => {
+    if (isMobile && setActiveTab) {
+      setActiveTab(); // This is effectively setMobileMenuOpen(false) from App.jsx
+    }
+  };
 
   // Mobile layout - simplified dropdown menu
   if (isMobile) {
@@ -88,20 +95,25 @@ export default function RoleSidebar({
         {/* Navigation Grid */}
         <div className="grid grid-cols-2 gap-2">
           {navItems.map((item) => (
-            <button
+            <NavLink
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-2 px-3 py-3 rounded-xl text-left transition-all ${activeTab === item.id
+              to={item.path}
+              onClick={handleNavClick}
+              className={({ isActive }) => `flex items-center gap-2 px-3 py-3 rounded-xl text-left transition-all ${isActive
                 ? 'bg-blue-100 text-blue-700 font-semibold'
                 : 'bg-gray-50 text-gray-600 active:bg-gray-100'
                 }`}
             >
-              <item.icon
-                className={`w-5 h-5 flex-shrink-0 ${activeTab === item.id ? 'text-blue-600' : 'text-gray-400'
-                  }`}
-              />
-              <span className="text-sm font-medium truncate">{item.label}</span>
-            </button>
+              {({ isActive }) => (
+                <>
+                  <item.icon
+                    className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-gray-400'
+                      }`}
+                  />
+                  <span className="text-sm font-medium truncate">{item.label}</span>
+                </>
+              )}
+            </NavLink>
           ))}
         </div>
 
@@ -174,25 +186,29 @@ export default function RoleSidebar({
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
-          <button
+          <NavLink
             key={item.id}
-            onClick={() => setActiveTab(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${activeTab === item.id
+            to={item.path}
+            className={({ isActive }) => `w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${isActive
               ? 'bg-blue-50 text-blue-700 font-semibold'
               : 'text-gray-600 hover:bg-gray-50'
               }`}
           >
-            <item.icon
-              className={`w-5 h-5 ${activeTab === item.id ? 'text-blue-600' : 'text-gray-400'
-                }`}
-            />
-            <div>
-              <p className="text-sm font-medium">{item.label}</p>
-              {activeTab !== item.id && (
-                <p className="text-[10px] text-gray-400">{item.description}</p>
-              )}
-            </div>
-          </button>
+            {({ isActive }) => (
+              <>
+                <item.icon
+                  className={`w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-400'
+                    }`}
+                />
+                <div>
+                  <p className="text-sm font-medium">{item.label}</p>
+                  {!isActive && (
+                    <p className="text-[10px] text-gray-400">{item.description}</p>
+                  )}
+                </div>
+              </>
+            )}
+          </NavLink>
         ))}
 
         {/* Admin Section */}

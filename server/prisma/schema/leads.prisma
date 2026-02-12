@@ -37,8 +37,9 @@ model Lead {
     assignedTo Int?
     assignee   User? @relation(fields: [assignedTo], references: [id])
 
-    activities LeadActivity[]
-    payments   Payment[]
+    activities    LeadActivity[]
+    notifications Notification[]
+    payments      Payment[]
 }
 
 model Payment {

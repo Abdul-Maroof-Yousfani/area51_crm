@@ -254,7 +254,8 @@ export default function LeadDetailModal({
   const sourceOptions = useMemo(() => {
     const list = [...(sources || [])];
     if (formData.source && !list.find((s) => s.name === formData.source)) {
-      list.push({ id: 'temp', name: formData.source });
+      // Use a unique ID based on the source name to avoid collisions
+      list.push({ id: `custom-${formData.source}`, name: formData.source });
     }
     return list;
   }, [sources, formData.source]);
@@ -693,8 +694,8 @@ export default function LeadDetailModal({
                           setFormData({ ...formData, manager: e.target.value })
                         }
                       >
-                        {(managers || MANAGERS).map((m) => (
-                          <option key={m} value={m}>
+                        {(managers || MANAGERS).map((m, i) => (
+                          <option key={`${m}-${i}`} value={m}>
                             {m}
                           </option>
                         ))}
@@ -710,8 +711,8 @@ export default function LeadDetailModal({
                         }
                       >
                         <option value="">Select Event Type</option>
-                        {(eventTypes || EVENT_TYPES).map((et) => (
-                          <option key={et} value={et}>
+                        {(eventTypes || EVENT_TYPES).map((et, i) => (
+                          <option key={`${et}-${i}`} value={et}>
                             {et}
                           </option>
                         ))}
@@ -744,8 +745,8 @@ export default function LeadDetailModal({
                         }
                       >
                         <option value="">Unknown</option>
-                        {sourceOptions.map((s) => (
-                          <option key={s.id} value={s.name}>
+                        {sourceOptions.map((s, i) => (
+                          <option key={s.id || `source-${i}`} value={s.name}>
                             {s.name}
                           </option>
                         ))}

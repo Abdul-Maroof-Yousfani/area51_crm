@@ -296,4 +296,48 @@ export const userService = {
     }
 };
 
+export const notificationsService = {
+    async getAll(params = {}) {
+        const query = new URLSearchParams(params).toString();
+        const response = await fetch(`${API_BASE_URL}/notifications?${query}`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to fetch notifications');
+        return data; // returns array directly based on controller
+    },
+
+    async markAsRead(id) {
+        const response = await fetch(`${API_BASE_URL}/notifications/${id}/read`, {
+            method: 'PATCH',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to mark notification as read');
+        return data;
+    },
+
+    async markAllAsRead(userData) {
+        const response = await fetch(`${API_BASE_URL}/notifications/read-all`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(userData)
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to mark all as read');
+        return data;
+    },
+
+    async delete(id) {
+        const response = await fetch(`${API_BASE_URL}/notifications/${id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to delete notification');
+        return data;
+    }
+};
+
 export default authService;

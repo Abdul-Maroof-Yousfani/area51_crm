@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { Loader, Menu, X } from 'lucide-react';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db, appId } from './lib/firebase';
 import { createActivityEntry, ACTIVITY_TYPES } from './utils/helpers';
 
 // Hooks
-import { useAuth, useFirestoreData, useAutoMigrateContacts, useCsvUpload, useNotifications, useAppSettings, useContacts, useSources, useLeads, useUsers } from './hooks';
+import { useAuth, useFirestoreData, useAutoMigrateContacts, useCsvUpload, useNotifications, useSocketNotifications, useAppSettings, useContacts, useSources, useLeads, useUsers } from './hooks';
 
 // UI Components
 import { Toast, DebugPanel, AuthScreen, NotificationBell, LanguageToggle } from './components/ui';
@@ -70,7 +71,7 @@ export default function App() {
 
   // Users from API (for managers list)
   const { users: apiUsers } = useUsers();
-  const managerNames = apiUsers.map(u => u.username);
+  const managerNames = (apiUsers || []).map(u => u.username);
 
   // Contacts from API
   const {
@@ -110,21 +111,126 @@ export default function App() {
     markAsRead,
     markAllAsRead,
     deleteNotification,
-    requestBrowserPermission
+    requestBrowserPermission,
+    handleNewNotification
   } = useNotifications(activeUser, { enableBrowserNotifications: true });
 
+  // Real-time Socket Notifications
+  // Track new leads for highlighting
+  const [newLeadIds, setNewLeadIds] = useState([]);
+  const [viewedLeadIds, setViewedLeadIds] = useState([]);
+
+  useSocketNotifications((payload) => {
+    // Payload can be { lead, notification } or just lead (backward compatibility)
+    const newLead = payload.lead || payload;
+    const notification = payload.notification;
+
+    // 1. Play sound (handled in hook)
+
+    // 2. Add to new ids for highlighting 
+    setNewLeadIds(prev => [...prev, newLead.id]);
+
+    // 3. Refresh leads data to show the new row
+    fetchLeads();
+
+    // 4. Add to notification center (Local state, already saved in DB by server)
+    if (notification) {
+      handleNewNotification(notification);
+    }
+  });
+
+  // Remove from new list when viewed
+  const handleLeadView = (lead) => {
+    if (newLeadIds.includes(lead.id)) {
+      setNewLeadIds(prev => prev.filter(id => id !== lead.id));
+      setViewedLeadIds(prev => [...prev, lead.id]);
+    }
+    setSelectedLead(lead);
+  };
+
   // UI state
-  const [activeTab, setActiveTab] = useState('owner-dashboard');
-  const [selectedLead, setSelectedLead] = useState(null);
-  const [showRevenue, setShowRevenue] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [showIntegrationsPanel, setShowIntegrationsPanel] = useState(false);
-  const [showNewLead, setShowNewLead] = useState(false);
-  const [selectedSource, setSelectedSource] = useState(null);
-  const [showUserSettings, setShowUserSettings] = useState(false);
-  const [showMigrationPanel, setShowMigrationPanel] = useState(false);
+  // UI state
+  // const [activeTab, setActiveTab] = useState('owner-dashboard'); // Replaced by Router
+  // const [selectedLead, setSelectedLead] = useState(null); // Replaced by URL state
+  // const [showRevenue, setShowRevenue] = useState(false); // Replaced by URL state
+  // const [showAdmin, setShowAdmin] = useState(false); // Replaced by URL state
+  // const [showIntegrationsPanel, setShowIntegrationsPanel] = useState(false); // Replaced by URL state
+  // const [showNewLead, setShowNewLead] = useState(false); // Replaced by SearchParams
+  // const [selectedSource, setSelectedSource] = useState(null); // Replaced by URL state
+  // const [showUserSettings, setShowUserSettings] = useState(false); // Replaced by URL state
+  // const [showMigrationPanel, setShowMigrationPanel] = useState(false); // Replaced by URL state
   const [toast, setToast] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Router Helpers
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Derived state from URL for Modals
+  const showNewLead = searchParams.get('modal') === 'new-lead';
+  const showRevenue = searchParams.get('modal') === 'revenue';
+  const showAdmin = searchParams.get('modal') === 'admin';
+  const showIntegrationsPanel = searchParams.get('modal') === 'integrations';
+  const showUserSettings = searchParams.get('modal') === 'settings';
+  const showMigrationPanel = searchParams.get('modal') === 'migration';
+
+  const selectedLeadId = searchParams.get('leadId');
+  const selectedSourceId = searchParams.get('sourceId');
+
+  // Derive objects from ID
+  // Note: data might be empty initially, so handle gracefully
+  // Use loose equality (==) to handle string/number mismatch for IDs
+  // Check apiLeads first (SQL data), then fallback to Firestore data
+  const selectedLead = selectedLeadId
+    ? (apiLeads.find(l => l.id == selectedLeadId) || data.find(l => l.id == selectedLeadId))
+    : null;
+
+  const selectedSource = selectedSourceId
+    ? (apiSources.find(s => s.id == selectedSourceId) || sources.find(s => s.id == selectedSourceId))
+    : null;
+
+  // Helpers to update URL state
+  const updateModalState = (modalName, show) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      if (show) newParams.set('modal', modalName);
+      else if (newParams.get('modal') === modalName) newParams.delete('modal');
+      return newParams;
+    });
+  };
+
+  const setShowNewLead = (show) => updateModalState('new-lead', show);
+  const setShowRevenue = (show) => updateModalState('revenue', show);
+  const setShowAdmin = (show) => updateModalState('admin', show);
+  const setShowIntegrationsPanel = (show) => updateModalState('integrations', show);
+  const setShowUserSettings = (show) => updateModalState('settings', show);
+  const setShowMigrationPanel = (show) => updateModalState('migration', show);
+
+  const setSelectedLead = (lead) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      if (lead) newParams.set('leadId', lead.id);
+      else newParams.delete('leadId');
+      return newParams;
+    });
+  };
+
+  const setSelectedSource = (source) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      if (source) newParams.set('sourceId', source.id);
+      else newParams.delete('sourceId');
+      return newParams;
+    });
+  };
+
+  const activeTab = location.pathname === '/' ? 'owner-dashboard' : location.pathname.substring(1);
+  const setActiveTab = (tab) => {
+    const path = tab === 'owner-dashboard' ? '/' : `/${tab}`;
+    navigate(path);
+    setMobileMenuOpen(false);
+  };
 
   // Debug state
   const [debugLogs, setDebugLogs] = useState([]);
@@ -326,7 +432,7 @@ export default function App() {
     return (
       <>
         <AuthScreen onLogin={setActiveUser} isLoading={authLoading} authError={authError} login={login} signup={signup} logout={logout} />
-        <DebugPanel logs={debugLogs} />
+        {/* <DebugPanel logs={debugLogs} /> */}
       </>
     );
   }
@@ -425,7 +531,7 @@ export default function App() {
               onNotificationClick={(notif) => {
                 // Navigate to the lead if clicking a lead-related notification
                 if (notif.leadId) {
-                  const lead = data.find(l => l.id === notif.leadId);
+                  const lead = apiLeads.find(l => l.id === notif.leadId);
                   if (lead) setSelectedLead(lead);
                 }
               }}
@@ -474,7 +580,7 @@ export default function App() {
             onDelete={deleteNotification}
             onNotificationClick={(notif) => {
               if (notif.leadId) {
-                const lead = data.find(l => l.id === notif.leadId);
+                const lead = apiLeads.find(l => l.id === notif.leadId);
                 if (lead) setSelectedLead(lead);
               }
             }}
@@ -482,86 +588,95 @@ export default function App() {
           />
         </div>
 
-        {/* Owner Dashboard */}
-        {activeTab === 'owner-dashboard' && (
-          <OwnerDashboard leads={apiLeads} onShowRevenue={() => setShowRevenue(true)} />
-        )}
+        <Routes>
+          {/* Owner Dashboard */}
+          <Route path="/" element={
+            <OwnerDashboard leads={apiLeads} onShowRevenue={() => setShowRevenue(true)} />
+          } />
 
-        {/* Employee Interface (Urdu) */}
-        {activeTab === 'employee' && (
-          <EmployeeView
-            leads={apiLeads}
-            currentUser={activeUser}
-            onSelectLead={setSelectedLead}
-            onStageChange={handleStageChange}
-            onAddNote={() => { }}
-          />
-        )}
+          {/* Employee Interface */}
+          <Route path="/employee" element={
+            <EmployeeView
+              leads={apiLeads}
+              currentUser={activeUser}
+              onSelectLead={setSelectedLead}
+              onStageChange={handleStageChange}
+              onAddNote={() => { }}
+            />
+          } />
 
-        {/* Finance View */}
-        {activeTab === 'finance' && <FinanceView leads={apiLeads} onSyncPayments={fetchLeads} />}
+          {/* Finance View */}
+          <Route path="/finance" element={
+            <FinanceView leads={apiLeads} onSyncPayments={fetchLeads} />
+          } />
 
-        {/* Call List View */}
-        {activeTab === 'call-list' && (
-          <CallListView
-            leads={apiLeads}
-            currentUser={activeUser}
-            onLogCall={handleLogCall}
-            onSelectLead={setSelectedLead}
-            onSaveLead={updateLead}
-          />
-        )}
+          {/* Call List View */}
+          <Route path="/call-list" element={
+            <CallListView
+              leads={apiLeads}
+              currentUser={activeUser}
+              onLogCall={handleLogCall}
+              onSelectLead={setSelectedLead}
+              onSaveLead={updateLead}
+            />
+          } />
 
-        {/* Simple Dashboard (Legacy) */}
-        {activeTab === 'dashboard' && (
-          <DashboardView stats={leadsStats} onShowRevenue={() => setShowRevenue(true)} />
-        )}
+          {/* Simple Dashboard (Legacy) */}
+          <Route path="/dashboard" element={
+            <DashboardView stats={leadsStats} onShowRevenue={() => setShowRevenue(true)} />
+          } />
 
-        {/* Leads Management */}
-        {activeTab === 'leads' && (
-          <LeadsView
-            data={apiLeads}
-            onSelectLead={setSelectedLead}
-            onShowNewLead={() => setShowNewLead(true)}
-            uploading={uploading}
-            onFileUpload={handleFileUpload}
-            onTruncateLeads={deleteAllLeads}
-          />
-        )}
+          {/* Leads Management */}
+          <Route path="/leads" element={
+            <LeadsView
+              data={apiLeads}
+              onSelectLead={handleLeadView}
+              newLeadIds={newLeadIds}
+              viewedLeadIds={viewedLeadIds}
+              onShowNewLead={() => setShowNewLead(true)}
+              uploading={uploading}
+              onFileUpload={handleFileUpload}
+              onTruncateLeads={deleteAllLeads}
+            />
+          } />
 
-        {/* Contacts */}
-        {activeTab === 'contacts' && (
-          <ContactsView
-            contacts={apiContacts}
-            loading={contactsLoading}
-            onAddContact={addContact}
-            onUpdateContact={updateContact}
-            onDeleteContact={deleteContact}
-            onDeleteAllContacts={deleteAllContacts}
-          />
-        )}
+          {/* Contacts */}
+          <Route path="/contacts" element={
+            <ContactsView
+              contacts={apiContacts}
+              loading={contactsLoading}
+              onAddContact={addContact}
+              onUpdateContact={updateContact}
+              onDeleteContact={deleteContact}
+              onDeleteAllContacts={deleteAllContacts}
+            />
+          } />
 
-        {/* Sources */}
-        {activeTab === 'sources' && (
-          <SourcesView
-            sources={apiSources}
-            leads={apiLeads}
-            onAdd={addSource}
-            onUpdate={updateSource}
-            onDelete={deleteSource}
-            onSourceClick={setSelectedSource}
-          />
-        )}
+          {/* Sources */}
+          <Route path="/sources" element={
+            <SourcesView
+              sources={apiSources}
+              leads={apiLeads}
+              onAdd={addSource}
+              onUpdate={updateSource}
+              onDelete={deleteSource}
+              onSourceClick={setSelectedSource}
+            />
+          } />
 
-        {/* Conversation Logs - Owner can view employee-client WhatsApp chats */}
-        {activeTab === 'conversation-logs' && (
-          <ConversationLogsView leads={apiLeads} currentUser={activeUser} />
-        )}
+          {/* Conversation Logs */}
+          <Route path="/conversation-logs" element={
+            <ConversationLogsView leads={apiLeads} currentUser={activeUser} />
+          } />
 
-        {/* AI Audit Logs - View AI interaction history */}
-        {activeTab === 'audit-logs' && (
-          <AuditLogsView leads={apiLeads} currentUser={activeUser} />
-        )}
+          {/* AI Audit Logs */}
+          <Route path="/audit-logs" element={
+            <AuditLogsView leads={apiLeads} currentUser={activeUser} />
+          } />
+
+          {/* Catch all - Redirect to Home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
 
         {/* Debug Footer - Hidden on mobile */}
         {/* <div className="hidden md:block fixed bottom-0 left-0 w-full bg-black text-white text-xs p-1 text-center opacity-50 pointer-events-none">

@@ -10,18 +10,19 @@
 // }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  username      String
-  email         String         @unique
-  password_hash String
-  is_active     Boolean
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
-  last_login_at DateTime       @default(now())
-  role          Role
-  sessions      Sessions[]
-  leads         Lead[]
-  activities    LeadActivity[]
+  id             Int            @id @default(autoincrement())
+  username       String
+  email          String         @unique
+  password_hash  String
+  is_active      Boolean
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  last_login_at  DateTime       @default(now())
+  role           Role
+  sessions       Sessions[]
+  leads          Lead[]
+  notifications  Notification[]
+  leadActivities LeadActivity[]
 }
 
 enum Role {
@@ -93,8 +94,9 @@ model Lead {
   assignedTo Int?
   assignee   User? @relation(fields: [assignedTo], references: [id])
 
-  activities LeadActivity[]
-  payments   Payment[]
+  activities    LeadActivity[]
+  notifications Notification[]
+  payments      Payment[]
 }
 
 model Payment {
@@ -126,6 +128,23 @@ model Sources {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   leads     Lead[]
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+
+  leadId Int?
+  lead   Lead? @relation(fields: [leadId], references: [id])
+
+  priority   String  @default("normal")
+  assignedTo String? // for 'all' or specific role logic if not by userId
 }
 
 // This is your Prisma schema file,
