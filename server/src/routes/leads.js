@@ -9,7 +9,8 @@ import {
     getLeadTimeline,
     deleteAllLeads,
     addPayment,
-    deletePayment
+    deletePayment,
+    importLeads
 } from '../controllers/leads.js';
 
 const router = express.Router();
@@ -43,5 +44,8 @@ router.post('/:id/payments', addPayment);
 
 // DELETE /:id/payments/:paymentId - Delete payment
 router.delete('/:id/payments/:paymentId', deletePayment);
+
+// POST /import - Import leads from CSV
+router.post('/import', importLeads);
 
 export default router;

@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { collection, doc, writeBatch, serverTimestamp } from 'firebase/firestore';
-import { db, appId } from '../lib/firebase';
 import { parseCSV } from '../utils/csv';
-import { safeAmount, determineStage, determineManager } from '../utils/helpers';
+import { leadsService } from '../services/api';
 
 /**
  * Matches CSV source text to existing source names (case-insensitive)
@@ -71,69 +69,85 @@ export function useCsvUpload(sources = []) {
     const reader = new FileReader();
 
     reader.onload = async (evt) => {
-      const rows = parseCSV(evt.target.result);
-      const headerIndex = rows.findIndex((row) =>
-        row.join(' ').toLowerCase().includes('client name')
-      );
+      try {
+        const rows = parseCSV(evt.target.result);
+        const headerIndex = rows.findIndex((row) =>
+          row.join(' ').toLowerCase().includes('client name')
+        );
 
-      if (headerIndex === -1) {
-        alert('Invalid CSV');
-        setUploading(false);
-        return;
-      }
-
-      const headers = rows[headerIndex].map((h) => h.replace(/"/g, '').trim().toLowerCase());
-      const get = (row, ...keys) => {
-        for (const k of keys) {
-          const idx = headers.findIndex((h) => h.includes(k));
-          if (idx > -1 && row[idx]) return row[idx].replace(/"/g, '').trim();
-        }
-        return '';
-      };
-
-      const batch = writeBatch(db);
-      let count = 0;
-      let unmatchedSources = new Set();
-
-      rows.slice(headerIndex + 1).forEach((row) => {
-        if (row.length < 2) return;
-        const name = get(row, 'client name', 'name');
-        if (!name) return;
-
-        const rawSource = get(row, 'source');
-        const matchedSource = matchSource(rawSource, sources);
-
-        // Track unmatched sources for reporting
-        if (rawSource && matchedSource === rawSource && !sources.find(s => s.name === rawSource)) {
-          unmatchedSources.add(rawSource);
+        if (headerIndex === -1) {
+          alert('Invalid CSV: Could not find "Client Name" header');
+          setUploading(false);
+          return;
         }
 
-        const leadRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'leads'));
-        batch.set(leadRef, {
-          clientName: name,
-          amount: safeAmount(get(row, 'amount')),
-          stage: determineStage(get(row, 'status'), get(row, 'notes'), 0),
-          inquiryDate: get(row, 'date', 'inquiry date') || new Date().toISOString().split('T')[0],
-          manager: determineManager(get(row, 'manager')),
-          source: matchedSource,
-          notes: get(row, 'notes'),
-          phone: get(row, 'phone', 'contact', 'mobile', 'cell'),
-          eventDate: get(row, 'event date', 'eventdate', 'function date'),
-          eventType: get(row, 'event type', 'eventtype', 'function type', 'occasion'),
-          guests: get(row, 'guests', 'pax', 'headcount', 'attendees'),
-          createdAt: serverTimestamp()
+        const headers = rows[headerIndex].map((h) => h.replace(/"/g, '').trim().toLowerCase());
+        const get = (row, ...keys) => {
+          for (const k of keys) {
+            const idx = headers.findIndex((h) => h.includes(k));
+            if (idx > -1 && row[idx]) return row[idx].replace(/"/g, '').trim();
+          }
+          return '';
+        };
+
+        const leadsToImport = [];
+        let unmatchedSources = new Set();
+
+        rows.slice(headerIndex + 1).forEach((row) => {
+          if (row.length < 2) return;
+          const name = get(row, 'client name', 'name');
+          if (!name) return;
+
+          const rawSource = get(row, 'source');
+          const matchedSource = matchSource(rawSource, sources);
+
+          // Track unmatched sources for reporting
+          if (rawSource && matchedSource === rawSource && !sources.find(s => s.name === rawSource)) {
+            unmatchedSources.add(rawSource);
+          }
+
+          leadsToImport.push({
+            clientName: name,
+            amount: get(row, 'amount'),
+            status: get(row, 'status') || 'New', // Backend handles mapping/defaults
+            notes: get(row, 'notes'),
+            phone: get(row, 'phone', 'contact', 'mobile', 'cell'),
+            email: get(row, 'email', 'mail'),
+            source: matchedSource,
+            manager: get(row, 'manager'),
+            inquiryDate: get(row, 'date', 'inquiry date'),
+            // Event details
+            eventDate: get(row, 'event date', 'eventdate', 'function date'),
+            eventType: get(row, 'event type', 'eventtype', 'function type', 'occasion'),
+            guests: get(row, 'guests', 'pax', 'headcount', 'attendees'),
+            venue: get(row, 'venue', 'location')
+          });
         });
-        count++;
-      });
 
-      if (count > 0) await batch.commit();
+        if (leadsToImport.length > 0) {
+          const result = await leadsService.import(leadsToImport);
+          let message = result.message || `Imported ${leadsToImport.length} leads.`;
 
-      let message = `Imported ${count} leads.`;
-      if (unmatchedSources.size > 0) {
-        message += `\n\nUnmatched sources (stored as-is): ${[...unmatchedSources].join(', ')}`;
+          if (unmatchedSources.size > 0) {
+            message += `\n\nUnmatched sources (saved as text): ${[...unmatchedSources].join(', ')}`;
+          }
+          alert(message);
+
+          // Reload page or trigger refresh?
+          // Ideally we should trigger a refresh via context, but strict reload ensures data is fresh
+          window.location.reload();
+        } else {
+          alert('No valid leads found in CSV');
+        }
+
+      } catch (error) {
+        console.error('Import failed:', error);
+        alert(`Import failed: ${error.message}`);
+      } finally {
+        setUploading(false);
+        // Reset file input
+        e.target.value = '';
       }
-      alert(message);
-      setUploading(false);
     };
 
     reader.readAsText(file);

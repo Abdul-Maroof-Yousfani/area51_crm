@@ -5,7 +5,7 @@ import prisma from '../util/prisma.js';
 
 // Secret key for JWT (Should be in .env in production)
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-const JWT_EXPIRES_IN = '1d';
+const JWT_EXPIRES_IN = '1h';
 
 // Joi Schemas
 const signupSchema = Joi.object({

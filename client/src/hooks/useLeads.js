@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { leadsService } from '../services/api';
 import { safeAmount, isWonStage } from '../utils/helpers';
 
-export function useLeads() {
+export function useLeads({ enabled = true } = {}) {
     const [leads, setLeads] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(enabled);
     const [error, setError] = useState(null);
     const [pagination, setPagination] = useState({ page: 1, limit: 100, total: 0 });
 
@@ -39,8 +39,12 @@ export function useLeads() {
 
     // Initial fetch
     useEffect(() => {
-        fetchLeads();
-    }, [fetchLeads]);
+        if (enabled) {
+            fetchLeads();
+        } else {
+            setLoading(false);
+        }
+    }, [fetchLeads, enabled]);
 
     const addLead = async (leadData) => {
         try {

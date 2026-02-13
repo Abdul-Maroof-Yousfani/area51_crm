@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { sourcesService } from '../services/api';
 
-export function useSources() {
+export function useSources({ enabled = true } = {}) {
     const [sources, setSources] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(enabled);
     const [error, setError] = useState(null);
 
     // Fetch all sources on mount
@@ -22,8 +22,12 @@ export function useSources() {
     }, []);
 
     useEffect(() => {
-        fetchSources();
-    }, [fetchSources]);
+        if (enabled) {
+            fetchSources();
+        } else {
+            setLoading(false);
+        }
+    }, [fetchSources, enabled]);
 
     const addSource = useCallback(async (name) => {
         try {

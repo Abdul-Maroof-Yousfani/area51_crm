@@ -4,50 +4,50 @@ import { getIO } from '../util/socket.js';
 
 // Validation schemas
 const leadSchema = Joi.object({
-    title: Joi.string().max(200).allow('', null),
-    amount: Joi.number().min(0).default(0),
-    status: Joi.string().valid('New', 'Contacted', 'Qualified', 'Site Visit Scheduled', 'Quoted', 'Negotiating', 'Booked', 'Lost').default('New'),
-    probability: Joi.number().min(0).max(100).default(0),
-    expectedCloseDate: Joi.date().iso().allow(null),
+    title: Joi.string().allow('', null),
+    amount: Joi.number().allow(null).default(0),
+    status: Joi.string().allow('', null).default('New'),
+    probability: Joi.number().allow(null).default(0),
+    expectedCloseDate: Joi.date().allow(null),
     notes: Joi.string().allow('', null),
     contactId: Joi.number().required(),
     sourceId: Joi.number().allow(null),
     assignedTo: Joi.number().allow(null),
     // Booking/Event fields
-    guests: Joi.number().integer().min(0).allow(null),
-    venue: Joi.string().max(200).allow('', null),
-    eventType: Joi.string().max(100).allow('', null),
-    eventDate: Joi.date().iso().allow(null),
-    finalAmount: Joi.number().min(0).allow(null),
-    advanceAmount: Joi.number().min(0).allow(null),
+    guests: Joi.number().allow(null),
+    venue: Joi.string().allow('', null),
+    eventType: Joi.string().allow('', null),
+    eventDate: Joi.date().allow(null),
+    finalAmount: Joi.number().allow(null),
+    advanceAmount: Joi.number().allow(null),
     // Site visit fields
-    siteVisitDate: Joi.date().iso().allow(null),
-    siteVisitTime: Joi.string().max(50).allow('', null)
+    siteVisitDate: Joi.date().allow(null),
+    siteVisitTime: Joi.string().allow('', null)
 });
 
 const updateLeadSchema = Joi.object({
-    title: Joi.string().max(200).allow('', null),
-    amount: Joi.number().min(0),
-    status: Joi.string().valid('New', 'Contacted', 'Qualified', 'Site Visit Scheduled', 'Quoted', 'Negotiating', 'Booked', 'Lost'),
-    probability: Joi.number().min(0).max(100),
-    expectedCloseDate: Joi.date().iso().allow(null),
+    title: Joi.string().allow('', null),
+    amount: Joi.number().allow(null),
+    status: Joi.string().allow('', null),
+    probability: Joi.number().allow(null),
+    expectedCloseDate: Joi.date().allow(null),
     notes: Joi.string().allow('', null),
     contactId: Joi.number(),
     sourceId: Joi.number().allow(null),
     assignedTo: Joi.number().allow(null),
     // Booking/Event fields
-    guests: Joi.number().integer().min(0).allow(null),
-    venue: Joi.string().max(200).allow('', null),
-    eventType: Joi.string().max(100).allow('', null),
-    eventDate: Joi.date().iso().allow(null),
-    finalAmount: Joi.number().min(0).allow(null),
-    advanceAmount: Joi.number().min(0).allow(null),
+    guests: Joi.number().allow(null),
+    venue: Joi.string().allow('', null),
+    eventType: Joi.string().allow('', null),
+    eventDate: Joi.date().allow(null),
+    finalAmount: Joi.number().allow(null),
+    advanceAmount: Joi.number().allow(null),
     // Site visit fields
-    siteVisitDate: Joi.date().iso().allow(null),
-    siteVisitTime: Joi.string().max(50).allow('', null),
+    siteVisitDate: Joi.date().allow(null),
+    siteVisitTime: Joi.string().allow('', null),
     // Booking Details
     bookingNotes: Joi.string().allow('', null),
-    bookedAt: Joi.date().iso().allow(null),
+    bookedAt: Joi.date().allow(null),
     bookedBy: Joi.string().allow('', null)
 }).min(1).unknown(true); // Allow unknown fields from frontend
 
@@ -388,6 +388,143 @@ export const deletePayment = async (req, res) => {
         return res.status(200).json({ status: true, message: 'Payment deleted successfully' });
     } catch (error) {
         console.error('Delete Payment Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// Import leads from CSV (Bulk)
+export const importLeads = async (req, res) => {
+    try {
+        const { leads } = req.body; // Expecting an array of lead objects
+        if (!Array.isArray(leads) || leads.length === 0) {
+            return res.status(400).json({ status: false, message: 'Invalid or empty leads data' });
+        }
+
+        let successCount = 0;
+        let failedCount = 0;
+        const errors = [];
+        const results = [];
+
+        // Process leads sequentially to handle potential race conditions with contact creation
+        for (const leadData of leads) {
+            try {
+                // 1. Resolve/Create Contact
+                let contactId = leadData.contactId;
+
+                // If no contactId provided, try to find or create based on phone/name
+                if (!contactId) {
+                    const phone = leadData.phone ? String(leadData.phone).trim() : null;
+                    const name = leadData.clientName || leadData.title || 'Unknown Client';
+
+                    // Try finding by phone first if available
+                    let existingContact = null;
+                    if (phone) {
+                        existingContact = await prisma.contact.findUnique({
+                            where: { phone }
+                        });
+                    }
+
+                    if (existingContact) {
+                        contactId = existingContact.id;
+                    } else {
+                        // Create new contact
+                        // Check if email is provided and unique, otherwise ignore email to avoid unique constraint error
+                        let email = leadData.email || null;
+                        if (email) {
+                            const existingEmail = await prisma.contact.findUnique({ where: { email } });
+                            if (existingEmail) email = null; // Don't use duplicate email
+                        }
+
+                        // Split name
+                        const parts = name.split(' ');
+                        const firstName = parts[0];
+                        const lastName = parts.slice(1).join(' ') || '';
+
+                        const newContact = await prisma.contact.create({
+                            data: {
+                                firstName,
+                                lastName,
+                                phone: phone || `unknown-${Date.now()}-${Math.floor(Math.random() * 1000)}`, // Phone is unique required, generate dummy if missing
+                                email
+                            }
+                        });
+                        contactId = newContact.id;
+                    }
+                }
+
+                if (!contactId) {
+                    throw new Error('Could not identify or create contact');
+                }
+
+                // 2. Resolve Source
+                let sourceId = leadData.sourceId;
+                if (!sourceId && leadData.source) {
+                    const sourceName = leadData.source;
+                    const source = await prisma.sources.findFirst({
+                        where: { name: { equals: sourceName, mode: 'insensitive' } }
+                    });
+
+                    if (source) {
+                        sourceId = source.id;
+                    } else {
+                        // Optionally create source? For now, leave null if not found
+                    }
+                }
+
+                // 3. Resolve Manager (AssignedTo)
+                let assignedTo = leadData.assignedTo;
+                if (!assignedTo && leadData.manager) {
+                    const managerName = leadData.manager;
+                    const user = await prisma.user.findFirst({
+                        where: { username: { equals: managerName, mode: 'insensitive' } }
+                    });
+                    if (user) assignedTo = user.id;
+                }
+
+                // 4. Create Lead
+                const newLead = await prisma.lead.create({
+                    data: {
+                        title: leadData.title || leadData.clientName || 'New Imported Lead',
+                        amount: leadData.amount ? parseFloat(leadData.amount) : 0,
+                        status: leadData.status || 'New',
+                        notes: leadData.notes || '',
+                        contactId: contactId,
+                        sourceId: sourceId, // Can be null
+                        assignedTo: assignedTo, // Can be null
+
+                        // Event details
+                        eventType: leadData.eventType || null,
+                        eventDate: leadData.eventDate ? new Date(leadData.eventDate) : null,
+                        venue: leadData.venue || null,
+                        guests: leadData.guests ? parseInt(leadData.guests) : null,
+
+                        // Timestamps
+                        createdAt: leadData.inquiryDate ? new Date(leadData.inquiryDate) : new Date()
+                    }
+                });
+
+                successCount++;
+                results.push({ status: 'success', id: newLead.id, title: newLead.title });
+
+            } catch (err) {
+                console.error('Import error for row:', leadData, err);
+                failedCount++;
+                errors.push({
+                    row: leadData.clientName || 'Unknown',
+                    error: err.message
+                });
+                results.push({ status: 'failed', error: err.message });
+            }
+        }
+
+        return res.status(200).json({
+            status: true,
+            message: `Import processed. Success: ${successCount}, Failed: ${failedCount}`,
+            data: { successCount, failedCount, errors }
+        });
+
+    } catch (error) {
+        console.error('Import Leads Error:', error);
         return res.status(500).json({ status: false, message: 'Internal Server Error', error: error.message });
     }
 };

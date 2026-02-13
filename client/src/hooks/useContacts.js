@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { contactService } from '../services/api';
 
-export function useContacts() {
+export function useContacts({ enabled = true } = {}) {
     const [contacts, setContacts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(enabled); // Only load if enabled
     const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(false);
     const [nextCursor, setNextCursor] = useState(null);
@@ -73,8 +73,12 @@ export function useContacts() {
     }, []);
 
     useEffect(() => {
-        fetchAllContacts();
-    }, [fetchAllContacts]);
+        if (enabled) {
+            fetchAllContacts();
+        } else {
+            setLoading(false);
+        }
+    }, [fetchAllContacts, enabled]);
 
     const addContact = useCallback(async (contactData) => {
         try {

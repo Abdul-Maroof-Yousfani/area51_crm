@@ -362,5 +362,13 @@
   "autoGreetingNote": "Use {{name}} to insert the lead's first name",
   "autoGreetingPlaceholder": "Enter the automatic greeting message...",
   "autoGreetingMessageLabel": "Auto Greeting Message",
-  "quickTemplates": "Quick Templates"
+  "quickTemplates": "Quick Templates",
+  "dashboard": "Dashboard",
+  "salesView": "Sales View",
+  "conversations": "Conversations",
+  "finance": "Finance",
+  "contacts": "Contacts",
+  "sources": "Sources",
+  "aiAudit": "AI Audit",
+  "myLeads": "My Leads"
 }

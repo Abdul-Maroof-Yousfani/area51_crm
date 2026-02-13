@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import prisma from '../util/prisma.js';
 
-const JWT_SECRET = process.env.JWT_SECRET 
+const JWT_SECRET = process.env.JWT_SECRET
 
 export const isAuthenticated = async (req, res, next) => {
     try {
@@ -21,7 +21,18 @@ export const isAuthenticated = async (req, res, next) => {
         }
 
         // Verify token
-        const decoded = jwt.verify(token, JWT_SECRET);
+        let decoded;
+        try {
+            decoded = jwt.verify(token, JWT_SECRET);
+        } catch (err) {
+            if (err.name === 'TokenExpiredError') {
+                return res.status(401).json({ status: false, message: 'Token expired', code: 'TOKEN_EXPIRED' });
+            }
+            if (err.name === 'JsonWebTokenError') {
+                return res.status(401).json({ status: false, message: 'Invalid token', code: 'INVALID_TOKEN' });
+            }
+            throw err;
+        }
 
         // Check if session is valid in DB
         const session = await prisma.sessions.findUnique({
@@ -39,6 +50,6 @@ export const isAuthenticated = async (req, res, next) => {
 
     } catch (error) {
         console.error('Auth Middleware Error:', error);
-        return res.status(401).json({ status: false, message: 'Not authorized, token failed' });
+        return res.status(500).json({ status: false, message: 'Server Error during authentication' });
     }
 };

@@ -21,29 +21,13 @@ import {
   MessageSquare,
   Bot,
   Bell,
-  Send,
   Search,
   Settings,
   Calendar,
   Edit2
 } from 'lucide-react';
-import {
-  collection,
-  doc,
-  setDoc,
-  deleteDoc,
-  getDocs,
-  onSnapshot,
-  writeBatch,
-  serverTimestamp,
-  query,
-  limit
-} from 'firebase/firestore';
-import { db, appId, functions, auth } from '../../lib/firebase';
-import { httpsCallable } from 'firebase/functions';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { normalizePakPhone } from '../../utils/helpers';
 import { ROLES, MANAGERS, EVENT_TYPES } from '../../lib/constants';
+import { userService, settingsService, maintenanceService, sourcesService } from '../../services/api';
 
 export default function AdminPanel({ onClose }) {
   const [users, setUsers] = useState([]);
@@ -63,92 +47,72 @@ export default function AdminPanel({ onClose }) {
   const [automationRules, setAutomationRules] = useState({});
   const [automationSearch, setAutomationSearch] = useState('');
   const [showSettings, setShowSettings] = useState(false);
-  const [managers, setManagers] = useState([]);
+  // const [managers, setManagers] = useState([]); // Deprecated
   const [eventTypes, setEventTypes] = useState([]);
   const [newManager, setNewManager] = useState('');
   const [newEventType, setNewEventType] = useState('');
   const [editingManager, setEditingManager] = useState(null);
   const [editingEventType, setEditingEventType] = useState(null);
 
+  // Load Users
   useEffect(() => {
-    const q = collection(db, 'artifacts', appId, 'public', 'data', 'allowed_users');
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        setUsers(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
-      },
-      (err) => console.error('Error fetching users', err)
-    );
-    return () => unsubscribe();
+    loadUsers();
   }, []);
 
-  // Load sources for assignment rules
-  useEffect(() => {
-    const q = collection(db, 'artifacts', appId, 'public', 'data', 'lead_sources');
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setSources(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
-    });
-    return () => unsubscribe();
-  }, []);
+  const loadUsers = async () => {
+    try {
+      const data = await userService.getAll();
+      setUsers(data);
+    } catch (err) {
+      console.error('Error fetching users', err);
+    }
+  };
 
-  // Load assignment config
+  // Load Sources
   useEffect(() => {
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'assignment_rules');
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setAssignmentConfig(docSnap.data());
+    const loadSources = async () => {
+      try {
+        const data = await sourcesService.getAll();
+        setSources(data);
+      } catch (err) {
+        console.error('Error fetching sources', err);
       }
-    });
-    return () => unsubscribe();
+    };
+    loadSources();
   }, []);
 
-  // Load automation rules
+  // Load Settings
   useEffect(() => {
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'automation_rules');
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setAutomationRules(docSnap.data());
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+    const loadSettings = async () => {
+      try {
+        const [assignRules, autoRules, evts] = await Promise.all([
+          settingsService.get('assignment_rules'),
+          settingsService.get('automation_rules'),
+          // settingsService.get('managers'), // Deprecated
+          settingsService.get('event_types')
+        ]);
 
-  // Load managers from Firestore (fallback to constants if not set)
-  useEffect(() => {
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'managers');
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists() && docSnap.data().list?.length > 0) {
-        setManagers(docSnap.data().list);
-      } else {
-        setManagers(MANAGERS);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+        if (assignRules) setAssignmentConfig(assignRules);
+        if (autoRules) setAutomationRules(autoRules);
 
-  // Load event types from Firestore (fallback to constants if not set)
-  useEffect(() => {
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'event_types');
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists() && docSnap.data().list?.length > 0) {
-        setEventTypes(docSnap.data().list);
-      } else {
+        if (evts && evts.list && evts.list.length > 0) {
+          setEventTypes(evts.list);
+        } else {
+          setEventTypes(EVENT_TYPES);
+        }
+      } catch (err) {
+        console.error('Error loading settings', err);
+        // Fallbacks
         setEventTypes(EVENT_TYPES);
       }
-    });
-    return () => unsubscribe();
+    };
+    loadSettings();
   }, []);
 
   const handleSaveAssignmentRules = async () => {
     setLoading(true);
     try {
-      await setDoc(
-        doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'assignment_rules'),
-        {
-          ...assignmentConfig,
-          updatedAt: serverTimestamp()
-        }
-      );
+      await settingsService.update('assignment_rules', assignmentConfig);
       alert('Assignment rules saved!');
     } catch (error) {
       console.error(error);
@@ -161,7 +125,7 @@ export default function AdminPanel({ onClose }) {
   const addSourceRule = () => {
     setAssignmentConfig((prev) => ({
       ...prev,
-      sourceRules: [...(prev.sourceRules || []), { source: '', assignTo: MANAGERS[0] }]
+      sourceRules: [...(prev.sourceRules || []), { source: '', assignTo: users[0]?.username || '' }]
     }));
   };
 
@@ -206,13 +170,7 @@ export default function AdminPanel({ onClose }) {
   const handleSaveAutomationRules = async () => {
     setLoading(true);
     try {
-      await setDoc(
-        doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'automation_rules'),
-        {
-          ...automationRules,
-          updatedAt: serverTimestamp()
-        }
-      );
+      await settingsService.update('automation_rules', automationRules);
       alert('Automation rules saved!');
     } catch (error) {
       console.error(error);
@@ -223,6 +181,15 @@ export default function AdminPanel({ onClose }) {
   };
 
   // Manager CRUD
+  const saveManagers = async (newList) => {
+    try {
+      await settingsService.update('managers', { list: newList });
+    } catch (err) {
+      console.error('Failed to save managers', err);
+      alert('Failed to save managers list to server');
+    }
+  };
+
   const handleAddManager = async () => {
     if (!newManager.trim()) return;
     if (managers.includes(newManager.trim())) {
@@ -230,20 +197,16 @@ export default function AdminPanel({ onClose }) {
       return;
     }
     const updated = [...managers, newManager.trim()];
-    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'managers'), {
-      list: updated,
-      updatedAt: serverTimestamp()
-    });
+    setManagers(updated);
+    await saveManagers(updated);
     setNewManager('');
   };
 
   const handleUpdateManager = async (oldName, newName) => {
     if (!newName.trim()) return;
     const updated = managers.map(m => m === oldName ? newName.trim() : m);
-    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'managers'), {
-      list: updated,
-      updatedAt: serverTimestamp()
-    });
+    setManagers(updated);
+    await saveManagers(updated);
     setEditingManager(null);
   };
 
@@ -254,13 +217,20 @@ export default function AdminPanel({ onClose }) {
     }
     if (!window.confirm(`Delete manager "${name}"?`)) return;
     const updated = managers.filter(m => m !== name);
-    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'managers'), {
-      list: updated,
-      updatedAt: serverTimestamp()
-    });
+    setManagers(updated);
+    await saveManagers(updated);
   };
 
   // Event Type CRUD
+  const saveEventTypes = async (newList) => {
+    try {
+      await settingsService.update('event_types', { list: newList });
+    } catch (err) {
+      console.error('Failed to save event types', err);
+      alert('Failed to save event types to server');
+    }
+  };
+
   const handleAddEventType = async () => {
     if (!newEventType.trim()) return;
     if (eventTypes.includes(newEventType.trim())) {
@@ -268,30 +238,24 @@ export default function AdminPanel({ onClose }) {
       return;
     }
     const updated = [...eventTypes, newEventType.trim()];
-    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'event_types'), {
-      list: updated,
-      updatedAt: serverTimestamp()
-    });
+    setEventTypes(updated);
+    await saveEventTypes(updated);
     setNewEventType('');
   };
 
   const handleUpdateEventType = async (oldName, newName) => {
     if (!newName.trim()) return;
     const updated = eventTypes.map(e => e === oldName ? newName.trim() : e);
-    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'event_types'), {
-      list: updated,
-      updatedAt: serverTimestamp()
-    });
+    setEventTypes(updated);
+    await saveEventTypes(updated);
     setEditingEventType(null);
   };
 
   const handleDeleteEventType = async (name) => {
     if (!window.confirm(`Delete event type "${name}"?`)) return;
     const updated = eventTypes.filter(e => e !== name);
-    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'app_settings', 'event_types'), {
-      list: updated,
-      updatedAt: serverTimestamp()
-    });
+    setEventTypes(updated);
+    await saveEventTypes(updated);
   };
 
   const handleAddUser = async (e) => {
@@ -299,85 +263,55 @@ export default function AdminPanel({ onClose }) {
     if (!newUserEmail.trim() || !newUserName.trim()) return;
     setLoading(true);
     try {
-      // Call cloud function to create user and send invite email
-      const inviteUser = httpsCallable(functions, 'inviteUser');
-      const result = await inviteUser({
+      const result = await userService.invite({
         email: newUserEmail,
         name: newUserName,
         role: newUserRole
       });
 
-      if (result.data.success) {
-        const savedEmail = newUserEmail;
-        const savedName = newUserName;
+      if (result.status) {
+        const { tempPassword, resetLink } = result.data;
 
-        // Now send the password reset email using Firebase Auth (this actually sends the email!)
-        try {
-          await sendPasswordResetEmail(auth, savedEmail, {
-            url: 'https://area-51-crm.web.app',
-            handleCodeInApp: false
-          });
+        // In a real app with email service, we'd say "Email sent".
+        // Here we simulate the "copy link" flow since we don't have a realemailer yet.
+        const copyLink = window.confirm(
+          `✅ User ${newUserName} has been added!\n\n` +
+          `Temporary Password: ${tempPassword}\n` +
+          `Reset Link: ${resetLink}\n\n` +
+          `Click OK to copy the link to clipboard.`
+        );
 
-          setNewUserEmail('');
-          setNewUserName('');
-          alert(`✅ Invite sent!\n\n${savedName} will receive an email at ${savedEmail} to set their password.`);
-        } catch (emailError) {
-          console.error('Email send error:', emailError);
-          // User was created but email failed - offer to copy the link
-          setNewUserEmail('');
-          setNewUserName('');
-
-          const copyLink = window.confirm(
-            `✅ User ${savedName} has been added!\n\n` +
-            `⚠️ Could not send email automatically. Copy the password reset link to share manually?\n\n` +
-            `(Click OK to copy the link)`
-          );
-          if (copyLink && result.data.resetLink) {
-            try {
-              await navigator.clipboard.writeText(result.data.resetLink);
-              alert('Password reset link copied to clipboard!');
-            } catch {
-              prompt('Copy this password reset link:', result.data.resetLink);
-            }
+        if (copyLink) {
+          try {
+            await navigator.clipboard.writeText(resetLink);
+            alert('Link copied!');
+          } catch {
+            prompt('Copy this link:', resetLink);
           }
         }
+
+        setNewUserEmail('');
+        setNewUserName('');
+        loadUsers(); // Refresh list
       } else {
-        throw new Error(result.data.message || 'Failed to invite user');
+        throw new Error(result.message || 'Failed to invite user');
       }
     } catch (error) {
       console.error(error);
-      // Fallback to just adding to allowlist if function fails
-      if (error.code === 'functions/not-found' || error.code === 'functions/unavailable') {
-        try {
-          await setDoc(
-            doc(db, 'artifacts', appId, 'public', 'data', 'allowed_users', newUserEmail),
-            {
-              email: newUserEmail,
-              name: newUserName,
-              role: newUserRole,
-              addedAt: serverTimestamp()
-            }
-          );
-          setNewUserEmail('');
-          setNewUserName('');
-          alert(`User added! They need to register manually at the login page with ${newUserEmail}.`);
-        } catch (fallbackError) {
-          alert('Failed to add user: ' + fallbackError.message);
-        }
-      } else {
-        alert('Failed to invite user: ' + (error.message || 'Unknown error'));
-      }
+      alert('Failed to invite user: ' + (error.message || 'Unknown error'));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRemoveUser = async (email) => {
-    if (!window.confirm(`Revoke access for ${email}?`)) return;
+  const handleRemoveUser = async (id) => {
+    if (!window.confirm(`Revoke access for this user?`)) return;
     try {
-      await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'allowed_users', email));
+      await userService.delete(id);
+      loadUsers(); // Refresh list
     } catch (error) {
       console.error(error);
+      alert('Failed to remove user');
     }
   };
 
@@ -386,14 +320,7 @@ export default function AdminPanel({ onClose }) {
       return;
     setResetting(true);
     try {
-      const leadsRef = collection(db, 'artifacts', appId, 'public', 'data', 'leads');
-      while (true) {
-        const snapshot = await getDocs(query(leadsRef, limit(400)));
-        if (snapshot.size === 0) break;
-        const batch = writeBatch(db);
-        snapshot.docs.forEach((doc) => batch.delete(doc.ref));
-        await batch.commit();
-      }
+      await maintenanceService.resetDatabase();
       alert('Database cleared successfully.');
       window.location.reload();
     } catch (err) {
@@ -405,71 +332,11 @@ export default function AdminPanel({ onClose }) {
   };
 
   const handleMigrateContacts = async () => {
-    if (!window.confirm('This will create contacts from existing leads. Continue?')) return;
+    if (!window.confirm('This will ensure all leads have linked contacts. Continue?')) return;
     setLoading(true);
     try {
-      const leadsRef = collection(db, 'artifacts', appId, 'public', 'data', 'leads');
-      const contactsRef = collection(db, 'artifacts', appId, 'public', 'data', 'contacts');
-
-      const leadsSnap = await getDocs(leadsRef);
-      const contactsSnap = await getDocs(contactsRef);
-
-      const existingContacts = new Map();
-      contactsSnap.forEach((doc) => {
-        const data = doc.data();
-        if (data.phone) existingContacts.set(data.phone, doc.id);
-      });
-
-      let batch = writeBatch(db);
-      let opsCount = 0;
-      let createdCount = 0;
-      let updatedCount = 0;
-
-      for (const leadDoc of leadsSnap.docs) {
-        const lead = leadDoc.data();
-        if (lead.contactId) continue;
-
-        const phone = normalizePakPhone(lead.phone);
-        if (!phone) continue;
-
-        let contactId = existingContacts.get(phone);
-
-        if (!contactId) {
-          const newContactRef = doc(contactsRef);
-          contactId = newContactRef.id;
-
-          const nameParts = (lead.clientName || 'Unknown').split(' ');
-          const firstName = nameParts[0];
-          const lastName = nameParts.slice(1).join(' ');
-
-          batch.set(newContactRef, {
-            firstName,
-            lastName,
-            phone,
-            email: '',
-            createdAt: serverTimestamp()
-          });
-
-          existingContacts.set(phone, contactId);
-          createdCount++;
-          opsCount++;
-        }
-
-        batch.set(leadDoc.ref, { contactId: contactId, phone: phone }, { merge: true });
-        updatedCount++;
-        opsCount++;
-
-        if (opsCount >= 450) {
-          await batch.commit();
-          batch = writeBatch(db);
-          opsCount = 0;
-        }
-      }
-
-      if (opsCount > 0) await batch.commit();
-      alert(
-        `Migration Complete.\nCreated Contacts: ${createdCount}\nUpdated Leads: ${updatedCount}`
-      );
+      const result = await maintenanceService.migrateContacts();
+      alert(result.message);
       window.location.reload();
     } catch (e) {
       console.error(e);
@@ -482,41 +349,8 @@ export default function AdminPanel({ onClose }) {
   const handleConsolidateSources = async () => {
     setLoading(true);
     try {
-      const leadsRef = collection(db, 'artifacts', appId, 'public', 'data', 'leads');
-      const sourcesRef = collection(db, 'artifacts', appId, 'public', 'data', 'lead_sources');
-
-      const [leadsSnap, sourcesSnap] = await Promise.all([
-        getDocs(leadsRef),
-        getDocs(sourcesRef)
-      ]);
-
-      const existingSources = new Set(
-        sourcesSnap.docs.map((d) => d.data().name.toLowerCase().trim())
-      );
-      const newSources = new Set();
-
-      leadsSnap.docs.forEach((doc) => {
-        const s = doc.data().source;
-        if (s && typeof s === 'string') {
-          const clean = s.trim();
-          if (clean && !existingSources.has(clean.toLowerCase())) {
-            newSources.add(clean);
-            existingSources.add(clean.toLowerCase());
-          }
-        }
-      });
-
-      if (newSources.size === 0) {
-        alert('All sources are already consolidated.');
-      } else {
-        const batch = writeBatch(db);
-        newSources.forEach((src) => {
-          const newDocRef = doc(sourcesRef);
-          batch.set(newDocRef, { name: src, createdAt: serverTimestamp() });
-        });
-        await batch.commit();
-        alert(`Successfully consolidated ${newSources.size} new sources from leads.`);
-      }
+      const result = await maintenanceService.consolidateSources();
+      alert(result.message);
     } catch (e) {
       console.error(e);
       alert('Consolidation failed: ' + e.message);
@@ -583,7 +417,7 @@ export default function AdminPanel({ onClose }) {
               </div>
             </form>
             <p className="text-xs text-gray-500 mt-2">
-              📧 User will receive an email to set their password and access the CRM.
+              📧 User will receive a temporary password/link to access the CRM.
             </p>
           </div>
 
@@ -646,9 +480,10 @@ export default function AdminPanel({ onClose }) {
                       }
                       className="w-full px-3 py-2 border rounded-lg text-sm"
                     >
-                      {MANAGERS.filter((m) => m !== 'Unassigned').map((m) => (
-                        <option key={m} value={m}>
-                          {m}
+                      <option value="">Select User...</option>
+                      {users.map((u) => (
+                        <option key={u.id} value={u.username}>
+                          {u.username || u.email}
                         </option>
                       ))}
                     </select>
@@ -675,9 +510,6 @@ export default function AdminPanel({ onClose }) {
                                 {s.name}
                               </option>
                             ))}
-                            <option value="Meta Lead Gen">Meta Lead Gen</option>
-                            <option value="WhatsApp Inbound">WhatsApp Inbound</option>
-                            <option value="Walk-in">Walk-in</option>
                           </select>
                           <span className="text-gray-400">→</span>
                           <select
@@ -685,9 +517,10 @@ export default function AdminPanel({ onClose }) {
                             onChange={(e) => updateSourceRule(idx, 'assignTo', e.target.value)}
                             className="flex-1 px-3 py-2 border rounded-lg text-sm"
                           >
-                            {MANAGERS.filter((m) => m !== 'Unassigned').map((m) => (
-                              <option key={m} value={m}>
-                                {m}
+                            <option value="">Select User...</option>
+                            {users.map((u) => (
+                              <option key={u.id} value={u.username}>
+                                {u.username || u.email}
                               </option>
                             ))}
                           </select>
@@ -727,9 +560,9 @@ export default function AdminPanel({ onClose }) {
                     >
                       <option value="round_robin">Use Round Robin</option>
                       <option value="unassigned">Leave Unassigned</option>
-                      {MANAGERS.filter((m) => m !== 'Unassigned').map((m) => (
-                        <option key={m} value={m}>
-                          Always assign to {m}
+                      {users.map((u) => (
+                        <option key={u.id} value={u.username}>
+                          Always assign to {u.username || u.email}
                         </option>
                       ))}
                     </select>
@@ -948,7 +781,7 @@ export default function AdminPanel({ onClose }) {
                 <Settings className="w-4 h-4 text-emerald-600" />
                 <h3 className="text-sm font-bold text-emerald-800">Settings</h3>
                 <span className="text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
-                  Managers & Event Types
+                  Event Types & System
                 </span>
               </div>
               {showSettings ? (
@@ -960,64 +793,24 @@ export default function AdminPanel({ onClose }) {
 
             {showSettings && (
               <div className="px-5 pb-5 space-y-6">
-                {/* Managers Section */}
+
+                {/* Managers Section - REPLACED WIH INFO */}
                 <div>
                   <div className="flex items-center gap-2 mb-3">
                     <Users className="w-4 h-4 text-emerald-600" />
                     <h4 className="text-sm font-bold text-emerald-800">Managers / Sales Team</h4>
                   </div>
-                  <div className="bg-white rounded-lg border p-4 space-y-2">
-                    {managers.map((manager) => (
-                      <div key={manager} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                        {editingManager === manager ? (
-                          <input
-                            type="text"
-                            defaultValue={manager}
-                            autoFocus
-                            onBlur={(e) => handleUpdateManager(manager, e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') handleUpdateManager(manager, e.target.value);
-                              if (e.key === 'Escape') setEditingManager(null);
-                            }}
-                            className="flex-1 px-2 py-1 border rounded text-sm"
-                          />
-                        ) : (
-                          <span className="text-sm text-gray-700">{manager}</span>
-                        )}
-                        <div className="flex gap-1">
-                          <button
-                            onClick={() => setEditingManager(manager)}
-                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
-                            title="Edit"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteManager(manager)}
-                            className="p-1.5 text-red-600 hover:bg-red-50 rounded"
-                            title="Delete"
-                            disabled={manager === 'Unassigned'}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                    <div className="flex gap-2 mt-3">
-                      <input
-                        type="text"
-                        placeholder="New manager name..."
-                        value={newManager}
-                        onChange={(e) => setNewManager(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleAddManager()}
-                        className="flex-1 px-3 py-2 border rounded-lg text-sm"
-                      />
-                      <button
-                        onClick={handleAddManager}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium flex items-center gap-1"
-                      >
-                        <Plus className="w-4 h-4" /> Add
-                      </button>
+                  <div className="bg-white p-4 rounded-lg border text-sm text-gray-600">
+                    <p>
+                      The sales team is now automatically managed based on the <strong>Invited Users</strong>.
+                      To add or remove team members, use the "Invite Team Member" section at the top.
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {users.map(u => (
+                        <span key={u.id} className="px-2 py-1 bg-gray-100 rounded text-xs border border-gray-200">
+                          {u.username || u.name}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -1134,7 +927,7 @@ export default function AdminPanel({ onClose }) {
               <tbody className="divide-y divide-gray-100">
                 {users.map((u) => (
                   <tr key={u.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-3 font-medium">{u.name}</td>
+                    <td className="px-6 py-3 font-medium">{u.username || u.name}</td>
                     <td className="px-6 py-3 text-gray-500">{u.email}</td>
                     <td className="px-6 py-3">
                       <span

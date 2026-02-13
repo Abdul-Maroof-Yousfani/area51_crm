@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { userService } from '../services/api';
 
-export function useUsers() {
+export function useUsers({ enabled = true } = {}) {
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(enabled);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -20,8 +20,12 @@ export function useUsers() {
             }
         };
 
-        fetchUsers();
-    }, []);
+        if (enabled) {
+            fetchUsers();
+        } else {
+            setLoading(false);
+        }
+    }, [enabled]);
 
     return { users, loading, error };
 }

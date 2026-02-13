@@ -668,7 +668,7 @@ export default function LeadDetailModal({
                       <input
                         type="number"
                         className="w-full p-2 border rounded-lg text-sm mt-1"
-                        value={formData.guests}
+                        value={formData.guests || ''}
                         onChange={(e) =>
                           setFormData({ ...formData, guests: e.target.value })
                         }
@@ -678,7 +678,7 @@ export default function LeadDetailModal({
                       <label className="text-xs font-semibold text-gray-500">Budget</label>
                       <input
                         className="w-full p-2 border rounded-lg text-sm mt-1"
-                        value={formData.amount}
+                        value={formData.amount || ''}
                         onChange={(e) =>
                           setFormData({ ...formData, amount: Number(e.target.value) })
                         }
@@ -689,11 +689,12 @@ export default function LeadDetailModal({
                       <label className="text-xs font-semibold text-gray-500">Manager</label>
                       <select
                         className="w-full p-2 border rounded-lg text-sm mt-1 bg-white"
-                        value={formData.manager}
+                        value={formData.manager || ''}
                         onChange={(e) =>
                           setFormData({ ...formData, manager: e.target.value })
                         }
                       >
+                        <option value="">Select Manager</option>
                         {(managers || MANAGERS).map((m, i) => (
                           <option key={`${m}-${i}`} value={m}>
                             {m}
@@ -845,7 +846,7 @@ export default function LeadDetailModal({
                   </h3>
                   <textarea
                     className="w-full p-3 border rounded-lg text-sm h-32"
-                    value={formData.notes}
+                    value={formData.notes || ''}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   />
                 </div>

@@ -362,5 +362,13 @@
   "autoGreetingNote": "{{name}} استعمال کریں لیڈ کا پہلا نام شامل کرنے کیلئے",
   "autoGreetingPlaceholder": "خودکار گریٹنگ پیغام درج کریں...",
   "autoGreetingMessageLabel": "آٹو گریٹنگ میسج",
-  "quickTemplates": "کوئیک ٹیمپلیٹس"
+  "quickTemplates": "کوئیک ٹیمپلیٹس",
+  "dashboard": "ڈیش بورڈ",
+  "salesView": "سیلز ویو",
+  "conversations": "گفتگو",
+  "finance": "فنانس",
+  "contacts": "رابطے",
+  "sources": "ذرائع",
+  "aiAudit": "AI آڈٹ",
+  "myLeads": "میرے لیڈز"
 }

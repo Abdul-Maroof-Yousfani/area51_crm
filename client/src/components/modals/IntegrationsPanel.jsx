@@ -12,6 +12,7 @@ import {
 } from '../../utils/googleCalendar';
 import { doc, setDoc, getDoc, collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, appId } from '../../lib/firebase';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 // Hard-coded integration source names (must match functions/index.js)
 const INTEGRATION_SOURCES = {
@@ -20,6 +21,7 @@ const INTEGRATION_SOURCES = {
 };
 
 export default function IntegrationsPanel({ onClose }) {
+  const { t } = useLanguage();
   const [config, setConfig] = useState({
     // Facebook/Meta Lead Gen
     fbAccessToken: '',

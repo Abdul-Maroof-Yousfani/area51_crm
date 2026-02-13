@@ -70,7 +70,7 @@ export default function App() {
   const { eventTypes } = useAppSettings();
 
   // Users from API (for managers list)
-  const { users: apiUsers } = useUsers();
+  const { users: apiUsers } = useUsers({ enabled: !!user });
   const managerNames = (apiUsers || []).map(u => u.username);
 
   // Contacts from API
@@ -81,7 +81,7 @@ export default function App() {
     updateContact,
     deleteContact,
     deleteAllContacts
-  } = useContacts();
+  } = useContacts({ enabled: !!user });
 
   // Sources from API
   const {
@@ -89,7 +89,7 @@ export default function App() {
     addSource,
     updateSource,
     deleteSource
-  } = useSources();
+  } = useSources({ enabled: !!user });
 
   // Leads from API
   const {
@@ -102,7 +102,7 @@ export default function App() {
     deleteLead,
     deleteAllLeads,
     addLeadNote
-  } = useLeads();
+  } = useLeads({ enabled: !!user });
 
   // Notifications
   const {

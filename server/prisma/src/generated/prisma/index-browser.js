@@ -218,9 +218,19 @@ exports.Prisma.NotificationScalarFieldEnum = {
   assignedTo: 'assignedTo'
 };
 
+exports.Prisma.AppSettingScalarFieldEnum = {
+  key: 'key',
+  value: 'value',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -231,6 +241,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.Role = exports.$Enums.Role = {
   Admin: 'Admin',
@@ -247,7 +263,8 @@ exports.Prisma.ModelName = {
   Payment: 'Payment',
   LeadActivity: 'LeadActivity',
   Sources: 'Sources',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  AppSetting: 'AppSetting'
 };
 
 /**

@@ -19,27 +19,28 @@ import {
 } from 'lucide-react';
 
 // Navigation items by role
-const getNavItems = (role) => {
+// Navigation items by role
+const getNavItems = (role, t) => {
   const ownerItems = [
-    { id: 'owner-dashboard', path: '/', label: 'Dashboard', icon: BarChart3, description: 'Analytics & KPIs' },
-    { id: 'leads', path: '/leads', label: 'All Leads', icon: Users, description: 'Manage leads' },
-    { id: 'employee', path: '/employee', label: 'Sales View', icon: MessageSquare, description: 'Employee interface' },
-    { id: 'call-list', path: '/call-list', label: 'Call List', icon: PhoneCall, description: 'Scheduled calls' },
-    { id: 'conversation-logs', path: '/conversation-logs', label: 'Conversations', icon: MessageCircle, description: 'WhatsApp history' },
-    { id: 'finance', path: '/finance', label: 'Finance', icon: CreditCard, description: 'Payments & invoicing' },
-    { id: 'contacts', path: '/contacts', label: 'Contacts', icon: Contact, description: 'Contact directory' },
-    { id: 'sources', path: '/sources', label: 'Sources', icon: Globe, description: 'Lead sources' },
-    { id: 'audit-logs', path: '/audit-logs', label: 'AI Audit', icon: Brain, description: 'AI interaction logs' }
+    { id: 'owner-dashboard', path: '/', label: t('dashboard'), icon: BarChart3, description: 'Analytics & KPIs' },
+    { id: 'leads', path: '/leads', label: t('allLeads'), icon: Users, description: 'Manage leads' },
+    { id: 'employee', path: '/employee', label: t('salesView'), icon: MessageSquare, description: 'Employee interface' },
+    { id: 'call-list', path: '/call-list', label: t('callList'), icon: PhoneCall, description: 'Scheduled calls' },
+    { id: 'conversation-logs', path: '/conversation-logs', label: t('conversations'), icon: MessageCircle, description: 'WhatsApp history' },
+    { id: 'finance', path: '/finance', label: t('finance'), icon: CreditCard, description: 'Payments & invoicing' },
+    { id: 'contacts', path: '/contacts', label: t('contacts'), icon: Contact, description: 'Contact directory' },
+    { id: 'sources', path: '/sources', label: t('sources'), icon: Globe, description: 'Lead sources' },
+    { id: 'audit-logs', path: '/audit-logs', label: t('aiAudit'), icon: Brain, description: 'AI interaction logs' }
   ];
 
   const salesItems = [
-    { id: 'employee', path: '/employee', label: 'میرے لیڈز', icon: MessageSquare, description: 'My inbox' },
-    { id: 'call-list', path: '/call-list', label: 'کال لسٹ', icon: PhoneCall, description: 'Scheduled calls' },
-    { id: 'contacts', path: '/contacts', label: 'رابطے', icon: Contact, description: 'Contacts' }
+    { id: 'employee', path: '/employee', label: t('myLeads'), icon: MessageSquare, description: 'My inbox' },
+    { id: 'call-list', path: '/call-list', label: t('callList'), icon: PhoneCall, description: 'Scheduled calls' },
+    { id: 'contacts', path: '/contacts', label: t('contacts'), icon: Contact, description: 'Contacts' }
   ];
 
   const financeItems = [
-    { id: 'finance', path: '/finance', label: 'Finance', icon: CreditCard, description: 'Payments & invoicing' }
+    { id: 'finance', path: '/finance', label: t('finance'), icon: CreditCard, description: 'Payments & invoicing' }
   ];
 
   switch (role) {
@@ -55,6 +56,8 @@ const getNavItems = (role) => {
   }
 };
 
+import { useLanguage } from '../../contexts/LanguageContext';
+
 export default function RoleSidebar({
   activeTab, // Now unused/deprecated, keeping for prop compatibility if needed
   setActiveTab, // Now strictly for mobile menu closing if passed
@@ -65,7 +68,8 @@ export default function RoleSidebar({
   onShowMigration,
   isMobile = false
 }) {
-  const navItems = getNavItems(userRole);
+  const { t } = useLanguage();
+  const navItems = getNavItems(userRole, t);
   const isOwnerOrAdmin = ['Owner', 'Admin'].includes(userRole);
 
   const handleNavClick = () => {

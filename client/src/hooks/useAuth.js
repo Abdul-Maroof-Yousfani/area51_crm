@@ -29,6 +29,8 @@ export function useAuth() {
     setAuthLoading(false);
   }, []);
 
+
+
   const login = useCallback(async (email, password) => {
     setAuthLoading(true);
     setAuthError(null);
@@ -97,6 +99,18 @@ export function useAuth() {
       localStorage.removeItem('token');
     }
   }, []);
+
+  // Listen for unauthorized events (401)
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      logout();
+    };
+
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => {
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    };
+  }, [logout]);
 
   return {
     user,
