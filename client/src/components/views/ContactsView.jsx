@@ -18,7 +18,7 @@ export default function ContactsView({ contacts, loading, onAddContact, onUpdate
   const showModal = searchParams.get('modal') === 'new-contact';
 
   const selectedContactId = searchParams.get('contactId');
-  const isEditing = searchParams.get('modal') === 'edit-contact';
+  const isEditing = searchParams.get('modal') === 'edit-contact'
 
   const selectedContact = useMemo(() => {
     if (!isEditing || !selectedContactId) return null;

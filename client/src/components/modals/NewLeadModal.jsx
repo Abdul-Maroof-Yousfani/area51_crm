@@ -169,7 +169,7 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
                     value={formData.manager}
                     onChange={(e) => setFormData({ ...formData, manager: e.target.value })}
                   >
-                    {(managers || MANAGERS).map((m) => (
+                    {([...new Set(managers || MANAGERS)]).map((m) => (
                       <option key={m} value={m}>
                         {m}
                       </option>
@@ -222,7 +222,7 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
                   onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
                 >
                   <option value="">Select Event Type</option>
-                  {(eventTypes || EVENT_TYPES).map((et) => (
+                  {([...new Set(eventTypes || EVENT_TYPES)]).map((et) => (
                     <option key={et} value={et}>
                       {et}
                     </option>

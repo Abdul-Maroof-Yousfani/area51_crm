@@ -18,7 +18,7 @@ const fetchWithAuth = async (url, options = {}) => {
 
     const response = await fetch(url, config);
 
-    if (response.status === 401) {
+    if (response.status === 401 && !url.includes('/logout')) {
         window.dispatchEvent(new Event('auth:unauthorized'));
     }
 

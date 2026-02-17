@@ -23,6 +23,11 @@ export const getNotifications = async (req, res) => {
             query.OR.push({ assignedTo: role });
         }
 
+        // Allow Admin and Owner to see all "New Lead" notifications
+        if (role === 'Admin' || role === 'Owner') {
+            query.OR.push({ type: 'lead_assigned' });
+        }
+
         const notifications = await prisma.notification.findMany({
             where: query,
             take: Number(limit),

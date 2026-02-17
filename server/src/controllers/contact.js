@@ -22,7 +22,7 @@ const updateContactSchema = Joi.object({
 export const getContacts = async (req, res) => {
     try {
         const { cursor, limit = 100 } = req.query;
-        const take = Math.min(parseInt(limit) || 100, 100); // Max 100 per request
+        const take = Math.min(parseInt(limit) || 100, 1000); // Max 1000 per request
 
         // Build query conditions
         const whereCondition = cursor ? { id: { gt: parseInt(cursor) } } : {};

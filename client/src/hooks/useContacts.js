@@ -52,11 +52,17 @@ export function useContacts({ enabled = true } = {}) {
 
             while (hasMoreData) {
                 console.log('[useContacts] Fetching page, cursor:', cursor);
-                const result = await contactService.getAll(cursor, 100);
+                const result = await contactService.getAll(cursor, 1000); // Fetch in larger batches
                 console.log('[useContacts] Received result:', result);
                 allContacts = [...allContacts, ...result.data];
                 hasMoreData = result.pagination.hasMore;
                 cursor = result.pagination.nextCursor;
+
+                // Safety break
+                if (allContacts.length > 100000) {
+                    console.warn('[useContacts] Safety break: exceeding 100k contacts, stopping fetch.');
+                    break;
+                }
             }
 
             console.log('[useContacts] Total contacts fetched:', allContacts.length);

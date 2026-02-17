@@ -47,9 +47,8 @@ export default function NotificationBell({
   const dropdownRef = useRef(null);
 
   // Filter notifications for current user
-  const userNotifications = notifications.filter(
-    n => n.assignedTo === currentUser?.name || n.assignedTo === 'all' || !n.assignedTo
-  );
+  // API already filters for current user, so just use the list
+  const userNotifications = notifications;
 
   const unreadCount = userNotifications.filter(n => !n.read).length;
 
@@ -76,7 +75,7 @@ export default function NotificationBell({
   const handleMarkAllRead = (e) => {
     e.stopPropagation();
     onMarkAllRead?.();
-    setIsOpen(false);
+    // setIsOpen(false); // Keep open as per user request
   }
 
   return (
@@ -85,8 +84,8 @@ export default function NotificationBell({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`relative p-2 rounded-full transition-all ${isOpen
-            ? 'bg-blue-100 text-blue-600'
-            : 'hover:bg-gray-100 text-gray-600'
+          ? 'bg-blue-100 text-blue-600'
+          : 'hover:bg-gray-100 text-gray-600'
           }`}
       >
         <Bell className="w-5 h-5" />

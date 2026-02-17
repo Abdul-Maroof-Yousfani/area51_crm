@@ -76,7 +76,31 @@ export const newUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
-        await prisma.user.delete({ where: { id: parseInt(id) } });
+        const userId = parseInt(id);
+
+        await prisma.$transaction(async (tx) => {
+            // 1. Delete Sessions
+            await tx.sessions.deleteMany({ where: { user_id: userId } });
+
+            // 2. Delete Notifications
+            await tx.notification.deleteMany({ where: { userId: userId } });
+
+            // 3. Unassign Leads
+            await tx.lead.updateMany({
+                where: { assignedTo: userId },
+                data: { assignedTo: null }
+            });
+
+            // 4. Unassign Activities (keep history but remove link)
+            await tx.leadActivity.updateMany({
+                where: { userId: userId },
+                data: { userId: null }
+            });
+
+            // 5. Delete User
+            await tx.user.delete({ where: { id: userId } });
+        });
+
         res.json({ status: true, message: 'User deleted successfully' });
     } catch (error) {
         console.error('Delete User Error:', error);

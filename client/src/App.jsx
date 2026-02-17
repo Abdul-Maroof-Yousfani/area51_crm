@@ -117,8 +117,27 @@ export default function App() {
 
   // Real-time Socket Notifications
   // Track new leads for highlighting
-  const [newLeadIds, setNewLeadIds] = useState([]);
+  const [newLeadIds, setNewLeadIds] = useState(() => {
+    // Initialize from localStorage if available
+    try {
+      const saved = localStorage.getItem('newLeadIds');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.error('Error parsing newLeadIds from localStorage', e);
+      return [];
+    }
+  });
+
   const [viewedLeadIds, setViewedLeadIds] = useState([]);
+
+  // Persist newLeadIds to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('newLeadIds', JSON.stringify(newLeadIds));
+    } catch (e) {
+      console.error('Error saving newLeadIds to localStorage', e);
+    }
+  }, [newLeadIds]);
 
   useSocketNotifications((payload) => {
     // Payload can be { lead, notification } or just lead (backward compatibility)
@@ -128,7 +147,11 @@ export default function App() {
     // 1. Play sound (handled in hook)
 
     // 2. Add to new ids for highlighting 
-    setNewLeadIds(prev => [...prev, newLead.id]);
+    setNewLeadIds(prev => {
+      // Avoid duplicates
+      if (prev.includes(newLead.id)) return prev;
+      return [...prev, newLead.id];
+    });
 
     // 3. Refresh leads data to show the new row
     fetchLeads();

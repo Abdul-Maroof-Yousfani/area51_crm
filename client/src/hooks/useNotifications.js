@@ -91,15 +91,23 @@ export function useNotifications(currentUser, options = {}) {
   // Fetch notifications from API
   const fetchNotifications = useCallback(async () => {
     const userId = currentUser?.id || currentUser?.uid;
-    if (!userId) return;
+    console.log('[useNotifications] Fetching for user:', userId, 'Current User Object:', currentUser);
+
+    if (!userId) {
+      console.log('[useNotifications] No userId, skipping fetch');
+      return;
+    }
+
     setLoading(true);
     try {
+      console.log('[useNotifications] Calling API...');
       // Pass userId and role to API (although API might infer role if auth was strict, here we pass what we have)
       const data = await notificationsService.getAll({
         userId: userId,
         role: currentUser.role,
         limit: maxNotifications
       });
+      console.log('[useNotifications] Fetched data:', data);
       setNotifications(data);
       setError(null);
     } catch (err) {

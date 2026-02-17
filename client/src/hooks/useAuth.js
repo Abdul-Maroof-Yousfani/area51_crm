@@ -103,7 +103,10 @@ export function useAuth() {
   // Listen for unauthorized events (401)
   useEffect(() => {
     const handleUnauthorized = () => {
-      logout();
+      // Only attempt logout if we still believe we're authenticated
+      if (localStorage.getItem('token')) {
+        logout();
+      }
     };
 
     window.addEventListener('auth:unauthorized', handleUnauthorized);
