@@ -182,3 +182,49 @@ export const logout = async (req, res) => {
         return res.status(500).json({ status: false, message: 'Internal Server Error' });
     }
 };
+
+export const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user.id;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ status: false, message: 'Please provide current and new password' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ status: false, message: 'Password must be at least 6 characters long' });
+        }
+
+        // Get user with password hash
+        const user = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+
+        if (!user) {
+            return res.status(404).json({ status: false, message: 'User not found' });
+        }
+
+        // Verify current password
+        const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
+        if (!isMatch) {
+            return res.status(400).json({ status: false, message: 'Incorrect current password' });
+        }
+
+        // Hash new password
+        const salt = await bcrypt.genSalt(10);
+        const password_hash = await bcrypt.hash(newPassword, salt);
+
+        // Update password
+        await prisma.user.update({
+            where: { id: userId },
+            data: { password_hash }
+        });
+
+        return res.status(200).json({ status: true, message: 'Password changed successfully' });
+
+    } catch (error) {
+        console.error('Change Password Error:', error);
+        return res.status(500).json({ status: false, message: 'Internal Server Error' });
+    }
+};

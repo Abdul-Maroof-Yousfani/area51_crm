@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, User, Lock, Phone, Bell, Save, Loader, Check, Mail, LogOut } from 'lucide-react';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, signOut } from 'firebase/auth';
-import { db, appId, auth } from '../../lib/firebase';
+import { db, appId } from '../../lib/firebase';
+import { authService } from '../../services/api';
 
 export default function UserSettingsPanel({ currentUser, onClose, onLogout }) {
   const [activeTab, setActiveTab] = useState('profile');
@@ -81,6 +81,10 @@ export default function UserSettingsPanel({ currentUser, onClose, onLogout }) {
     setSaving(false);
   };
 
+  // ... (keep other imports, remove unused firebase auth)
+
+  // ... inside component
+
   const handleChangePassword = async () => {
     if (!passwords.current || !passwords.new || !passwords.confirm) {
       setMessage({ type: 'error', text: 'Please fill in all password fields.' });
@@ -101,27 +105,13 @@ export default function UserSettingsPanel({ currentUser, onClose, onLogout }) {
     setMessage(null);
 
     try {
-      const user = auth.currentUser;
-      if (!user) throw new Error('Not authenticated');
-
-      // Re-authenticate user first
-      const credential = EmailAuthProvider.credential(user.email, passwords.current);
-      await reauthenticateWithCredential(user, credential);
-
-      // Update password
-      await updatePassword(user, passwords.new);
+      await authService.changePassword(passwords.current, passwords.new);
 
       setPasswords({ current: '', new: '', confirm: '' });
       setMessage({ type: 'success', text: 'Password changed successfully!' });
     } catch (error) {
       console.error('Error changing password:', error);
-      if (error.code === 'auth/wrong-password') {
-        setMessage({ type: 'error', text: 'Current password is incorrect.' });
-      } else if (error.code === 'auth/requires-recent-login') {
-        setMessage({ type: 'error', text: 'Please log out and log back in before changing your password.' });
-      } else {
-        setMessage({ type: 'error', text: 'Failed to change password. Please try again.' });
-      }
+      setMessage({ type: 'error', text: error.message || 'Failed to change password. Please try again.' });
     }
 
     setSaving(false);
@@ -129,8 +119,7 @@ export default function UserSettingsPanel({ currentUser, onClose, onLogout }) {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      if (onLogout) onLogout();
+      if (onLogout) await onLogout();
       onClose();
     } catch (error) {
       console.error('Error signing out:', error);
@@ -171,8 +160,8 @@ export default function UserSettingsPanel({ currentUser, onClose, onLogout }) {
               key={tab.id}
               onClick={() => { setActiveTab(tab.id); setMessage(null); }}
               className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium transition-colors ${activeTab === tab.id
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                ? 'text-blue-600 border-b-2 border-blue-600 bg-white'
+                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                 }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -186,8 +175,8 @@ export default function UserSettingsPanel({ currentUser, onClose, onLogout }) {
           {/* Message */}
           {message && (
             <div className={`mb-4 p-3 rounded-lg text-sm flex items-center gap-2 ${message.type === 'success'
-                ? 'bg-green-50 text-green-700 border border-green-200'
-                : 'bg-red-50 text-red-700 border border-red-200'
+              ? 'bg-green-50 text-green-700 border border-green-200'
+              : 'bg-red-50 text-red-700 border border-red-200'
               }`}>
               {message.type === 'success' ? (
                 <Check className="w-4 h-4" />

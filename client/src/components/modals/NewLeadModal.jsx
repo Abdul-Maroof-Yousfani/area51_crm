@@ -11,7 +11,8 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
   const [formData, setFormData] = useState({
     manager: 'Unassigned',
     stage: 'New',
-    amount: '',
+    quotationAmount: '',
+    clientBudget: '',
     eventType: '',
     eventDate: '',
     inquiryDate: new Date().toISOString().split('T')[0],
@@ -43,12 +44,19 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
 
   const handleSubmit = () => {
     if (!selectedContact) return alert('Contact is required');
+
+    // Validate client budget is filled
+    if (!formData.clientBudget || formData.clientBudget === '') {
+      return alert('Client Budget is required');
+    }
+
     onSave({
       ...formData,
       contactId: selectedContact.id,
       clientName: `${selectedContact.firstName} ${selectedContact.lastName || ''}`.trim(),
       phone: selectedContact.phone,
-      amount: Number(formData.amount) || 0
+      quotationAmount: Number(formData.quotationAmount) || 0,
+      clientBudget: Number(formData.clientBudget)
     });
     onClose();
   };
@@ -137,15 +145,28 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase">Amount</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase">Client Budget <span className="text-red-500">*</span></label>
                   <input
                     type="number"
                     className="w-full p-2 border rounded-lg mt-1"
-                    value={formData.amount}
-                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                    placeholder="0"
+                    value={formData.clientBudget}
+                    onChange={(e) => setFormData({ ...formData, clientBudget: e.target.value })}
+                    placeholder="PKR"
+                    required
                   />
                 </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase">Quotation Amount</label>
+                  <input
+                    type="number"
+                    className="w-full p-2 border rounded-lg mt-1"
+                    value={formData.quotationAmount}
+                    onChange={(e) => setFormData({ ...formData, quotationAmount: e.target.value })}
+                    placeholder="PKR (based on budget)"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-gray-500 uppercase">Stage</label>
                   <select
@@ -267,6 +288,6 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 }

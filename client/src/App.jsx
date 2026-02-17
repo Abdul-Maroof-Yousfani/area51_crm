@@ -158,7 +158,21 @@ export default function App() {
 
     // 4. Add to notification center (Local state, already saved in DB by server)
     if (notification) {
-      handleNewNotification(notification);
+      // Filter out notifications not meant for this user
+      // Logic mirrors backend permissions:
+      // 1. Explicitly assigned to this user (userId match)
+      // 2. Assigned to their role (assignedTo match)
+      // 3. Assigned to 'all'
+      // 4. Admin/Owner always see 'lead_assigned' (New Lead) notifications
+      const isForMe =
+        (notification.userId && notification.userId == activeUser.id) ||
+        (notification.assignedTo === activeUser.role) ||
+        (notification.assignedTo === 'all') ||
+        ((activeUser.role === 'Admin' || activeUser.role === 'Owner') && notification.type === 'lead_assigned');
+
+      if (isForMe) {
+        handleNewNotification(notification);
+      }
     }
   });
 
@@ -283,7 +297,8 @@ export default function App() {
       const status = (leadData.stage === 'New Lead' ? 'New' : leadData.stage) || 'New';
 
       const payload = {
-        amount: Number(leadData.amount) || 0,
+        quotationAmount: Number(leadData.quotationAmount) || 0,
+        clientBudget: Number(leadData.clientBudget) || 0,
         status,
         notes: leadData.notes,
         contactId: leadData.contactId,

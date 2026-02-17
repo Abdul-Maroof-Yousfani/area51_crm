@@ -89,7 +89,9 @@ export default function LeadDetailModal({
       console.error('Calendar sync error:', error);
     }
 
+
     setIsSaving(false);
+    onClose();
   };
 
   const handleAddComment = async () => {
@@ -122,7 +124,7 @@ export default function LeadDetailModal({
         eventDate: formData.eventDate ? new Date(formData.eventDate).toISOString().split('T')[0] : '',
         eventType: formData.eventType || '',
         guests: formData.guests || '',
-        finalAmount: formData.amount || '',
+        finalAmount: formData.quotationAmount || '',
         advanceAmount: formData.advancePaid || '',
         notes: formData.bookingNotes || ''
       });
@@ -209,7 +211,7 @@ export default function LeadDetailModal({
       eventDate: bookingData.eventDate,
       eventType: bookingData.eventType,
       guests: bookingData.guests,
-      amount: Number(bookingData.finalAmount),
+      quotationAmount: Number(bookingData.finalAmount),
       advancePaid: Number(bookingData.advanceAmount) || 0,
       totalPaid: Number(bookingData.advanceAmount) || 0,
       totalDue: Number(bookingData.finalAmount) - (Number(bookingData.advanceAmount) || 0),
@@ -228,7 +230,10 @@ export default function LeadDetailModal({
       eventDate: bookingData.eventDate,
       eventType: bookingData.eventType,
       guests: bookingData.guests,
-      amount: Number(bookingData.finalAmount),
+      eventType: bookingData.eventType,
+      guests: bookingData.guests,
+      finalAmount: Number(bookingData.finalAmount),
+      quotationAmount: Number(bookingData.finalAmount),
       advanceAmount: Number(bookingData.advanceAmount) || 0,
       totalPaid: Number(bookingData.advanceAmount) || 0,
       totalDue: Number(bookingData.finalAmount) - (Number(bookingData.advanceAmount) || 0),
@@ -237,8 +242,31 @@ export default function LeadDetailModal({
       bookedBy: currentUser.name,
       stageUpdatedAt: new Date().toISOString(),
       stageUpdatedBy: currentUser.name,
-      activityLog: arrayUnion(activityEntry)
+
     });
+
+    // Log activity via API
+    try {
+      const activityData = {
+        from,
+        to,
+        bookingDetails: {
+          venue: bookingData.venue,
+          eventDate: bookingData.eventDate,
+          finalAmount: bookingData.finalAmount,
+          advanceAmount: bookingData.advanceAmount
+        }
+      };
+
+      await leadsService.addNote(lead.id, {
+        content: JSON.stringify(activityData),
+        type: ACTIVITY_TYPES.STAGE_CHANGE,
+        userId: currentUser.id
+      });
+      fetchTimeline();
+    } catch (error) {
+      console.error('Error logging booking activity:', error);
+    }
 
     // Close confirmation and switch to timeline
     setBookingConfirm(null);
@@ -675,14 +703,28 @@ export default function LeadDetailModal({
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-gray-500">Budget</label>
+                      <label className="text-xs font-semibold text-gray-500">Client Budget <span className="text-red-500">*</span></label>
                       <input
                         className="w-full p-2 border rounded-lg text-sm mt-1"
-                        value={formData.amount || ''}
+                        value={formData.clientBudget || ''}
                         onChange={(e) =>
-                          setFormData({ ...formData, amount: Number(e.target.value) })
+                          setFormData({ ...formData, clientBudget: Number(e.target.value) })
                         }
                         type="number"
+                        placeholder="PKR"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-gray-500">Quotation Amount</label>
+                      <input
+                        className="w-full p-2 border rounded-lg text-sm mt-1"
+                        value={formData.quotationAmount || ''}
+                        onChange={(e) =>
+                          setFormData({ ...formData, quotationAmount: Number(e.target.value) })
+                        }
+                        type="number"
+                        placeholder="PKR (based on client budget)"
                       />
                     </div>
                     <div>

@@ -17,7 +17,8 @@ import {
   ChevronRight,
   ChevronLeft,
   ChevronsLeft,
-  ChevronsRight
+  ChevronsRight,
+  Search
 } from 'lucide-react';
 import { safeAmount, formatCurrency } from '../../utils/helpers';
 import { PAYMENT_MILESTONES } from '../../lib/constants';
@@ -28,6 +29,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 export default function FinanceView({ leads, onSyncPayments }) {
   const { t, language } = useLanguage();
   const [filter, setFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [syncing, setSyncing] = useState(false);
@@ -78,15 +80,26 @@ export default function FinanceView({ leads, onSyncPayments }) {
       })
       .map((l) => {
         // Calculate financial fields dynamically
-        // Use finalAmount if available, otherwise amount. Ensure numbers.
-        const totalValue = safeAmount(l.finalAmount !== undefined && l.finalAmount !== null ? l.finalAmount : l.amount);
+        // Use finalAmount if available, otherwise quotationAmount. Ensure numbers.
+        const totalValue = safeAmount(l.finalAmount !== undefined && l.finalAmount !== null ? l.finalAmount : l.quotationAmount);
 
         // Calculate total paid from payments array if available, else fallback to advanceAmount
+        // Calculate total paid from payments array
         let totalPaid = 0;
-        if (l.payments && Array.isArray(l.payments) && l.payments.length > 0) {
-          totalPaid = l.payments.reduce((sum, p) => sum + safeAmount(p.amount), 0);
-        } else {
-          totalPaid = safeAmount(l.advanceAmount);
+        const payments = Array.isArray(l.payments) ? l.payments : [];
+        if (payments.length > 0) {
+          totalPaid = payments.reduce((sum, p) => sum + safeAmount(p.amount), 0);
+        }
+
+        // Add legacy advance amount if not already in payments
+        const hasAdvancePayment = payments.some(p =>
+          p.type === 'Advance' ||
+          p.type === 'Advance (Initial)' ||
+          (p.notes && p.notes.toLowerCase().includes('initial booking'))
+        );
+
+        if (!hasAdvancePayment && l.advanceAmount > 0) {
+          totalPaid += safeAmount(l.advanceAmount);
         }
 
         const totalDue = Math.max(0, totalValue - totalPaid);
@@ -125,6 +138,15 @@ export default function FinanceView({ leads, onSyncPayments }) {
 
     let result = bookedLeads;
 
+    // 0. Filter by Search Query (Client Name or Phone)
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(l =>
+        (l.clientName && l.clientName.toLowerCase().includes(q)) ||
+        (l.phone && l.phone.toLowerCase().includes(q))
+      );
+    }
+
     // 1. Filter by Date Range (Event Date)
     if (startDate && endDate) {
       const start = new Date(startDate);
@@ -145,7 +167,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
     }
 
     return result;
-  }, [bookedLeads, filter, startDate, endDate]);
+  }, [bookedLeads, filter, startDate, endDate, searchQuery]);
 
   const paginatedLeads = useMemo(() => {
     const start = pageIndex * pageSize;
@@ -327,7 +349,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`px-2 md:px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium whitespace-nowrap ${filter === f.key
+            className={`px-2 md:px-3 h-9 flex items-center justify-center rounded-lg text-xs md:text-sm font-medium whitespace-nowrap ${filter === f.key
               ? 'bg-blue-600 text-white'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
@@ -338,7 +360,7 @@ export default function FinanceView({ leads, onSyncPayments }) {
 
         <div className="h-6 w-px bg-gray-200 mx-2 hidden sm:block"></div>
 
-        <div className="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg text-sm px-2 py-1">
+        <div className="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg text-sm px-2 h-9">
           <input
             type="date"
             className="bg-transparent border-none text-xs md:text-sm p-1 w-24 md:w-auto"
@@ -364,6 +386,18 @@ export default function FinanceView({ leads, onSyncPayments }) {
             </button>
           )}
         </div>
+        {/* Search Input */}
+        <div className="relative">
+          <Search className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder={t('search') || 'Search...'}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-8 pr-3 h-9 bg-gray-50 border border-gray-200 rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-32 md:w-48 transition-all"
+          />
+        </div>
+
       </div>
 
       {/* Mobile Card View */}

@@ -79,6 +79,8 @@
   "remaining": "Remaining",
   "addPayment": "Add Payment",
   "amount": "Amount",
+  "quotationAmount": "Quotation Amount",
+  "clientBudget": "Client Budget",
   "date": "Date",
   "type": "Type",
   "notesOptional": "Notes (Optional)",

@@ -1609,17 +1609,17 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    sessions: number
     leads: number
-    notifications: number
     leadActivities: number
+    notifications: number
+    sessions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     leads?: boolean | UserCountOutputTypeCountLeadsArgs
-    notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
     leadActivities?: boolean | UserCountOutputTypeCountLeadActivitiesArgs
+    notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   }
 
   // Custom InputTypes
@@ -1636,15 +1636,15 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SessionsWhereInput
+  export type UserCountOutputTypeCountLeadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LeadWhereInput
   }
 
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountLeadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: LeadWhereInput
+  export type UserCountOutputTypeCountLeadActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: LeadActivityWhereInput
   }
 
   /**
@@ -1657,8 +1657,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountLeadActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: LeadActivityWhereInput
+  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SessionsWhereInput
   }
 
 
@@ -2007,10 +2007,10 @@ export namespace Prisma {
     updated_at?: boolean
     last_login_at?: boolean
     role?: boolean
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
     leads?: boolean | User$leadsArgs<ExtArgs>
-    notifications?: boolean | User$notificationsArgs<ExtArgs>
     leadActivities?: boolean | User$leadActivitiesArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2052,10 +2052,10 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password_hash" | "is_active" | "created_at" | "updated_at" | "last_login_at" | "role", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
     leads?: boolean | User$leadsArgs<ExtArgs>
-    notifications?: boolean | User$notificationsArgs<ExtArgs>
     leadActivities?: boolean | User$leadActivitiesArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2064,10 +2064,10 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      sessions: Prisma.$SessionsPayload<ExtArgs>[]
       leads: Prisma.$LeadPayload<ExtArgs>[]
-      notifications: Prisma.$NotificationPayload<ExtArgs>[]
       leadActivities: Prisma.$LeadActivityPayload<ExtArgs>[]
+      notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      sessions: Prisma.$SessionsPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2473,10 +2473,10 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     leads<T extends User$leadsArgs<ExtArgs> = {}>(args?: Subset<T, User$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     leadActivities<T extends User$leadActivitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$leadActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2903,30 +2903,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.sessions
-   */
-  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Sessions
-     */
-    select?: SessionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Sessions
-     */
-    omit?: SessionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionsInclude<ExtArgs> | null
-    where?: SessionsWhereInput
-    orderBy?: SessionsOrderByWithRelationInput | SessionsOrderByWithRelationInput[]
-    cursor?: SessionsWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SessionsScalarFieldEnum | SessionsScalarFieldEnum[]
-  }
-
-  /**
    * User.leads
    */
   export type User$leadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2948,6 +2924,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: LeadScalarFieldEnum | LeadScalarFieldEnum[]
+  }
+
+  /**
+   * User.leadActivities
+   */
+  export type User$leadActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeadActivity
+     */
+    select?: LeadActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeadActivity
+     */
+    omit?: LeadActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeadActivityInclude<ExtArgs> | null
+    where?: LeadActivityWhereInput
+    orderBy?: LeadActivityOrderByWithRelationInput | LeadActivityOrderByWithRelationInput[]
+    cursor?: LeadActivityWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: LeadActivityScalarFieldEnum | LeadActivityScalarFieldEnum[]
   }
 
   /**
@@ -2975,27 +2975,27 @@ export namespace Prisma {
   }
 
   /**
-   * User.leadActivities
+   * User.sessions
    */
-  export type User$leadActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the LeadActivity
+     * Select specific fields to fetch from the Sessions
      */
-    select?: LeadActivitySelect<ExtArgs> | null
+    select?: SessionsSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the LeadActivity
+     * Omit specific fields from the Sessions
      */
-    omit?: LeadActivityOmit<ExtArgs> | null
+    omit?: SessionsOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: LeadActivityInclude<ExtArgs> | null
-    where?: LeadActivityWhereInput
-    orderBy?: LeadActivityOrderByWithRelationInput | LeadActivityOrderByWithRelationInput[]
-    cursor?: LeadActivityWhereUniqueInput
+    include?: SessionsInclude<ExtArgs> | null
+    where?: SessionsWhereInput
+    orderBy?: SessionsOrderByWithRelationInput | SessionsOrderByWithRelationInput[]
+    cursor?: SessionsWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: LeadActivityScalarFieldEnum | LeadActivityScalarFieldEnum[]
+    distinct?: SessionsScalarFieldEnum | SessionsScalarFieldEnum[]
   }
 
   /**
@@ -5296,7 +5296,8 @@ export namespace Prisma {
 
   export type LeadAvgAggregateOutputType = {
     id: number | null
-    amount: number | null
+    quotationAmount: number | null
+    clientBudget: number | null
     probability: number | null
     guests: number | null
     finalAmount: number | null
@@ -5308,7 +5309,8 @@ export namespace Prisma {
 
   export type LeadSumAggregateOutputType = {
     id: number | null
-    amount: number | null
+    quotationAmount: number | null
+    clientBudget: number | null
     probability: number | null
     guests: number | null
     finalAmount: number | null
@@ -5321,7 +5323,8 @@ export namespace Prisma {
   export type LeadMinAggregateOutputType = {
     id: number | null
     title: string | null
-    amount: number | null
+    quotationAmount: number | null
+    clientBudget: number | null
     status: string | null
     probability: number | null
     expectedCloseDate: Date | null
@@ -5347,7 +5350,8 @@ export namespace Prisma {
   export type LeadMaxAggregateOutputType = {
     id: number | null
     title: string | null
-    amount: number | null
+    quotationAmount: number | null
+    clientBudget: number | null
     status: string | null
     probability: number | null
     expectedCloseDate: Date | null
@@ -5373,7 +5377,8 @@ export namespace Prisma {
   export type LeadCountAggregateOutputType = {
     id: number
     title: number
-    amount: number
+    quotationAmount: number
+    clientBudget: number
     status: number
     probability: number
     expectedCloseDate: number
@@ -5400,7 +5405,8 @@ export namespace Prisma {
 
   export type LeadAvgAggregateInputType = {
     id?: true
-    amount?: true
+    quotationAmount?: true
+    clientBudget?: true
     probability?: true
     guests?: true
     finalAmount?: true
@@ -5412,7 +5418,8 @@ export namespace Prisma {
 
   export type LeadSumAggregateInputType = {
     id?: true
-    amount?: true
+    quotationAmount?: true
+    clientBudget?: true
     probability?: true
     guests?: true
     finalAmount?: true
@@ -5425,7 +5432,8 @@ export namespace Prisma {
   export type LeadMinAggregateInputType = {
     id?: true
     title?: true
-    amount?: true
+    quotationAmount?: true
+    clientBudget?: true
     status?: true
     probability?: true
     expectedCloseDate?: true
@@ -5451,7 +5459,8 @@ export namespace Prisma {
   export type LeadMaxAggregateInputType = {
     id?: true
     title?: true
-    amount?: true
+    quotationAmount?: true
+    clientBudget?: true
     status?: true
     probability?: true
     expectedCloseDate?: true
@@ -5477,7 +5486,8 @@ export namespace Prisma {
   export type LeadCountAggregateInputType = {
     id?: true
     title?: true
-    amount?: true
+    quotationAmount?: true
+    clientBudget?: true
     status?: true
     probability?: true
     expectedCloseDate?: true
@@ -5590,7 +5600,8 @@ export namespace Prisma {
   export type LeadGroupByOutputType = {
     id: number
     title: string | null
-    amount: number
+    quotationAmount: number | null
+    clientBudget: number
     status: string
     probability: number | null
     expectedCloseDate: Date | null
@@ -5635,7 +5646,8 @@ export namespace Prisma {
   export type LeadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    amount?: boolean
+    quotationAmount?: boolean
+    clientBudget?: boolean
     status?: boolean
     probability?: boolean
     expectedCloseDate?: boolean
@@ -5656,9 +5668,9 @@ export namespace Prisma {
     contactId?: boolean
     sourceId?: boolean
     assignedTo?: boolean
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
     contact?: boolean | ContactDefaultArgs<ExtArgs>
     source?: boolean | Lead$sourceArgs<ExtArgs>
-    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
     activities?: boolean | Lead$activitiesArgs<ExtArgs>
     notifications?: boolean | Lead$notificationsArgs<ExtArgs>
     payments?: boolean | Lead$paymentsArgs<ExtArgs>
@@ -5668,7 +5680,8 @@ export namespace Prisma {
   export type LeadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    amount?: boolean
+    quotationAmount?: boolean
+    clientBudget?: boolean
     status?: boolean
     probability?: boolean
     expectedCloseDate?: boolean
@@ -5689,15 +5702,16 @@ export namespace Prisma {
     contactId?: boolean
     sourceId?: boolean
     assignedTo?: boolean
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
     contact?: boolean | ContactDefaultArgs<ExtArgs>
     source?: boolean | Lead$sourceArgs<ExtArgs>
-    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
   }, ExtArgs["result"]["lead"]>
 
   export type LeadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    amount?: boolean
+    quotationAmount?: boolean
+    clientBudget?: boolean
     status?: boolean
     probability?: boolean
     expectedCloseDate?: boolean
@@ -5718,15 +5732,16 @@ export namespace Prisma {
     contactId?: boolean
     sourceId?: boolean
     assignedTo?: boolean
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
     contact?: boolean | ContactDefaultArgs<ExtArgs>
     source?: boolean | Lead$sourceArgs<ExtArgs>
-    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
   }, ExtArgs["result"]["lead"]>
 
   export type LeadSelectScalar = {
     id?: boolean
     title?: boolean
-    amount?: boolean
+    quotationAmount?: boolean
+    clientBudget?: boolean
     status?: boolean
     probability?: boolean
     expectedCloseDate?: boolean
@@ -5749,33 +5764,33 @@ export namespace Prisma {
     assignedTo?: boolean
   }
 
-  export type LeadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "amount" | "status" | "probability" | "expectedCloseDate" | "notes" | "guests" | "venue" | "eventType" | "eventDate" | "finalAmount" | "advanceAmount" | "siteVisitDate" | "siteVisitTime" | "bookingNotes" | "bookedAt" | "bookedBy" | "createdAt" | "updatedAt" | "contactId" | "sourceId" | "assignedTo", ExtArgs["result"]["lead"]>
+  export type LeadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "quotationAmount" | "clientBudget" | "status" | "probability" | "expectedCloseDate" | "notes" | "guests" | "venue" | "eventType" | "eventDate" | "finalAmount" | "advanceAmount" | "siteVisitDate" | "siteVisitTime" | "bookingNotes" | "bookedAt" | "bookedBy" | "createdAt" | "updatedAt" | "contactId" | "sourceId" | "assignedTo", ExtArgs["result"]["lead"]>
   export type LeadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
     contact?: boolean | ContactDefaultArgs<ExtArgs>
     source?: boolean | Lead$sourceArgs<ExtArgs>
-    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
     activities?: boolean | Lead$activitiesArgs<ExtArgs>
     notifications?: boolean | Lead$notificationsArgs<ExtArgs>
     payments?: boolean | Lead$paymentsArgs<ExtArgs>
     _count?: boolean | LeadCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type LeadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
     contact?: boolean | ContactDefaultArgs<ExtArgs>
     source?: boolean | Lead$sourceArgs<ExtArgs>
-    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
   }
   export type LeadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
     contact?: boolean | ContactDefaultArgs<ExtArgs>
     source?: boolean | Lead$sourceArgs<ExtArgs>
-    assignee?: boolean | Lead$assigneeArgs<ExtArgs>
   }
 
   export type $LeadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Lead"
     objects: {
+      assignee: Prisma.$UserPayload<ExtArgs> | null
       contact: Prisma.$ContactPayload<ExtArgs>
       source: Prisma.$SourcesPayload<ExtArgs> | null
-      assignee: Prisma.$UserPayload<ExtArgs> | null
       activities: Prisma.$LeadActivityPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
       payments: Prisma.$PaymentPayload<ExtArgs>[]
@@ -5783,7 +5798,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       title: string | null
-      amount: number
+      quotationAmount: number | null
+      clientBudget: number
       status: string
       probability: number | null
       expectedCloseDate: Date | null
@@ -6198,9 +6214,9 @@ export namespace Prisma {
    */
   export interface Prisma__LeadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    assignee<T extends Lead$assigneeArgs<ExtArgs> = {}>(args?: Subset<T, Lead$assigneeArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     contact<T extends ContactDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ContactDefaultArgs<ExtArgs>>): Prisma__ContactClient<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     source<T extends Lead$sourceArgs<ExtArgs> = {}>(args?: Subset<T, Lead$sourceArgs<ExtArgs>>): Prisma__SourcesClient<$Result.GetResult<Prisma.$SourcesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    assignee<T extends Lead$assigneeArgs<ExtArgs> = {}>(args?: Subset<T, Lead$assigneeArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     activities<T extends Lead$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, Lead$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends Lead$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, Lead$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payments<T extends Lead$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Lead$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6235,7 +6251,8 @@ export namespace Prisma {
   interface LeadFieldRefs {
     readonly id: FieldRef<"Lead", 'Int'>
     readonly title: FieldRef<"Lead", 'String'>
-    readonly amount: FieldRef<"Lead", 'Float'>
+    readonly quotationAmount: FieldRef<"Lead", 'Float'>
+    readonly clientBudget: FieldRef<"Lead", 'Float'>
     readonly status: FieldRef<"Lead", 'String'>
     readonly probability: FieldRef<"Lead", 'Int'>
     readonly expectedCloseDate: FieldRef<"Lead", 'DateTime'>
@@ -6652,25 +6669,6 @@ export namespace Prisma {
   }
 
   /**
-   * Lead.source
-   */
-  export type Lead$sourceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Sources
-     */
-    select?: SourcesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Sources
-     */
-    omit?: SourcesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SourcesInclude<ExtArgs> | null
-    where?: SourcesWhereInput
-  }
-
-  /**
    * Lead.assignee
    */
   export type Lead$assigneeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6687,6 +6685,25 @@ export namespace Prisma {
      */
     include?: UserInclude<ExtArgs> | null
     where?: UserWhereInput
+  }
+
+  /**
+   * Lead.source
+   */
+  export type Lead$sourceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Sources
+     */
+    select?: SourcesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Sources
+     */
+    omit?: SourcesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SourcesInclude<ExtArgs> | null
+    where?: SourcesWhereInput
   }
 
   /**
@@ -10388,8 +10405,8 @@ export namespace Prisma {
     leadId?: boolean
     priority?: boolean
     assignedTo?: boolean
-    user?: boolean | Notification$userArgs<ExtArgs>
     lead?: boolean | Notification$leadArgs<ExtArgs>
+    user?: boolean | Notification$userArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10402,8 +10419,8 @@ export namespace Prisma {
     leadId?: boolean
     priority?: boolean
     assignedTo?: boolean
-    user?: boolean | Notification$userArgs<ExtArgs>
     lead?: boolean | Notification$leadArgs<ExtArgs>
+    user?: boolean | Notification$userArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10416,8 +10433,8 @@ export namespace Prisma {
     leadId?: boolean
     priority?: boolean
     assignedTo?: boolean
-    user?: boolean | Notification$userArgs<ExtArgs>
     lead?: boolean | Notification$leadArgs<ExtArgs>
+    user?: boolean | Notification$userArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectScalar = {
@@ -10434,23 +10451,23 @@ export namespace Prisma {
 
   export type NotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "message" | "read" | "createdAt" | "userId" | "leadId" | "priority" | "assignedTo", ExtArgs["result"]["notification"]>
   export type NotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | Notification$userArgs<ExtArgs>
     lead?: boolean | Notification$leadArgs<ExtArgs>
+    user?: boolean | Notification$userArgs<ExtArgs>
   }
   export type NotificationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | Notification$userArgs<ExtArgs>
     lead?: boolean | Notification$leadArgs<ExtArgs>
+    user?: boolean | Notification$userArgs<ExtArgs>
   }
   export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | Notification$userArgs<ExtArgs>
     lead?: boolean | Notification$leadArgs<ExtArgs>
+    user?: boolean | Notification$userArgs<ExtArgs>
   }
 
   export type $NotificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Notification"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs> | null
       lead: Prisma.$LeadPayload<ExtArgs> | null
+      user: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -10856,8 +10873,8 @@ export namespace Prisma {
    */
   export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends Notification$userArgs<ExtArgs> = {}>(args?: Subset<T, Notification$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     lead<T extends Notification$leadArgs<ExtArgs> = {}>(args?: Subset<T, Notification$leadArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends Notification$userArgs<ExtArgs> = {}>(args?: Subset<T, Notification$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11292,25 +11309,6 @@ export namespace Prisma {
   }
 
   /**
-   * Notification.user
-   */
-  export type Notification$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the User
-     */
-    select?: UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the User
-     */
-    omit?: UserOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
-  }
-
-  /**
    * Notification.lead
    */
   export type Notification$leadArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11327,6 +11325,25 @@ export namespace Prisma {
      */
     include?: LeadInclude<ExtArgs> | null
     where?: LeadWhereInput
+  }
+
+  /**
+   * Notification.user
+   */
+  export type Notification$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -12372,7 +12389,8 @@ export namespace Prisma {
   export const LeadScalarFieldEnum: {
     id: 'id',
     title: 'title',
-    amount: 'amount',
+    quotationAmount: 'quotationAmount',
+    clientBudget: 'clientBudget',
     status: 'status',
     probability: 'probability',
     expectedCloseDate: 'expectedCloseDate',
@@ -12610,10 +12628,10 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"User"> | Date | string
     last_login_at?: DateTimeFilter<"User"> | Date | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    sessions?: SessionsListRelationFilter
     leads?: LeadListRelationFilter
-    notifications?: NotificationListRelationFilter
     leadActivities?: LeadActivityListRelationFilter
+    notifications?: NotificationListRelationFilter
+    sessions?: SessionsListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -12626,10 +12644,10 @@ export namespace Prisma {
     updated_at?: SortOrder
     last_login_at?: SortOrder
     role?: SortOrder
-    sessions?: SessionsOrderByRelationAggregateInput
     leads?: LeadOrderByRelationAggregateInput
-    notifications?: NotificationOrderByRelationAggregateInput
     leadActivities?: LeadActivityOrderByRelationAggregateInput
+    notifications?: NotificationOrderByRelationAggregateInput
+    sessions?: SessionsOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -12645,10 +12663,10 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"User"> | Date | string
     last_login_at?: DateTimeFilter<"User"> | Date | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    sessions?: SessionsListRelationFilter
     leads?: LeadListRelationFilter
-    notifications?: NotificationListRelationFilter
     leadActivities?: LeadActivityListRelationFilter
+    notifications?: NotificationListRelationFilter
+    sessions?: SessionsListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -12828,7 +12846,8 @@ export namespace Prisma {
     NOT?: LeadWhereInput | LeadWhereInput[]
     id?: IntFilter<"Lead"> | number
     title?: StringNullableFilter<"Lead"> | string | null
-    amount?: FloatFilter<"Lead"> | number
+    quotationAmount?: FloatNullableFilter<"Lead"> | number | null
+    clientBudget?: FloatFilter<"Lead"> | number
     status?: StringFilter<"Lead"> | string
     probability?: IntNullableFilter<"Lead"> | number | null
     expectedCloseDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
@@ -12849,9 +12868,9 @@ export namespace Prisma {
     contactId?: IntFilter<"Lead"> | number
     sourceId?: IntNullableFilter<"Lead"> | number | null
     assignedTo?: IntNullableFilter<"Lead"> | number | null
+    assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     contact?: XOR<ContactScalarRelationFilter, ContactWhereInput>
     source?: XOR<SourcesNullableScalarRelationFilter, SourcesWhereInput> | null
-    assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     activities?: LeadActivityListRelationFilter
     notifications?: NotificationListRelationFilter
     payments?: PaymentListRelationFilter
@@ -12860,7 +12879,8 @@ export namespace Prisma {
   export type LeadOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrderInput | SortOrder
-    amount?: SortOrder
+    quotationAmount?: SortOrderInput | SortOrder
+    clientBudget?: SortOrder
     status?: SortOrder
     probability?: SortOrderInput | SortOrder
     expectedCloseDate?: SortOrderInput | SortOrder
@@ -12881,9 +12901,9 @@ export namespace Prisma {
     contactId?: SortOrder
     sourceId?: SortOrderInput | SortOrder
     assignedTo?: SortOrderInput | SortOrder
+    assignee?: UserOrderByWithRelationInput
     contact?: ContactOrderByWithRelationInput
     source?: SourcesOrderByWithRelationInput
-    assignee?: UserOrderByWithRelationInput
     activities?: LeadActivityOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
@@ -12895,7 +12915,8 @@ export namespace Prisma {
     OR?: LeadWhereInput[]
     NOT?: LeadWhereInput | LeadWhereInput[]
     title?: StringNullableFilter<"Lead"> | string | null
-    amount?: FloatFilter<"Lead"> | number
+    quotationAmount?: FloatNullableFilter<"Lead"> | number | null
+    clientBudget?: FloatFilter<"Lead"> | number
     status?: StringFilter<"Lead"> | string
     probability?: IntNullableFilter<"Lead"> | number | null
     expectedCloseDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
@@ -12916,9 +12937,9 @@ export namespace Prisma {
     contactId?: IntFilter<"Lead"> | number
     sourceId?: IntNullableFilter<"Lead"> | number | null
     assignedTo?: IntNullableFilter<"Lead"> | number | null
+    assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     contact?: XOR<ContactScalarRelationFilter, ContactWhereInput>
     source?: XOR<SourcesNullableScalarRelationFilter, SourcesWhereInput> | null
-    assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     activities?: LeadActivityListRelationFilter
     notifications?: NotificationListRelationFilter
     payments?: PaymentListRelationFilter
@@ -12927,7 +12948,8 @@ export namespace Prisma {
   export type LeadOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrderInput | SortOrder
-    amount?: SortOrder
+    quotationAmount?: SortOrderInput | SortOrder
+    clientBudget?: SortOrder
     status?: SortOrder
     probability?: SortOrderInput | SortOrder
     expectedCloseDate?: SortOrderInput | SortOrder
@@ -12961,7 +12983,8 @@ export namespace Prisma {
     NOT?: LeadScalarWhereWithAggregatesInput | LeadScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Lead"> | number
     title?: StringNullableWithAggregatesFilter<"Lead"> | string | null
-    amount?: FloatWithAggregatesFilter<"Lead"> | number
+    quotationAmount?: FloatNullableWithAggregatesFilter<"Lead"> | number | null
+    clientBudget?: FloatWithAggregatesFilter<"Lead"> | number
     status?: StringWithAggregatesFilter<"Lead"> | string
     probability?: IntNullableWithAggregatesFilter<"Lead"> | number | null
     expectedCloseDate?: DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
@@ -13186,8 +13209,8 @@ export namespace Prisma {
     leadId?: IntNullableFilter<"Notification"> | number | null
     priority?: StringFilter<"Notification"> | string
     assignedTo?: StringNullableFilter<"Notification"> | string | null
-    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     lead?: XOR<LeadNullableScalarRelationFilter, LeadWhereInput> | null
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type NotificationOrderByWithRelationInput = {
@@ -13200,8 +13223,8 @@ export namespace Prisma {
     leadId?: SortOrderInput | SortOrder
     priority?: SortOrder
     assignedTo?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
     lead?: LeadOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type NotificationWhereUniqueInput = Prisma.AtLeast<{
@@ -13217,8 +13240,8 @@ export namespace Prisma {
     leadId?: IntNullableFilter<"Notification"> | number | null
     priority?: StringFilter<"Notification"> | string
     assignedTo?: StringNullableFilter<"Notification"> | string | null
-    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     lead?: XOR<LeadNullableScalarRelationFilter, LeadWhereInput> | null
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type NotificationOrderByWithAggregationInput = {
@@ -13304,10 +13327,10 @@ export namespace Prisma {
     updated_at?: Date | string
     last_login_at?: Date | string
     role: $Enums.Role
-    sessions?: SessionsCreateNestedManyWithoutUserInput
     leads?: LeadCreateNestedManyWithoutAssigneeInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
     leadActivities?: LeadActivityCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    sessions?: SessionsCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -13320,10 +13343,10 @@ export namespace Prisma {
     updated_at?: Date | string
     last_login_at?: Date | string
     role: $Enums.Role
-    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
     leads?: LeadUncheckedCreateNestedManyWithoutAssigneeInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     leadActivities?: LeadActivityUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -13335,10 +13358,10 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    sessions?: SessionsUpdateManyWithoutUserNestedInput
     leads?: LeadUpdateManyWithoutAssigneeNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
     leadActivities?: LeadActivityUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    sessions?: SessionsUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -13351,10 +13374,10 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
     leads?: LeadUncheckedUpdateManyWithoutAssigneeNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     leadActivities?: LeadActivityUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -13538,7 +13561,8 @@ export namespace Prisma {
 
   export type LeadCreateInput = {
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -13556,9 +13580,9 @@ export namespace Prisma {
     bookedBy?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    assignee?: UserCreateNestedOneWithoutLeadsInput
     contact: ContactCreateNestedOneWithoutLeadsInput
     source?: SourcesCreateNestedOneWithoutLeadsInput
-    assignee?: UserCreateNestedOneWithoutLeadsInput
     activities?: LeadActivityCreateNestedManyWithoutLeadInput
     notifications?: NotificationCreateNestedManyWithoutLeadInput
     payments?: PaymentCreateNestedManyWithoutLeadInput
@@ -13567,7 +13591,8 @@ export namespace Prisma {
   export type LeadUncheckedCreateInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -13595,7 +13620,8 @@ export namespace Prisma {
 
   export type LeadUpdateInput = {
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13613,9 +13639,9 @@ export namespace Prisma {
     bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignee?: UserUpdateOneWithoutLeadsNestedInput
     contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
     source?: SourcesUpdateOneWithoutLeadsNestedInput
-    assignee?: UserUpdateOneWithoutLeadsNestedInput
     activities?: LeadActivityUpdateManyWithoutLeadNestedInput
     notifications?: NotificationUpdateManyWithoutLeadNestedInput
     payments?: PaymentUpdateManyWithoutLeadNestedInput
@@ -13624,7 +13650,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13653,7 +13680,8 @@ export namespace Prisma {
   export type LeadCreateManyInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -13678,7 +13706,8 @@ export namespace Prisma {
 
   export type LeadUpdateManyMutationInput = {
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13701,7 +13730,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13912,8 +13942,8 @@ export namespace Prisma {
     createdAt?: Date | string
     priority?: string
     assignedTo?: string | null
-    user?: UserCreateNestedOneWithoutNotificationsInput
     lead?: LeadCreateNestedOneWithoutNotificationsInput
+    user?: UserCreateNestedOneWithoutNotificationsInput
   }
 
   export type NotificationUncheckedCreateInput = {
@@ -13935,8 +13965,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     priority?: StringFieldUpdateOperationsInput | string
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneWithoutNotificationsNestedInput
     lead?: LeadUpdateOneWithoutNotificationsNestedInput
+    user?: UserUpdateOneWithoutNotificationsNestedInput
   }
 
   export type NotificationUncheckedUpdateInput = {
@@ -14075,22 +14105,10 @@ export namespace Prisma {
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
   }
 
-  export type SessionsListRelationFilter = {
-    every?: SessionsWhereInput
-    some?: SessionsWhereInput
-    none?: SessionsWhereInput
-  }
-
   export type LeadListRelationFilter = {
     every?: LeadWhereInput
     some?: LeadWhereInput
     none?: LeadWhereInput
-  }
-
-  export type NotificationListRelationFilter = {
-    every?: NotificationWhereInput
-    some?: NotificationWhereInput
-    none?: NotificationWhereInput
   }
 
   export type LeadActivityListRelationFilter = {
@@ -14099,11 +14117,23 @@ export namespace Prisma {
     none?: LeadActivityWhereInput
   }
 
-  export type SessionsOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type NotificationListRelationFilter = {
+    every?: NotificationWhereInput
+    some?: NotificationWhereInput
+    none?: NotificationWhereInput
+  }
+
+  export type SessionsListRelationFilter = {
+    every?: SessionsWhereInput
+    some?: SessionsWhereInput
+    none?: SessionsWhereInput
   }
 
   export type LeadOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type LeadActivityOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -14111,7 +14141,7 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type LeadActivityOrderByRelationAggregateInput = {
+  export type SessionsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -14349,6 +14379,17 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type FloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -14382,15 +14423,9 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
   }
 
   export type ContactScalarRelationFilter = {
@@ -14401,11 +14436,6 @@ export namespace Prisma {
   export type SourcesNullableScalarRelationFilter = {
     is?: SourcesWhereInput | null
     isNot?: SourcesWhereInput | null
-  }
-
-  export type UserNullableScalarRelationFilter = {
-    is?: UserWhereInput | null
-    isNot?: UserWhereInput | null
   }
 
   export type PaymentListRelationFilter = {
@@ -14421,7 +14451,8 @@ export namespace Prisma {
   export type LeadCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    amount?: SortOrder
+    quotationAmount?: SortOrder
+    clientBudget?: SortOrder
     status?: SortOrder
     probability?: SortOrder
     expectedCloseDate?: SortOrder
@@ -14446,7 +14477,8 @@ export namespace Prisma {
 
   export type LeadAvgOrderByAggregateInput = {
     id?: SortOrder
-    amount?: SortOrder
+    quotationAmount?: SortOrder
+    clientBudget?: SortOrder
     probability?: SortOrder
     guests?: SortOrder
     finalAmount?: SortOrder
@@ -14459,7 +14491,8 @@ export namespace Prisma {
   export type LeadMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    amount?: SortOrder
+    quotationAmount?: SortOrder
+    clientBudget?: SortOrder
     status?: SortOrder
     probability?: SortOrder
     expectedCloseDate?: SortOrder
@@ -14485,7 +14518,8 @@ export namespace Prisma {
   export type LeadMinOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    amount?: SortOrder
+    quotationAmount?: SortOrder
+    clientBudget?: SortOrder
     status?: SortOrder
     probability?: SortOrder
     expectedCloseDate?: SortOrder
@@ -14510,7 +14544,8 @@ export namespace Prisma {
 
   export type LeadSumOrderByAggregateInput = {
     id?: SortOrder
-    amount?: SortOrder
+    quotationAmount?: SortOrder
+    clientBudget?: SortOrder
     probability?: SortOrder
     guests?: SortOrder
     finalAmount?: SortOrder
@@ -14518,6 +14553,22 @@ export namespace Prisma {
     contactId?: SortOrder
     sourceId?: SortOrder
     assignedTo?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -14564,22 +14615,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type LeadScalarRelationFilter = {
@@ -14818,25 +14853,11 @@ export namespace Prisma {
     _max?: NestedJsonFilter<$PrismaModel>
   }
 
-  export type SessionsCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput> | SessionsCreateWithoutUserInput[] | SessionsUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionsCreateOrConnectWithoutUserInput | SessionsCreateOrConnectWithoutUserInput[]
-    createMany?: SessionsCreateManyUserInputEnvelope
-    connect?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
-  }
-
   export type LeadCreateNestedManyWithoutAssigneeInput = {
     create?: XOR<LeadCreateWithoutAssigneeInput, LeadUncheckedCreateWithoutAssigneeInput> | LeadCreateWithoutAssigneeInput[] | LeadUncheckedCreateWithoutAssigneeInput[]
     connectOrCreate?: LeadCreateOrConnectWithoutAssigneeInput | LeadCreateOrConnectWithoutAssigneeInput[]
     createMany?: LeadCreateManyAssigneeInputEnvelope
     connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
-  }
-
-  export type NotificationCreateNestedManyWithoutUserInput = {
-    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
-    createMany?: NotificationCreateManyUserInputEnvelope
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
   export type LeadActivityCreateNestedManyWithoutUserInput = {
@@ -14846,7 +14867,14 @@ export namespace Prisma {
     connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
   }
 
-  export type SessionsUncheckedCreateNestedManyWithoutUserInput = {
+  export type NotificationCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type SessionsCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput> | SessionsCreateWithoutUserInput[] | SessionsUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionsCreateOrConnectWithoutUserInput | SessionsCreateOrConnectWithoutUserInput[]
     createMany?: SessionsCreateManyUserInputEnvelope
@@ -14860,6 +14888,13 @@ export namespace Prisma {
     connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
   }
 
+  export type LeadActivityUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput> | LeadActivityCreateWithoutUserInput[] | LeadActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutUserInput | LeadActivityCreateOrConnectWithoutUserInput[]
+    createMany?: LeadActivityCreateManyUserInputEnvelope
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+  }
+
   export type NotificationUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
@@ -14867,11 +14902,11 @@ export namespace Prisma {
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
-  export type LeadActivityUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput> | LeadActivityCreateWithoutUserInput[] | LeadActivityUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: LeadActivityCreateOrConnectWithoutUserInput | LeadActivityCreateOrConnectWithoutUserInput[]
-    createMany?: LeadActivityCreateManyUserInputEnvelope
-    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+  export type SessionsUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput> | SessionsCreateWithoutUserInput[] | SessionsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionsCreateOrConnectWithoutUserInput | SessionsCreateOrConnectWithoutUserInput[]
+    createMany?: SessionsCreateManyUserInputEnvelope
+    connect?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -14890,20 +14925,6 @@ export namespace Prisma {
     set?: $Enums.Role
   }
 
-  export type SessionsUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput> | SessionsCreateWithoutUserInput[] | SessionsUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionsCreateOrConnectWithoutUserInput | SessionsCreateOrConnectWithoutUserInput[]
-    upsert?: SessionsUpsertWithWhereUniqueWithoutUserInput | SessionsUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionsCreateManyUserInputEnvelope
-    set?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
-    disconnect?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
-    delete?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
-    connect?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
-    update?: SessionsUpdateWithWhereUniqueWithoutUserInput | SessionsUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionsUpdateManyWithWhereWithoutUserInput | SessionsUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionsScalarWhereInput | SessionsScalarWhereInput[]
-  }
-
   export type LeadUpdateManyWithoutAssigneeNestedInput = {
     create?: XOR<LeadCreateWithoutAssigneeInput, LeadUncheckedCreateWithoutAssigneeInput> | LeadCreateWithoutAssigneeInput[] | LeadUncheckedCreateWithoutAssigneeInput[]
     connectOrCreate?: LeadCreateOrConnectWithoutAssigneeInput | LeadCreateOrConnectWithoutAssigneeInput[]
@@ -14916,20 +14937,6 @@ export namespace Prisma {
     update?: LeadUpdateWithWhereUniqueWithoutAssigneeInput | LeadUpdateWithWhereUniqueWithoutAssigneeInput[]
     updateMany?: LeadUpdateManyWithWhereWithoutAssigneeInput | LeadUpdateManyWithWhereWithoutAssigneeInput[]
     deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
-  }
-
-  export type NotificationUpdateManyWithoutUserNestedInput = {
-    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
-    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: NotificationCreateManyUserInputEnvelope
-    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
   }
 
   export type LeadActivityUpdateManyWithoutUserNestedInput = {
@@ -14946,15 +14953,21 @@ export namespace Prisma {
     deleteMany?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
+  export type NotificationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
   }
 
-  export type SessionsUncheckedUpdateManyWithoutUserNestedInput = {
+  export type SessionsUpdateManyWithoutUserNestedInput = {
     create?: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput> | SessionsCreateWithoutUserInput[] | SessionsUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionsCreateOrConnectWithoutUserInput | SessionsCreateOrConnectWithoutUserInput[]
     upsert?: SessionsUpsertWithWhereUniqueWithoutUserInput | SessionsUpsertWithWhereUniqueWithoutUserInput[]
@@ -14966,6 +14979,14 @@ export namespace Prisma {
     update?: SessionsUpdateWithWhereUniqueWithoutUserInput | SessionsUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: SessionsUpdateManyWithWhereWithoutUserInput | SessionsUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: SessionsScalarWhereInput | SessionsScalarWhereInput[]
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type LeadUncheckedUpdateManyWithoutAssigneeNestedInput = {
@@ -14982,6 +15003,20 @@ export namespace Prisma {
     deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
   }
 
+  export type LeadActivityUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput> | LeadActivityCreateWithoutUserInput[] | LeadActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: LeadActivityCreateOrConnectWithoutUserInput | LeadActivityCreateOrConnectWithoutUserInput[]
+    upsert?: LeadActivityUpsertWithWhereUniqueWithoutUserInput | LeadActivityUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: LeadActivityCreateManyUserInputEnvelope
+    set?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    disconnect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    delete?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
+    update?: LeadActivityUpdateWithWhereUniqueWithoutUserInput | LeadActivityUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: LeadActivityUpdateManyWithWhereWithoutUserInput | LeadActivityUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+  }
+
   export type NotificationUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
@@ -14996,18 +15031,18 @@ export namespace Prisma {
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
   }
 
-  export type LeadActivityUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput> | LeadActivityCreateWithoutUserInput[] | LeadActivityUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: LeadActivityCreateOrConnectWithoutUserInput | LeadActivityCreateOrConnectWithoutUserInput[]
-    upsert?: LeadActivityUpsertWithWhereUniqueWithoutUserInput | LeadActivityUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: LeadActivityCreateManyUserInputEnvelope
-    set?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
-    disconnect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
-    delete?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
-    connect?: LeadActivityWhereUniqueInput | LeadActivityWhereUniqueInput[]
-    update?: LeadActivityUpdateWithWhereUniqueWithoutUserInput | LeadActivityUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: LeadActivityUpdateManyWithWhereWithoutUserInput | LeadActivityUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+  export type SessionsUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput> | SessionsCreateWithoutUserInput[] | SessionsUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionsCreateOrConnectWithoutUserInput | SessionsCreateOrConnectWithoutUserInput[]
+    upsert?: SessionsUpsertWithWhereUniqueWithoutUserInput | SessionsUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionsCreateManyUserInputEnvelope
+    set?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
+    disconnect?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
+    delete?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
+    connect?: SessionsWhereUniqueInput | SessionsWhereUniqueInput[]
+    update?: SessionsUpdateWithWhereUniqueWithoutUserInput | SessionsUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionsUpdateManyWithWhereWithoutUserInput | SessionsUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionsScalarWhereInput | SessionsScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -15070,6 +15105,12 @@ export namespace Prisma {
     deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutLeadsInput = {
+    create?: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLeadsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type ContactCreateNestedOneWithoutLeadsInput = {
     create?: XOR<ContactCreateWithoutLeadsInput, ContactUncheckedCreateWithoutLeadsInput>
     connectOrCreate?: ContactCreateOrConnectWithoutLeadsInput
@@ -15080,12 +15121,6 @@ export namespace Prisma {
     create?: XOR<SourcesCreateWithoutLeadsInput, SourcesUncheckedCreateWithoutLeadsInput>
     connectOrCreate?: SourcesCreateOrConnectWithoutLeadsInput
     connect?: SourcesWhereUniqueInput
-  }
-
-  export type UserCreateNestedOneWithoutLeadsInput = {
-    create?: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutLeadsInput
-    connect?: UserWhereUniqueInput
   }
 
   export type LeadActivityCreateNestedManyWithoutLeadInput = {
@@ -15130,6 +15165,14 @@ export namespace Prisma {
     connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
   }
 
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type FloatFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -15150,12 +15193,14 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
+  export type UserUpdateOneWithoutLeadsNestedInput = {
+    create?: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutLeadsInput
+    upsert?: UserUpsertWithoutLeadsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLeadsInput, UserUpdateWithoutLeadsInput>, UserUncheckedUpdateWithoutLeadsInput>
   }
 
   export type ContactUpdateOneRequiredWithoutLeadsNestedInput = {
@@ -15174,16 +15219,6 @@ export namespace Prisma {
     delete?: SourcesWhereInput | boolean
     connect?: SourcesWhereUniqueInput
     update?: XOR<XOR<SourcesUpdateToOneWithWhereWithoutLeadsInput, SourcesUpdateWithoutLeadsInput>, SourcesUncheckedUpdateWithoutLeadsInput>
-  }
-
-  export type UserUpdateOneWithoutLeadsNestedInput = {
-    create?: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutLeadsInput
-    upsert?: UserUpsertWithoutLeadsInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLeadsInput, UserUpdateWithoutLeadsInput>, UserUncheckedUpdateWithoutLeadsInput>
   }
 
   export type LeadActivityUpdateManyWithoutLeadNestedInput = {
@@ -15356,26 +15391,16 @@ export namespace Prisma {
     deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutNotificationsInput = {
-    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type LeadCreateNestedOneWithoutNotificationsInput = {
     create?: XOR<LeadCreateWithoutNotificationsInput, LeadUncheckedCreateWithoutNotificationsInput>
     connectOrCreate?: LeadCreateOrConnectWithoutNotificationsInput
     connect?: LeadWhereUniqueInput
   }
 
-  export type UserUpdateOneWithoutNotificationsNestedInput = {
+  export type UserCreateNestedOneWithoutNotificationsInput = {
     create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
     connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
-    upsert?: UserUpsertWithoutNotificationsInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
   }
 
   export type LeadUpdateOneWithoutNotificationsNestedInput = {
@@ -15386,6 +15411,16 @@ export namespace Prisma {
     delete?: LeadWhereInput | boolean
     connect?: LeadWhereUniqueInput
     update?: XOR<XOR<LeadUpdateToOneWithWhereWithoutNotificationsInput, LeadUpdateWithoutNotificationsInput>, LeadUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type UserUpdateOneWithoutNotificationsNestedInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    upsert?: UserUpsertWithoutNotificationsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -15554,6 +15589,17 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -15565,7 +15611,7 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
     in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
     notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
@@ -15573,7 +15619,12 @@ export namespace Prisma {
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -15621,22 +15672,6 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
-
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
-  }
   export type NestedJsonFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -15661,38 +15696,10 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type SessionsCreateWithoutUserInput = {
-    session_token: string
-    ip_address: string
-    user_agent: string
-    created_at?: Date | string
-    expires_at: Date | string
-    revoked_at: Date | string
-  }
-
-  export type SessionsUncheckedCreateWithoutUserInput = {
-    id?: number
-    session_token: string
-    ip_address: string
-    user_agent: string
-    created_at?: Date | string
-    expires_at: Date | string
-    revoked_at: Date | string
-  }
-
-  export type SessionsCreateOrConnectWithoutUserInput = {
-    where: SessionsWhereUniqueInput
-    create: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionsCreateManyUserInputEnvelope = {
-    data: SessionsCreateManyUserInput | SessionsCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
   export type LeadCreateWithoutAssigneeInput = {
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -15720,7 +15727,8 @@ export namespace Prisma {
   export type LeadUncheckedCreateWithoutAssigneeInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -15755,6 +15763,31 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type LeadActivityCreateWithoutUserInput = {
+    type?: string
+    content: string
+    createdAt?: Date | string
+    lead: LeadCreateNestedOneWithoutActivitiesInput
+  }
+
+  export type LeadActivityUncheckedCreateWithoutUserInput = {
+    id?: number
+    leadId: number
+    type?: string
+    content: string
+    createdAt?: Date | string
+  }
+
+  export type LeadActivityCreateOrConnectWithoutUserInput = {
+    where: LeadActivityWhereUniqueInput
+    create: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput>
+  }
+
+  export type LeadActivityCreateManyUserInputEnvelope = {
+    data: LeadActivityCreateManyUserInput | LeadActivityCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type NotificationCreateWithoutUserInput = {
     type: string
     message: string
@@ -15786,59 +15819,33 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type LeadActivityCreateWithoutUserInput = {
-    type?: string
-    content: string
-    createdAt?: Date | string
-    lead: LeadCreateNestedOneWithoutActivitiesInput
+  export type SessionsCreateWithoutUserInput = {
+    session_token: string
+    ip_address: string
+    user_agent: string
+    created_at?: Date | string
+    expires_at: Date | string
+    revoked_at: Date | string
   }
 
-  export type LeadActivityUncheckedCreateWithoutUserInput = {
+  export type SessionsUncheckedCreateWithoutUserInput = {
     id?: number
-    leadId: number
-    type?: string
-    content: string
-    createdAt?: Date | string
+    session_token: string
+    ip_address: string
+    user_agent: string
+    created_at?: Date | string
+    expires_at: Date | string
+    revoked_at: Date | string
   }
 
-  export type LeadActivityCreateOrConnectWithoutUserInput = {
-    where: LeadActivityWhereUniqueInput
-    create: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput>
-  }
-
-  export type LeadActivityCreateManyUserInputEnvelope = {
-    data: LeadActivityCreateManyUserInput | LeadActivityCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type SessionsUpsertWithWhereUniqueWithoutUserInput = {
+  export type SessionsCreateOrConnectWithoutUserInput = {
     where: SessionsWhereUniqueInput
-    update: XOR<SessionsUpdateWithoutUserInput, SessionsUncheckedUpdateWithoutUserInput>
     create: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput>
   }
 
-  export type SessionsUpdateWithWhereUniqueWithoutUserInput = {
-    where: SessionsWhereUniqueInput
-    data: XOR<SessionsUpdateWithoutUserInput, SessionsUncheckedUpdateWithoutUserInput>
-  }
-
-  export type SessionsUpdateManyWithWhereWithoutUserInput = {
-    where: SessionsScalarWhereInput
-    data: XOR<SessionsUpdateManyMutationInput, SessionsUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type SessionsScalarWhereInput = {
-    AND?: SessionsScalarWhereInput | SessionsScalarWhereInput[]
-    OR?: SessionsScalarWhereInput[]
-    NOT?: SessionsScalarWhereInput | SessionsScalarWhereInput[]
-    id?: IntFilter<"Sessions"> | number
-    session_token?: StringFilter<"Sessions"> | string
-    ip_address?: StringFilter<"Sessions"> | string
-    user_agent?: StringFilter<"Sessions"> | string
-    created_at?: DateTimeFilter<"Sessions"> | Date | string
-    expires_at?: DateTimeFilter<"Sessions"> | Date | string
-    revoked_at?: DateTimeFilter<"Sessions"> | Date | string
-    user_id?: IntFilter<"Sessions"> | number
+  export type SessionsCreateManyUserInputEnvelope = {
+    data: SessionsCreateManyUserInput | SessionsCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type LeadUpsertWithWhereUniqueWithoutAssigneeInput = {
@@ -15863,7 +15870,8 @@ export namespace Prisma {
     NOT?: LeadScalarWhereInput | LeadScalarWhereInput[]
     id?: IntFilter<"Lead"> | number
     title?: StringNullableFilter<"Lead"> | string | null
-    amount?: FloatFilter<"Lead"> | number
+    quotationAmount?: FloatNullableFilter<"Lead"> | number | null
+    clientBudget?: FloatFilter<"Lead"> | number
     status?: StringFilter<"Lead"> | string
     probability?: IntNullableFilter<"Lead"> | number | null
     expectedCloseDate?: DateTimeNullableFilter<"Lead"> | Date | string | null
@@ -15884,6 +15892,34 @@ export namespace Prisma {
     contactId?: IntFilter<"Lead"> | number
     sourceId?: IntNullableFilter<"Lead"> | number | null
     assignedTo?: IntNullableFilter<"Lead"> | number | null
+  }
+
+  export type LeadActivityUpsertWithWhereUniqueWithoutUserInput = {
+    where: LeadActivityWhereUniqueInput
+    update: XOR<LeadActivityUpdateWithoutUserInput, LeadActivityUncheckedUpdateWithoutUserInput>
+    create: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput>
+  }
+
+  export type LeadActivityUpdateWithWhereUniqueWithoutUserInput = {
+    where: LeadActivityWhereUniqueInput
+    data: XOR<LeadActivityUpdateWithoutUserInput, LeadActivityUncheckedUpdateWithoutUserInput>
+  }
+
+  export type LeadActivityUpdateManyWithWhereWithoutUserInput = {
+    where: LeadActivityScalarWhereInput
+    data: XOR<LeadActivityUpdateManyMutationInput, LeadActivityUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type LeadActivityScalarWhereInput = {
+    AND?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+    OR?: LeadActivityScalarWhereInput[]
+    NOT?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
+    id?: IntFilter<"LeadActivity"> | number
+    leadId?: IntFilter<"LeadActivity"> | number
+    userId?: IntNullableFilter<"LeadActivity"> | number | null
+    type?: StringFilter<"LeadActivity"> | string
+    content?: StringFilter<"LeadActivity"> | string
+    createdAt?: DateTimeFilter<"LeadActivity"> | Date | string
   }
 
   export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
@@ -15917,32 +15953,34 @@ export namespace Prisma {
     assignedTo?: StringNullableFilter<"Notification"> | string | null
   }
 
-  export type LeadActivityUpsertWithWhereUniqueWithoutUserInput = {
-    where: LeadActivityWhereUniqueInput
-    update: XOR<LeadActivityUpdateWithoutUserInput, LeadActivityUncheckedUpdateWithoutUserInput>
-    create: XOR<LeadActivityCreateWithoutUserInput, LeadActivityUncheckedCreateWithoutUserInput>
+  export type SessionsUpsertWithWhereUniqueWithoutUserInput = {
+    where: SessionsWhereUniqueInput
+    update: XOR<SessionsUpdateWithoutUserInput, SessionsUncheckedUpdateWithoutUserInput>
+    create: XOR<SessionsCreateWithoutUserInput, SessionsUncheckedCreateWithoutUserInput>
   }
 
-  export type LeadActivityUpdateWithWhereUniqueWithoutUserInput = {
-    where: LeadActivityWhereUniqueInput
-    data: XOR<LeadActivityUpdateWithoutUserInput, LeadActivityUncheckedUpdateWithoutUserInput>
+  export type SessionsUpdateWithWhereUniqueWithoutUserInput = {
+    where: SessionsWhereUniqueInput
+    data: XOR<SessionsUpdateWithoutUserInput, SessionsUncheckedUpdateWithoutUserInput>
   }
 
-  export type LeadActivityUpdateManyWithWhereWithoutUserInput = {
-    where: LeadActivityScalarWhereInput
-    data: XOR<LeadActivityUpdateManyMutationInput, LeadActivityUncheckedUpdateManyWithoutUserInput>
+  export type SessionsUpdateManyWithWhereWithoutUserInput = {
+    where: SessionsScalarWhereInput
+    data: XOR<SessionsUpdateManyMutationInput, SessionsUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type LeadActivityScalarWhereInput = {
-    AND?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
-    OR?: LeadActivityScalarWhereInput[]
-    NOT?: LeadActivityScalarWhereInput | LeadActivityScalarWhereInput[]
-    id?: IntFilter<"LeadActivity"> | number
-    leadId?: IntFilter<"LeadActivity"> | number
-    userId?: IntNullableFilter<"LeadActivity"> | number | null
-    type?: StringFilter<"LeadActivity"> | string
-    content?: StringFilter<"LeadActivity"> | string
-    createdAt?: DateTimeFilter<"LeadActivity"> | Date | string
+  export type SessionsScalarWhereInput = {
+    AND?: SessionsScalarWhereInput | SessionsScalarWhereInput[]
+    OR?: SessionsScalarWhereInput[]
+    NOT?: SessionsScalarWhereInput | SessionsScalarWhereInput[]
+    id?: IntFilter<"Sessions"> | number
+    session_token?: StringFilter<"Sessions"> | string
+    ip_address?: StringFilter<"Sessions"> | string
+    user_agent?: StringFilter<"Sessions"> | string
+    created_at?: DateTimeFilter<"Sessions"> | Date | string
+    expires_at?: DateTimeFilter<"Sessions"> | Date | string
+    revoked_at?: DateTimeFilter<"Sessions"> | Date | string
+    user_id?: IntFilter<"Sessions"> | number
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -15955,8 +15993,8 @@ export namespace Prisma {
     last_login_at?: Date | string
     role: $Enums.Role
     leads?: LeadCreateNestedManyWithoutAssigneeInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
     leadActivities?: LeadActivityCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -15970,8 +16008,8 @@ export namespace Prisma {
     last_login_at?: Date | string
     role: $Enums.Role
     leads?: LeadUncheckedCreateNestedManyWithoutAssigneeInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     leadActivities?: LeadActivityUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -16000,8 +16038,8 @@ export namespace Prisma {
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     leads?: LeadUpdateManyWithoutAssigneeNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
     leadActivities?: LeadActivityUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -16015,13 +16053,14 @@ export namespace Prisma {
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     leads?: LeadUncheckedUpdateManyWithoutAssigneeNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     leadActivities?: LeadActivityUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LeadCreateWithoutContactInput = {
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16039,8 +16078,8 @@ export namespace Prisma {
     bookedBy?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    source?: SourcesCreateNestedOneWithoutLeadsInput
     assignee?: UserCreateNestedOneWithoutLeadsInput
+    source?: SourcesCreateNestedOneWithoutLeadsInput
     activities?: LeadActivityCreateNestedManyWithoutLeadInput
     notifications?: NotificationCreateNestedManyWithoutLeadInput
     payments?: PaymentCreateNestedManyWithoutLeadInput
@@ -16049,7 +16088,8 @@ export namespace Prisma {
   export type LeadUncheckedCreateWithoutContactInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16100,6 +16140,40 @@ export namespace Prisma {
     data: XOR<LeadUpdateManyMutationInput, LeadUncheckedUpdateManyWithoutContactInput>
   }
 
+  export type UserCreateWithoutLeadsInput = {
+    username: string
+    email: string
+    password_hash: string
+    is_active: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    last_login_at?: Date | string
+    role: $Enums.Role
+    leadActivities?: LeadActivityCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    sessions?: SessionsCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutLeadsInput = {
+    id?: number
+    username: string
+    email: string
+    password_hash: string
+    is_active: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    last_login_at?: Date | string
+    role: $Enums.Role
+    leadActivities?: LeadActivityUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutLeadsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
+  }
+
   export type ContactCreateWithoutLeadsInput = {
     firstName: string
     lastName?: string | null
@@ -16140,40 +16214,6 @@ export namespace Prisma {
   export type SourcesCreateOrConnectWithoutLeadsInput = {
     where: SourcesWhereUniqueInput
     create: XOR<SourcesCreateWithoutLeadsInput, SourcesUncheckedCreateWithoutLeadsInput>
-  }
-
-  export type UserCreateWithoutLeadsInput = {
-    username: string
-    email: string
-    password_hash: string
-    is_active: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    last_login_at?: Date | string
-    role: $Enums.Role
-    sessions?: SessionsCreateNestedManyWithoutUserInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-    leadActivities?: LeadActivityCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutLeadsInput = {
-    id?: number
-    username: string
-    email: string
-    password_hash: string
-    is_active: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    last_login_at?: Date | string
-    role: $Enums.Role
-    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-    leadActivities?: LeadActivityUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutLeadsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
   }
 
   export type LeadActivityCreateWithoutLeadInput = {
@@ -16261,6 +16301,46 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserUpsertWithoutLeadsInput = {
+    update: XOR<UserUpdateWithoutLeadsInput, UserUncheckedUpdateWithoutLeadsInput>
+    create: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutLeadsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutLeadsInput, UserUncheckedUpdateWithoutLeadsInput>
+  }
+
+  export type UserUpdateWithoutLeadsInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    leadActivities?: LeadActivityUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    sessions?: SessionsUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutLeadsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    leadActivities?: LeadActivityUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type ContactUpsertWithoutLeadsInput = {
     update: XOR<ContactUpdateWithoutLeadsInput, ContactUncheckedUpdateWithoutLeadsInput>
     create: XOR<ContactCreateWithoutLeadsInput, ContactUncheckedCreateWithoutLeadsInput>
@@ -16313,46 +16393,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserUpsertWithoutLeadsInput = {
-    update: XOR<UserUpdateWithoutLeadsInput, UserUncheckedUpdateWithoutLeadsInput>
-    create: XOR<UserCreateWithoutLeadsInput, UserUncheckedCreateWithoutLeadsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutLeadsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutLeadsInput, UserUncheckedUpdateWithoutLeadsInput>
-  }
-
-  export type UserUpdateWithoutLeadsInput = {
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    sessions?: SessionsUpdateManyWithoutUserNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-    leadActivities?: LeadActivityUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutLeadsInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-    leadActivities?: LeadActivityUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LeadActivityUpsertWithWhereUniqueWithoutLeadInput = {
@@ -16419,7 +16459,8 @@ export namespace Prisma {
 
   export type LeadCreateWithoutPaymentsInput = {
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16437,9 +16478,9 @@ export namespace Prisma {
     bookedBy?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    assignee?: UserCreateNestedOneWithoutLeadsInput
     contact: ContactCreateNestedOneWithoutLeadsInput
     source?: SourcesCreateNestedOneWithoutLeadsInput
-    assignee?: UserCreateNestedOneWithoutLeadsInput
     activities?: LeadActivityCreateNestedManyWithoutLeadInput
     notifications?: NotificationCreateNestedManyWithoutLeadInput
   }
@@ -16447,7 +16488,8 @@ export namespace Prisma {
   export type LeadUncheckedCreateWithoutPaymentsInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16490,7 +16532,8 @@ export namespace Prisma {
 
   export type LeadUpdateWithoutPaymentsInput = {
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16508,9 +16551,9 @@ export namespace Prisma {
     bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignee?: UserUpdateOneWithoutLeadsNestedInput
     contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
     source?: SourcesUpdateOneWithoutLeadsNestedInput
-    assignee?: UserUpdateOneWithoutLeadsNestedInput
     activities?: LeadActivityUpdateManyWithoutLeadNestedInput
     notifications?: NotificationUpdateManyWithoutLeadNestedInput
   }
@@ -16518,7 +16561,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateWithoutPaymentsInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16545,7 +16589,8 @@ export namespace Prisma {
 
   export type LeadCreateWithoutActivitiesInput = {
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16563,9 +16608,9 @@ export namespace Prisma {
     bookedBy?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    assignee?: UserCreateNestedOneWithoutLeadsInput
     contact: ContactCreateNestedOneWithoutLeadsInput
     source?: SourcesCreateNestedOneWithoutLeadsInput
-    assignee?: UserCreateNestedOneWithoutLeadsInput
     notifications?: NotificationCreateNestedManyWithoutLeadInput
     payments?: PaymentCreateNestedManyWithoutLeadInput
   }
@@ -16573,7 +16618,8 @@ export namespace Prisma {
   export type LeadUncheckedCreateWithoutActivitiesInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16612,9 +16658,9 @@ export namespace Prisma {
     updated_at?: Date | string
     last_login_at?: Date | string
     role: $Enums.Role
-    sessions?: SessionsCreateNestedManyWithoutUserInput
     leads?: LeadCreateNestedManyWithoutAssigneeInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    sessions?: SessionsCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutLeadActivitiesInput = {
@@ -16627,9 +16673,9 @@ export namespace Prisma {
     updated_at?: Date | string
     last_login_at?: Date | string
     role: $Enums.Role
-    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
     leads?: LeadUncheckedCreateNestedManyWithoutAssigneeInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutLeadActivitiesInput = {
@@ -16650,7 +16696,8 @@ export namespace Prisma {
 
   export type LeadUpdateWithoutActivitiesInput = {
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16668,9 +16715,9 @@ export namespace Prisma {
     bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignee?: UserUpdateOneWithoutLeadsNestedInput
     contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
     source?: SourcesUpdateOneWithoutLeadsNestedInput
-    assignee?: UserUpdateOneWithoutLeadsNestedInput
     notifications?: NotificationUpdateManyWithoutLeadNestedInput
     payments?: PaymentUpdateManyWithoutLeadNestedInput
   }
@@ -16678,7 +16725,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateWithoutActivitiesInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16723,9 +16771,9 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    sessions?: SessionsUpdateManyWithoutUserNestedInput
     leads?: LeadUpdateManyWithoutAssigneeNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    sessions?: SessionsUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLeadActivitiesInput = {
@@ -16738,14 +16786,15 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
     leads?: LeadUncheckedUpdateManyWithoutAssigneeNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LeadCreateWithoutSourceInput = {
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16763,8 +16812,8 @@ export namespace Prisma {
     bookedBy?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    contact: ContactCreateNestedOneWithoutLeadsInput
     assignee?: UserCreateNestedOneWithoutLeadsInput
+    contact: ContactCreateNestedOneWithoutLeadsInput
     activities?: LeadActivityCreateNestedManyWithoutLeadInput
     notifications?: NotificationCreateNestedManyWithoutLeadInput
     payments?: PaymentCreateNestedManyWithoutLeadInput
@@ -16773,7 +16822,8 @@ export namespace Prisma {
   export type LeadUncheckedCreateWithoutSourceInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16824,43 +16874,10 @@ export namespace Prisma {
     data: XOR<LeadUpdateManyMutationInput, LeadUncheckedUpdateManyWithoutSourceInput>
   }
 
-  export type UserCreateWithoutNotificationsInput = {
-    username: string
-    email: string
-    password_hash: string
-    is_active: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    last_login_at?: Date | string
-    role: $Enums.Role
-    sessions?: SessionsCreateNestedManyWithoutUserInput
-    leads?: LeadCreateNestedManyWithoutAssigneeInput
-    leadActivities?: LeadActivityCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutNotificationsInput = {
-    id?: number
-    username: string
-    email: string
-    password_hash: string
-    is_active: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    last_login_at?: Date | string
-    role: $Enums.Role
-    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
-    leads?: LeadUncheckedCreateNestedManyWithoutAssigneeInput
-    leadActivities?: LeadActivityUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutNotificationsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
-  }
-
   export type LeadCreateWithoutNotificationsInput = {
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16878,9 +16895,9 @@ export namespace Prisma {
     bookedBy?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    assignee?: UserCreateNestedOneWithoutLeadsInput
     contact: ContactCreateNestedOneWithoutLeadsInput
     source?: SourcesCreateNestedOneWithoutLeadsInput
-    assignee?: UserCreateNestedOneWithoutLeadsInput
     activities?: LeadActivityCreateNestedManyWithoutLeadInput
     payments?: PaymentCreateNestedManyWithoutLeadInput
   }
@@ -16888,7 +16905,8 @@ export namespace Prisma {
   export type LeadUncheckedCreateWithoutNotificationsInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -16918,44 +16936,38 @@ export namespace Prisma {
     create: XOR<LeadCreateWithoutNotificationsInput, LeadUncheckedCreateWithoutNotificationsInput>
   }
 
-  export type UserUpsertWithoutNotificationsInput = {
-    update: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+  export type UserCreateWithoutNotificationsInput = {
+    username: string
+    email: string
+    password_hash: string
+    is_active: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    last_login_at?: Date | string
+    role: $Enums.Role
+    leads?: LeadCreateNestedManyWithoutAssigneeInput
+    leadActivities?: LeadActivityCreateNestedManyWithoutUserInput
+    sessions?: SessionsCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationsInput = {
+    id?: number
+    username: string
+    email: string
+    password_hash: string
+    is_active: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    last_login_at?: Date | string
+    role: $Enums.Role
+    leads?: LeadUncheckedCreateNestedManyWithoutAssigneeInput
+    leadActivities?: LeadActivityUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionsUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationsInput = {
+    where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutNotificationsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
-  }
-
-  export type UserUpdateWithoutNotificationsInput = {
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    sessions?: SessionsUpdateManyWithoutUserNestedInput
-    leads?: LeadUpdateManyWithoutAssigneeNestedInput
-    leadActivities?: LeadActivityUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutNotificationsInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password_hash?: StringFieldUpdateOperationsInput | string
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
-    leads?: LeadUncheckedUpdateManyWithoutAssigneeNestedInput
-    leadActivities?: LeadActivityUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LeadUpsertWithoutNotificationsInput = {
@@ -16971,7 +16983,8 @@ export namespace Prisma {
 
   export type LeadUpdateWithoutNotificationsInput = {
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16989,9 +17002,9 @@ export namespace Prisma {
     bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignee?: UserUpdateOneWithoutLeadsNestedInput
     contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
     source?: SourcesUpdateOneWithoutLeadsNestedInput
-    assignee?: UserUpdateOneWithoutLeadsNestedInput
     activities?: LeadActivityUpdateManyWithoutLeadNestedInput
     payments?: PaymentUpdateManyWithoutLeadNestedInput
   }
@@ -16999,7 +17012,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateWithoutNotificationsInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17024,20 +17038,51 @@ export namespace Prisma {
     payments?: PaymentUncheckedUpdateManyWithoutLeadNestedInput
   }
 
-  export type SessionsCreateManyUserInput = {
-    id?: number
-    session_token: string
-    ip_address: string
-    user_agent: string
-    created_at?: Date | string
-    expires_at: Date | string
-    revoked_at: Date | string
+  export type UserUpsertWithoutNotificationsInput = {
+    update: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNotificationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type UserUpdateWithoutNotificationsInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    leads?: LeadUpdateManyWithoutAssigneeNestedInput
+    leadActivities?: LeadActivityUpdateManyWithoutUserNestedInput
+    sessions?: SessionsUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password_hash?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    last_login_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    leads?: LeadUncheckedUpdateManyWithoutAssigneeNestedInput
+    leadActivities?: LeadActivityUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionsUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LeadCreateManyAssigneeInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -17059,6 +17104,14 @@ export namespace Prisma {
     sourceId?: number | null
   }
 
+  export type LeadActivityCreateManyUserInput = {
+    id?: number
+    leadId: number
+    type?: string
+    content: string
+    createdAt?: Date | string
+  }
+
   export type NotificationCreateManyUserInput = {
     id?: number
     type: string
@@ -17070,46 +17123,20 @@ export namespace Prisma {
     assignedTo?: string | null
   }
 
-  export type LeadActivityCreateManyUserInput = {
+  export type SessionsCreateManyUserInput = {
     id?: number
-    leadId: number
-    type?: string
-    content: string
-    createdAt?: Date | string
-  }
-
-  export type SessionsUpdateWithoutUserInput = {
-    session_token?: StringFieldUpdateOperationsInput | string
-    ip_address?: StringFieldUpdateOperationsInput | string
-    user_agent?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    revoked_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionsUncheckedUpdateWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    session_token?: StringFieldUpdateOperationsInput | string
-    ip_address?: StringFieldUpdateOperationsInput | string
-    user_agent?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    revoked_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionsUncheckedUpdateManyWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    session_token?: StringFieldUpdateOperationsInput | string
-    ip_address?: StringFieldUpdateOperationsInput | string
-    user_agent?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    revoked_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    session_token: string
+    ip_address: string
+    user_agent: string
+    created_at?: Date | string
+    expires_at: Date | string
+    revoked_at: Date | string
   }
 
   export type LeadUpdateWithoutAssigneeInput = {
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17137,7 +17164,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateWithoutAssigneeInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17165,7 +17193,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateManyWithoutAssigneeInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17185,6 +17214,29 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     contactId?: IntFieldUpdateOperationsInput | number
     sourceId?: NullableIntFieldUpdateOperationsInput | number | null
+  }
+
+  export type LeadActivityUpdateWithoutUserInput = {
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lead?: LeadUpdateOneRequiredWithoutActivitiesNestedInput
+  }
+
+  export type LeadActivityUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    leadId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type LeadActivityUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    leadId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type NotificationUpdateWithoutUserInput = {
@@ -17219,33 +17271,40 @@ export namespace Prisma {
     assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type LeadActivityUpdateWithoutUserInput = {
-    type?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    lead?: LeadUpdateOneRequiredWithoutActivitiesNestedInput
+  export type SessionsUpdateWithoutUserInput = {
+    session_token?: StringFieldUpdateOperationsInput | string
+    ip_address?: StringFieldUpdateOperationsInput | string
+    user_agent?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    revoked_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type LeadActivityUncheckedUpdateWithoutUserInput = {
+  export type SessionsUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
-    leadId?: IntFieldUpdateOperationsInput | number
-    type?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    session_token?: StringFieldUpdateOperationsInput | string
+    ip_address?: StringFieldUpdateOperationsInput | string
+    user_agent?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    revoked_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type LeadActivityUncheckedUpdateManyWithoutUserInput = {
+  export type SessionsUncheckedUpdateManyWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
-    leadId?: IntFieldUpdateOperationsInput | number
-    type?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    session_token?: StringFieldUpdateOperationsInput | string
+    ip_address?: StringFieldUpdateOperationsInput | string
+    user_agent?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    expires_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    revoked_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LeadCreateManyContactInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -17269,7 +17328,8 @@ export namespace Prisma {
 
   export type LeadUpdateWithoutContactInput = {
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17287,8 +17347,8 @@ export namespace Prisma {
     bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    source?: SourcesUpdateOneWithoutLeadsNestedInput
     assignee?: UserUpdateOneWithoutLeadsNestedInput
+    source?: SourcesUpdateOneWithoutLeadsNestedInput
     activities?: LeadActivityUpdateManyWithoutLeadNestedInput
     notifications?: NotificationUpdateManyWithoutLeadNestedInput
     payments?: PaymentUpdateManyWithoutLeadNestedInput
@@ -17297,7 +17357,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateWithoutContactInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17325,7 +17386,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateManyWithoutContactInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17463,7 +17525,8 @@ export namespace Prisma {
   export type LeadCreateManySourceInput = {
     id?: number
     title?: string | null
-    amount?: number
+    quotationAmount?: number | null
+    clientBudget: number
     status?: string
     probability?: number | null
     expectedCloseDate?: Date | string | null
@@ -17487,7 +17550,8 @@ export namespace Prisma {
 
   export type LeadUpdateWithoutSourceInput = {
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17505,8 +17569,8 @@ export namespace Prisma {
     bookedBy?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
     assignee?: UserUpdateOneWithoutLeadsNestedInput
+    contact?: ContactUpdateOneRequiredWithoutLeadsNestedInput
     activities?: LeadActivityUpdateManyWithoutLeadNestedInput
     notifications?: NotificationUpdateManyWithoutLeadNestedInput
     payments?: PaymentUpdateManyWithoutLeadNestedInput
@@ -17515,7 +17579,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateWithoutSourceInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17543,7 +17608,8 @@ export namespace Prisma {
   export type LeadUncheckedUpdateManyWithoutSourceInput = {
     id?: IntFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
-    amount?: FloatFieldUpdateOperationsInput | number
+    quotationAmount?: NullableFloatFieldUpdateOperationsInput | number | null
+    clientBudget?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     probability?: NullableIntFieldUpdateOperationsInput | number | null
     expectedCloseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

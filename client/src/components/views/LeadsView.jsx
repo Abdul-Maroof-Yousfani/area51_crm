@@ -82,9 +82,20 @@ export default function LeadsView({
       },
     },
     {
-      accessorKey: 'amount',
-      header: t('amount'),
+      accessorKey: 'quotationAmount',
+      header: t('quotationAmount'),
       cell: ({ getValue }) => formatCurrency(getValue()),
+      sortingFn: (rowA, rowB, columnId) => {
+        return safeAmount(rowA.getValue(columnId)) - safeAmount(rowB.getValue(columnId));
+      },
+    },
+    {
+      accessorKey: 'clientBudget',
+      header: t('clientBudget'),
+      cell: ({ getValue }) => {
+        const value = getValue();
+        return value ? formatCurrency(value) : <span className="text-gray-400">-</span>;
+      },
       sortingFn: (rowA, rowB, columnId) => {
         return safeAmount(rowA.getValue(columnId)) - safeAmount(rowB.getValue(columnId));
       },
@@ -265,7 +276,16 @@ export default function LeadsView({
               </div>
             </div>
             <div className="flex justify-between items-center mt-2 pt-2 border-t">
-              <span className="text-sm font-bold text-green-600">{formatCurrency(row.original.amount)}</span>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-gray-500">Quotation</span>
+                <span className="text-sm font-bold text-green-600">{formatCurrency(row.original.quotationAmount)}</span>
+              </div>
+              {row.original.clientBudget && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-gray-500">Client Budget</span>
+                  <span className="text-sm font-bold text-blue-600">{formatCurrency(row.original.clientBudget)}</span>
+                </div>
+              )}
               <span className="text-xs text-gray-400 flex items-center gap-1">
                 <Calendar className="w-3 h-3" /> {row.original.inquiryDate}
               </span>

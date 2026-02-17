@@ -5,7 +5,8 @@ import { getIO } from '../util/socket.js';
 // Validation schemas
 const leadSchema = Joi.object({
     title: Joi.string().allow('', null),
-    amount: Joi.number().allow(null).default(0),
+    quotationAmount: Joi.number().allow(null).default(0),
+    clientBudget: Joi.number().required(),
     status: Joi.string().allow('', null).default('New'),
     probability: Joi.number().allow(null).default(0),
     expectedCloseDate: Joi.date().allow(null),
@@ -27,7 +28,8 @@ const leadSchema = Joi.object({
 
 const updateLeadSchema = Joi.object({
     title: Joi.string().allow('', null),
-    amount: Joi.number().allow(null),
+    quotationAmount: Joi.number().allow(null),
+    clientBudget: Joi.number(),
     status: Joi.string().allow('', null),
     probability: Joi.number().allow(null),
     expectedCloseDate: Joi.date().allow(null),
@@ -144,8 +146,12 @@ export const getLeadById = async (req, res) => {
 // Create new lead
 export const createLead = async (req, res) => {
     try {
+        console.log('📥 Received lead creation request:', JSON.stringify(req.body, null, 2));
+
         const { error, value } = leadSchema.validate(req.body);
         if (error) {
+            console.error('❌ Validation Error:', error.details[0].message);
+            console.error('❌ Validation Details:', error.details);
             return res.status(400).json({ status: false, message: error.details[0].message });
         }
 
@@ -176,7 +182,7 @@ export const createLead = async (req, res) => {
                 message: `New Lead: ${newLead.title || 'Received'}`,
                 leadId: newLead.id,
                 userId: newLead.assignedTo || null, // Specific user or null
-                assignedTo: newLead.assignedTo ? null : 'all', // If no specific user, assign to all
+                assignedTo: newLead.assignedTo ? null : 'Admin', // If no specific user, assign to Admin (and Owner via logic)
                 priority: 'high'
             }
         });
@@ -218,9 +224,56 @@ export const updateLead = async (req, res) => {
         }
 
         // Update lead
+        // Handle relations separately and clean up data
+        const { contactId, sourceId, assignedTo, ...cleanData } = value;
+
+        // Whitelist allowed fields to prevent unknown argument errors
+        const allowedFields = [
+            'title', 'quotationAmount', 'clientBudget', 'status', 'probability', 'expectedCloseDate',
+            'notes', 'guests', 'venue', 'eventType', 'eventDate',
+            'finalAmount', 'advanceAmount', 'siteVisitDate', 'siteVisitTime',
+            'bookingNotes', 'bookedAt', 'bookedBy', 'createdAt', 'updatedAt',
+            'stageUpdatedAt', 'stageUpdatedBy'
+        ];
+
+        const updateData = {};
+
+        // Only copy allowed fields
+        Object.keys(cleanData).forEach(key => {
+            if (allowedFields.includes(key)) {
+                updateData[key] = cleanData[key];
+            }
+        });
+
+        console.log('🔄 Update Lead Payload:', JSON.stringify(cleanData, null, 2));
+        console.log('🔍 Prisma Update Data:', JSON.stringify(updateData, null, 2));
+
+        // 1. Handle Contact (Required in schema, but optional in update payload)
+        if (contactId) {
+            updateData.contact = { connect: { id: parseInt(contactId) } };
+        }
+
+        // 2. Handle Source (Optional)
+        if (sourceId !== undefined) {
+            if (sourceId) {
+                updateData.source = { connect: { id: parseInt(sourceId) } };
+            } else {
+                updateData.source = { disconnect: true };
+            }
+        }
+
+        // 3. Handle Assignee (Optional)
+        if (assignedTo !== undefined) {
+            if (assignedTo) {
+                updateData.assignee = { connect: { id: parseInt(assignedTo) } };
+            } else {
+                updateData.assignee = { disconnect: true };
+            }
+        }
+
         const updatedLead = await prisma.lead.update({
             where: { id: parseInt(id) },
-            data: value,
+            data: updateData,
             include: {
                 contact: true,
                 source: true,
@@ -485,7 +538,8 @@ export const importLeads = async (req, res) => {
                 const newLead = await prisma.lead.create({
                     data: {
                         title: leadData.title || leadData.clientName || 'New Imported Lead',
-                        amount: leadData.amount ? parseFloat(leadData.amount) : 0,
+                        quotationAmount: leadData.quotationAmount || leadData.amount ? parseFloat(leadData.quotationAmount || leadData.amount) : 0,
+                        clientBudget: leadData.clientBudget ? parseFloat(leadData.clientBudget) : 0,
                         status: leadData.status || 'New',
                         notes: leadData.notes || '',
                         contactId: contactId,

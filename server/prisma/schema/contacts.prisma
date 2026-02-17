@@ -1,10 +1,10 @@
 model Contact {
-    id        Int      @id @default(autoincrement())
-    firstName String
-    lastName  String?
-    email     String?  @unique
-    phone     String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    leads     Lead[]
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String?
+  email     String?  @unique
+  phone     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  leads     Lead[]
 }

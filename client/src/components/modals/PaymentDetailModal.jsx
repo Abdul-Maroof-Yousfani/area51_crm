@@ -14,23 +14,30 @@ export default function PaymentDetailModal({ lead, onClose, onUpdate }) {
 
     // Initialize payments - include advanceAmount as a legacy payment if no Payment records exist
     const initializePayments = () => {
-        if (lead?.payments && lead.payments.length > 0) {
-            return lead.payments;
-        }
+        const currentPayments = Array.isArray(lead?.payments) ? lead.payments : [];
 
-        // If no payments but advanceAmount exists, show it as a legacy payment
-        if (lead?.advanceAmount && lead.advanceAmount > 0) {
-            return [{
+        // Check if there's already an 'Advance' payment recorded to avoid duplication
+        const hasAdvancePayment = currentPayments.some(p =>
+            p.type === 'Advance' ||
+            p.type === 'Advance (Initial)' ||
+            (p.notes && p.notes.toLowerCase().includes('initial booking'))
+        );
+
+        // If no explicit advance payment record exists, but we have an advanceAmount on the lead,
+        // show it as a legacy payment
+        if (lead?.advanceAmount && lead.advanceAmount > 0 && !hasAdvancePayment) {
+            const legacyPayment = {
                 id: 'legacy-advance',
                 amount: lead.advanceAmount,
                 date: lead.bookedAt || lead.createdAt || new Date().toISOString(),
                 type: 'Advance (Initial)',
                 notes: 'Initial booking payment',
                 isLegacy: true
-            }];
+            };
+            return [legacyPayment, ...currentPayments];
         }
 
-        return [];
+        return currentPayments;
     };
 
     const [payments, setPayments] = useState(initializePayments());

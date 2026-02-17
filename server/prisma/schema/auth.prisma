@@ -1,14 +1,3 @@
-// users [icon: user, color: yellow]{
-// id string pk
-// username string unique
-// email string unique
-// password_hash string
-// is_active boolean
-// created_at timestamp
-// updated_at timestamp
-// last_login_at timestamp
-// }
-
 model User {
   id             Int            @id @default(autoincrement())
   username       String
@@ -19,17 +8,10 @@ model User {
   updated_at     DateTime       @updatedAt
   last_login_at  DateTime       @default(now())
   role           Role
-  sessions       Sessions[]
   leads          Lead[]
-  notifications  Notification[]
   leadActivities LeadActivity[]
-}
-
-enum Role {
-  Admin
-  Owner
-  Sales
-  Finance
+  notifications  Notification[]
+  sessions       Sessions[]
 }
 
 model Sessions {
@@ -42,4 +24,11 @@ model Sessions {
   revoked_at    DateTime
   user_id       Int
   user          User     @relation(fields: [user_id], references: [id])
+}
+
+enum Role {
+  Admin
+  Owner
+  Sales
+  Finance
 }

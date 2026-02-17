@@ -156,7 +156,8 @@ exports.Prisma.ContactScalarFieldEnum = {
 exports.Prisma.LeadScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  amount: 'amount',
+  quotationAmount: 'quotationAmount',
+  clientBudget: 'clientBudget',
   status: 'status',
   probability: 'probability',
   expectedCloseDate: 'expectedCloseDate',
