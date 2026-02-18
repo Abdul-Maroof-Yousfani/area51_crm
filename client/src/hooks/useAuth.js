@@ -95,6 +95,7 @@ export function useAuth() {
     } finally {
       setUser(null);
       setActiveUser(null);
+      setAuthError(null);
       localStorage.removeItem('user');
       localStorage.removeItem('token');
     }

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3006/api';
+const API_BASE_URL = 'https://area51crm.inplsoftwares.com/api';
 
 const fetchWithAuth = async (url, options = {}) => {
     const token = localStorage.getItem('token');

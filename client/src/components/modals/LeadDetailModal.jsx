@@ -230,8 +230,6 @@ export default function LeadDetailModal({
       eventDate: bookingData.eventDate,
       eventType: bookingData.eventType,
       guests: bookingData.guests,
-      eventType: bookingData.eventType,
-      guests: bookingData.guests,
       finalAmount: Number(bookingData.finalAmount),
       quotationAmount: Number(bookingData.finalAmount),
       advanceAmount: Number(bookingData.advanceAmount) || 0,
@@ -242,7 +240,6 @@ export default function LeadDetailModal({
       bookedBy: currentUser.name,
       stageUpdatedAt: new Date().toISOString(),
       stageUpdatedBy: currentUser.name,
-
     });
 
     // Log activity via API

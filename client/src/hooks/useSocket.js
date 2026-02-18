@@ -11,35 +11,40 @@ export const useSocket = (url = 'http://localhost:3006') => {
         if (!socket) {
             socket = io(url, {
                 withCredentials: true,
-                transports: ['websocket', 'polling']
+                transports: ['websocket', 'polling'],
+                autoConnect: true,
+                reconnection: true,
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000,
             });
         }
 
         const onConnect = () => {
-            console.log('✅ Connected to Socket.IO server');
+            console.log('✅ Connected to Socket.IO server at', url);
             setIsConnected(true);
         };
-        const onDisconnect = () => {
-            console.log('❌ Disconnected from Socket.IO server');
+
+        const onDisconnect = (reason) => {
+            console.log('❌ Disconnected from Socket.IO server:', reason);
             setIsConnected(false);
         };
+
         const onConnectError = (err) => {
-            console.error('⚠️ Socket connection error:', err);
+            console.error('⚠️ Socket connection error:', err.message);
         };
+
+        if (socket.connected) {
+            setIsConnected(true);
+        }
 
         socket.on('connect', onConnect);
         socket.on('disconnect', onDisconnect);
         socket.on('connect_error', onConnectError);
 
-        // Initial state
-        if (socket.connected) {
-            console.log('✅ Socket already connected');
-            setIsConnected(true);
-        }
-
         return () => {
             socket.off('connect', onConnect);
             socket.off('disconnect', onDisconnect);
+            socket.off('connect_error', onConnectError);
         };
     }, [url]);
 
