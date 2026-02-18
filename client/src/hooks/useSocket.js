@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 // Singleton socket instance to prevent multiple connections
 let socket;
 
-export const useSocket = (url = 'http://localhost:3006') => {
+export const useSocket = (url = 'https://area51crm.inplsoftwares.com') => {
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
