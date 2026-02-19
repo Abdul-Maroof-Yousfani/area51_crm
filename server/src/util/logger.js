@@ -1,5 +1,5 @@
 import morgan from 'morgan';
-import rfs from 'rotating-file-stream';
+import { createStream } from 'rotating-file-stream';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -14,7 +14,7 @@ const logDirectory = path.resolve(__dirname, '../../log');
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
 // create a rotating write stream
-const accessLogStream = rfs('access.log', {
+const accessLogStream = createStream('access.log', {
     interval: '1d',
     path: logDirectory
 });

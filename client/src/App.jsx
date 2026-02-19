@@ -63,9 +63,6 @@ export default function App() {
     handleDeleteAllContacts
   } = useFirestoreData(user);
 
-  // CSV upload (pass sources for matching)
-  const { uploading, handleFileUpload } = useCsvUpload(sources);
-
   // App settings (managers, event types from Firestore)
   const { eventTypes } = useAppSettings();
 
@@ -103,6 +100,9 @@ export default function App() {
     deleteAllLeads,
     addLeadNote
   } = useLeads({ enabled: !!user });
+
+  // CSV upload — placed after useLeads so fetchLeads is already declared
+  const { importProgress, closeImportModal, handleFileUpload } = useCsvUpload(apiSources, fetchLeads);
 
   // Notifications
   const {
@@ -672,9 +672,10 @@ export default function App() {
               newLeadIds={newLeadIds}
               viewedLeadIds={viewedLeadIds}
               onShowNewLead={() => setShowNewLead(true)}
-              uploading={uploading}
               onFileUpload={handleFileUpload}
               onTruncateLeads={deleteAllLeads}
+              importProgress={importProgress}
+              closeImportModal={closeImportModal}
             />
           } />
 

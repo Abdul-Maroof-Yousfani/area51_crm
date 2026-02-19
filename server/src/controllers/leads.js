@@ -520,7 +520,11 @@ export const importLeads = async (req, res) => {
                     if (source) {
                         sourceId = source.id;
                     } else {
-                        // Optionally create source? For now, leave null if not found
+                        // Auto-create the source so no data is lost
+                        const newSource = await prisma.sources.create({
+                            data: { name: sourceName }
+                        });
+                        sourceId = newSource.id;
                     }
                 }
 
@@ -538,8 +542,8 @@ export const importLeads = async (req, res) => {
                 const newLead = await prisma.lead.create({
                     data: {
                         title: leadData.title || leadData.clientName || 'New Imported Lead',
-                        quotationAmount: leadData.quotationAmount || leadData.amount ? parseFloat(leadData.quotationAmount || leadData.amount) : 0,
-                        clientBudget: leadData.clientBudget ? parseFloat(leadData.clientBudget) : 0,
+                        quotationAmount: leadData.quotationAmount || leadData.amount ? parseFloat(String(leadData.quotationAmount || leadData.amount).replace(/,/g, '')) : 0,
+                        clientBudget: leadData.clientBudget ? parseFloat(String(leadData.clientBudget).replace(/,/g, '')) : 0,
                         status: leadData.status || 'New',
                         notes: leadData.notes || '',
                         contactId: contactId,

@@ -58,14 +58,27 @@ const matchSource = (csvSource, existingSources) => {
   return csvSource;
 };
 
-export function useCsvUpload(sources = []) {
-  const [uploading, setUploading] = useState(false);
+const INITIAL_PROGRESS = {
+  open: false,
+  total: 0,
+  current: 0,
+  successCount: 0,
+  failedRows: [],
+  done: false,
+  unmatchedSources: [],
+};
+
+export function useCsvUpload(sources = [], onImportDone = null) {
+  const [importProgress, setImportProgress] = useState(INITIAL_PROGRESS);
+
+  const closeImportModal = () => {
+    setImportProgress(INITIAL_PROGRESS);
+  };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setUploading(true);
     const reader = new FileReader();
 
     reader.onload = async (evt) => {
@@ -77,7 +90,6 @@ export function useCsvUpload(sources = []) {
 
         if (headerIndex === -1) {
           alert('Invalid CSV: Could not find "Client Name" header');
-          setUploading(false);
           return;
         }
 
@@ -91,61 +103,169 @@ export function useCsvUpload(sources = []) {
         };
 
         const leadsToImport = [];
-        let unmatchedSources = new Set();
+
+        /**
+         * KEY FIX: Excel exports comma-formatted numbers WITHOUT quotes in CSV.
+         * e.g. 1,450,000 → ["1", "450", "000"] (3 separate cells).
+         *
+         * IMPORTANT: Only merge at the specific AMOUNT column — not at every
+         * pure-digit cell — because phone numbers (e.g. 3030523775) are also
+         * pure-digit and would incorrectly merge with the following amount fragment.
+         */
+        const normalizeRow = (row) => {
+          // Find the amount column in the header
+          const amtIdx = headers.findIndex(
+            (h) => h === 'amount' || h === 'quotation amount' || h.startsWith('amount')
+          );
+          if (amtIdx < 0 || amtIdx >= row.length) return row;
+
+          const cell = (row[amtIdx] || '').trim();
+
+          // Relaxed check: The first part might be "Rs 1" or just "1". 
+          // We rely on the *continued* presence of 3-digit chunks to identify a split.
+
+          // Count how many following cells are exactly-3-digit groups
+          let j = amtIdx + 1;
+          while (j < row.length && /^\d{3}$/.test((row[j] || '').trim())) j++;
+
+          if (j === amtIdx + 1) return row; // nothing to merge
+
+          // Re-build row: merge the split cells back into one amount cell
+          const merged = row.slice(amtIdx, j).join('');
+          return [
+            ...row.slice(0, amtIdx),
+            merged,
+            ...row.slice(j)
+          ];
+        };
+
+        const cleanNumber = (val) => {
+          if (!val) return '';
+          return String(val).replace(/[^\d.]/g, '');
+        };
 
         rows.slice(headerIndex + 1).forEach((row) => {
           if (row.length < 2) return;
-          const name = get(row, 'client name', 'name');
+
+          // Normalize first so split number cells don't offset subsequent columns
+          const r = normalizeRow(row);
+
+          const name = get(r, 'client name', 'name');
           if (!name) return;
-
-          const rawSource = get(row, 'source');
-          const matchedSource = matchSource(rawSource, sources);
-
-          // Track unmatched sources for reporting
-          if (rawSource && matchedSource === rawSource && !sources.find(s => s.name === rawSource)) {
-            unmatchedSources.add(rawSource);
-          }
 
           leadsToImport.push({
             clientName: name,
-            amount: get(row, 'amount'),
-            status: get(row, 'status') || 'New', // Backend handles mapping/defaults
-            notes: get(row, 'notes'),
-            phone: get(row, 'phone', 'contact', 'mobile', 'cell'),
-            email: get(row, 'email', 'mail'),
-            source: matchedSource,
-            manager: get(row, 'manager'),
-            inquiryDate: get(row, 'date', 'inquiry date'),
-            // Event details
-            eventDate: get(row, 'event date', 'eventdate', 'function date'),
-            eventType: get(row, 'event type', 'eventtype', 'function type', 'occasion'),
-            guests: get(row, 'guests', 'pax', 'headcount', 'attendees'),
-            venue: get(row, 'venue', 'location')
+            amount: cleanNumber(get(r, 'amount', 'quotation')),
+            quotationAmount: cleanNumber(get(r, 'amount', 'quotation')),
+            clientBudget: cleanNumber(get(r, 'budget', 'client budget')),
+            status: get(r, 'status') || 'New',
+            notes: get(r, 'notes'),
+            phone: get(r, 'phone', 'contact', 'mobile', 'cell'),
+            email: get(r, 'email', 'mail'),
+            source: get(r, 'source'),  // now reads correct column after normalization
+            manager: get(r, 'manager'),
+            inquiryDate: get(r, 'date', 'inquiry date'),
+            eventDate: get(r, 'event date', 'eventdate', 'function date'),
+            eventType: get(r, 'event type', 'eventtype', 'function type', 'occasion'),
+            guests: get(r, 'guests', 'pax', 'headcount', 'attendees'),
+            venue: get(r, 'venue', 'location')
           });
         });
 
-        if (leadsToImport.length > 0) {
-          const result = await leadsService.import(leadsToImport);
-          let message = result.message || `Imported ${leadsToImport.length} leads.`;
-
-          if (unmatchedSources.size > 0) {
-            message += `\n\nUnmatched sources (saved as text): ${[...unmatchedSources].join(', ')}`;
-          }
-          alert(message);
-
-          // Reload page or trigger refresh?
-          // Ideally we should trigger a refresh via context, but strict reload ensures data is fresh
-          window.location.reload();
-        } else {
+        if (leadsToImport.length === 0) {
           alert('No valid leads found in CSV');
+          return;
+        }
+
+        // Open modal and start import
+        setImportProgress({
+          open: true,
+          total: leadsToImport.length,
+          current: 0,
+          successCount: 0,
+          failedRows: [],
+          done: false,
+          unmatchedSources: [],
+        });
+
+        // Import all leads via API (which processes them server-side)
+        // We split into chunks to show progress on the frontend
+        const CHUNK_SIZE = 10;
+        let successCount = 0;
+        const failedRows = [];
+        let processed = 0;
+
+        for (let i = 0; i < leadsToImport.length; i += CHUNK_SIZE) {
+          const chunk = leadsToImport.slice(i, i + CHUNK_SIZE);
+          const chunkStartIndex = i; // CSV data row index (0-based within leadsToImport)
+
+          try {
+            const result = await leadsService.import(chunk);
+
+            // result.data = { successCount, failedCount, errors: [{row, error}] }
+            successCount += result.data?.successCount ?? chunk.length;
+
+            // Map errors back to their absolute row numbers
+            if (result.data?.errors?.length > 0) {
+              result.data.errors.forEach((err, errIdx) => {
+                // 'errors' array is in order of failed items in the chunk
+                // We reconstruct their index by looking at 'results' if available, else estimate
+                const absRowNumber = headerIndex + 1 + chunkStartIndex + errIdx + 2; // +2: 1 for header row, 1 for 1-based index
+                failedRows.push({
+                  rowNumber: absRowNumber,
+                  clientName: err.row || chunk[errIdx]?.clientName || '—',
+                  error: err.error,
+                });
+              });
+              // Correct successCount from server response
+              successCount = successCount - (result.data?.failedCount ?? 0);
+            }
+          } catch (chunkErr) {
+            // Entire chunk failed
+            chunk.forEach((lead, ci) => {
+              const absRowNumber = headerIndex + 1 + chunkStartIndex + ci + 2;
+              failedRows.push({
+                rowNumber: absRowNumber,
+                clientName: lead.clientName,
+                error: chunkErr.message,
+              });
+            });
+          }
+
+          processed += chunk.length;
+
+          // Update progress in state
+          setImportProgress(prev => ({
+            ...prev,
+            current: processed,
+            successCount,
+            failedRows: [...failedRows],
+          }));
+        }
+
+        // Mark done
+        setImportProgress(prev => ({
+          ...prev,
+          current: leadsToImport.length,
+          successCount,
+          failedRows: [...failedRows],
+          done: true,
+        }));
+
+        // Refresh leads data without page reload
+        if (typeof onImportDone === 'function') {
+          onImportDone();
         }
 
       } catch (error) {
         console.error('Import failed:', error);
-        alert(`Import failed: ${error.message}`);
+        setImportProgress(prev => ({
+          ...prev,
+          done: true,
+          failedRows: [...prev.failedRows, { rowNumber: '?', clientName: 'Unknown', error: error.message }],
+        }));
       } finally {
-        setUploading(false);
-        // Reset file input
+        // Reset file input so the same file can be re-selected
         e.target.value = '';
       }
     };
@@ -153,5 +273,5 @@ export function useCsvUpload(sources = []) {
     reader.readAsText(file);
   };
 
-  return { uploading, handleFileUpload };
+  return { importProgress, closeImportModal, handleFileUpload };
 }

@@ -7,20 +7,22 @@ import {
   getPaginationRowModel,
   flexRender,
 } from '@tanstack/react-table';
-import { Search, Upload, Plus, Loader, Phone, Calendar, ChevronRight, Trash2, ChevronUp, ChevronDown, ChevronsLeft, ChevronLeft, ChevronsRight } from 'lucide-react';
+import { Search, Upload, Plus, Phone, Calendar, ChevronRight, Trash2, ChevronUp, ChevronDown, ChevronsLeft, ChevronLeft, ChevronsRight } from 'lucide-react';
 import { safeAmount, formatCurrency } from '../../utils/helpers';
 import { STAGES, STAGE_COLORS } from '../../lib/constants';
 import { useLanguage } from '../../contexts/LanguageContext';
+import CsvImportModal from '../modals/CsvImportModal';
 
 export default function LeadsView({
   data,
   onSelectLead,
   onShowNewLead,
-  uploading,
   onFileUpload,
   onTruncateLeads,
   newLeadIds = [],
-  viewedLeadIds = []
+  viewedLeadIds = [],
+  importProgress,
+  closeImportModal,
 }) {
   const { t } = useLanguage();
   const [globalFilter, setGlobalFilter] = useState('');
@@ -165,16 +167,10 @@ export default function LeadsView({
                 onChange={(e) => setGlobalFilter(e.target.value)}
               />
             </div>
-            {uploading ? (
-              <span className="text-sm text-gray-500 flex items-center gap-2">
-                <Loader className="w-4 h-4 animate-spin" /> {t('importing')}
-              </span>
-            ) : (
-              <label className="bg-green-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-green-700 transition-colors whitespace-nowrap cursor-pointer">
-                <Upload className="w-4 h-4" /> <span className="hidden sm:inline">{t('importCsv')}</span>
-                <input type="file" className="hidden" onChange={onFileUpload} />
-              </label>
-            )}
+            <label className="bg-green-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-green-700 transition-colors whitespace-nowrap cursor-pointer">
+              <Upload className="w-4 h-4" /> <span className="hidden sm:inline">{t('importCsv')}</span>
+              <input type="file" className="hidden" accept=".csv" onChange={onFileUpload} />
+            </label>
             {onTruncateLeads && (
               <button
                 onClick={onTruncateLeads}
@@ -454,6 +450,9 @@ export default function LeadsView({
           </div>
         </div>
       </div>
+
+      {/* CSV Import Progress Modal */}
+      <CsvImportModal progress={importProgress} onClose={closeImportModal} />
     </div>
   );
 }
