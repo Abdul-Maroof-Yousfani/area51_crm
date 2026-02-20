@@ -10,11 +10,11 @@ export function useContacts({ enabled = true } = {}) {
     const [totalCount, setTotalCount] = useState(0);
 
     // Fetch contacts with optional cursor for pagination
-    const fetchContacts = useCallback(async (cursor = null, append = false) => {
+    const fetchContacts = useCallback(async (cursor = null, append = false, search = '') => {
         setLoading(true);
         setError(null);
         try {
-            const result = await contactService.getAll(cursor, 100);
+            const result = await contactService.getAll(cursor, 10000, search);
 
             if (append) {
                 setContacts(prev => [...prev, ...result.data]);
@@ -25,9 +25,11 @@ export function useContacts({ enabled = true } = {}) {
             setHasMore(result.pagination.hasMore);
             setNextCursor(result.pagination.nextCursor);
             setTotalCount(result.pagination.total);
+            return result.data;
         } catch (err) {
             setError(err.message);
             console.error('Failed to fetch contacts:', err);
+            return [];
         } finally {
             setLoading(false);
         }
@@ -40,51 +42,18 @@ export function useContacts({ enabled = true } = {}) {
         }
     }, [hasMore, nextCursor, loading, fetchContacts]);
 
-    // Fetch all pages to get complete data set
-    const fetchAllContacts = useCallback(async () => {
-        console.log('[useContacts] Fetching all contacts...');
-        setLoading(true);
-        setError(null);
-        try {
-            let allContacts = [];
-            let cursor = null;
-            let hasMoreData = true;
-
-            while (hasMoreData) {
-                console.log('[useContacts] Fetching page, cursor:', cursor);
-                const result = await contactService.getAll(cursor, 1000); // Fetch in larger batches
-                console.log('[useContacts] Received result:', result);
-                allContacts = [...allContacts, ...result.data];
-                hasMoreData = result.pagination.hasMore;
-                cursor = result.pagination.nextCursor;
-
-                // Safety break
-                if (allContacts.length > 100000) {
-                    console.warn('[useContacts] Safety break: exceeding 100k contacts, stopping fetch.');
-                    break;
-                }
-            }
-
-            console.log('[useContacts] Total contacts fetched:', allContacts.length);
-            setContacts(allContacts);
-            setHasMore(false);
-            setNextCursor(null);
-            setTotalCount(allContacts.length);
-        } catch (err) {
-            console.error('[useContacts] Error fetching contacts:', err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+    // Search contacts (replaces list)
+    const searchContacts = useCallback(async (query) => {
+        return await fetchContacts(null, false, query);
+    }, [fetchContacts]);
 
     useEffect(() => {
         if (enabled) {
-            fetchAllContacts();
+            fetchContacts();
         } else {
             setLoading(false);
         }
-    }, [fetchAllContacts, enabled]);
+    }, [fetchContacts, enabled]);
 
     const addContact = useCallback(async (contactData) => {
         try {
@@ -137,8 +106,8 @@ export function useContacts({ enabled = true } = {}) {
         error,
         hasMore,
         totalCount,
-        fetchContacts,
-        fetchAllContacts,
+        fetchContacts: (cursor, append) => fetchContacts(cursor, append, ''),
+        searchContacts,
         loadMore,
         addContact,
         updateContact,

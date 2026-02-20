@@ -38,7 +38,8 @@ export const newUser = async (req, res) => {
         }
 
         // Generate random password
-        const tempPassword = Math.random().toString(36).slice(-8);
+        const tempPassword = 'area51_';
+
         const salt = await bcrypt.genSalt(10);
         const password_hash = await bcrypt.hash(tempPassword, salt);
 

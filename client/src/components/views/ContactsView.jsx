@@ -12,7 +12,7 @@ import { Search, UserPlus, MessageCircle, Phone, Mail, Trash2, ChevronUp, Chevro
 import { getWhatsappLink } from '../../utils/helpers';
 import { ContactModal } from '../modals';
 
-export default function ContactsView({ contacts, loading, onAddContact, onUpdateContact, onDeleteContact, onDeleteAllContacts }) {
+export default function ContactsView({ contacts, loading, onAddContact, onUpdateContact, onDeleteContact, onDeleteAllContacts, searchContacts, loadMore, hasMore }) {
   // URL State
   const [searchParams, setSearchParams] = useSearchParams();
   const showModal = searchParams.get('modal') === 'new-contact';
@@ -180,28 +180,34 @@ export default function ContactsView({ contacts, loading, onAddContact, onUpdate
               onChange={(e) => setGlobalFilter(e.target.value)}
             />
           </div>
-          {onDeleteAllContacts && (
-            <button
-              onClick={onDeleteAllContacts}
-              className="bg-red-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-red-700 transition-colors whitespace-nowrap"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Delete All</span>
-            </button>
-          )}
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-blue-700 transition-colors whitespace-nowrap"
-          >
-            <UserPlus className="w-4 h-4" />
-            <span className="hidden sm:inline">Add Contact</span>
-          </button>
+          {/* Server-side Search Trigger */}
+          {React.useEffect(() => {
+            const timer = setTimeout(() => {
+              if (searchContacts) searchContacts(globalFilter);
+            }, 500);
+            return () => clearTimeout(timer);
+          }, [globalFilter, searchContacts])}
         </div>
+        {onDeleteAllContacts && (
+          <button
+            onClick={onDeleteAllContacts}
+            className="bg-red-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-red-700 transition-colors whitespace-nowrap"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span className="hidden sm:inline">Delete All</span>
+          </button>
+        )}
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-blue-700 transition-colors whitespace-nowrap"
+        >
+          <UserPlus className="w-4 h-4" />
+          <span className="hidden sm:inline">Add Contact</span>
+        </button>
       </div>
-
       {/* Mobile Card View */}
-      <div className="md:hidden space-y-2">
-        {loading ? (
+      <div className={`md:hidden space-y-2 ${loading ? 'opacity-70 pointer-events-none' : ''}`}>
+        {loading && contacts.length === 0 ? (
           <div className="flex items-center justify-center py-12">
             <Loader className="w-6 h-6 animate-spin text-blue-600" />
           </div>
@@ -245,8 +251,8 @@ export default function ContactsView({ contacts, loading, onAddContact, onUpdate
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden md:block bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        {loading ? (
+      <div className={`hidden md:block bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden ${loading ? 'opacity-70 pointer-events-none' : ''}`}>
+        {loading && contacts.length === 0 ? (
           <div className="flex items-center justify-center py-16">
             <Loader className="w-8 h-8 animate-spin text-blue-600" />
           </div>
@@ -310,111 +316,113 @@ export default function ContactsView({ contacts, loading, onAddContact, onUpdate
       </div>
 
       {/* Pagination Controls */}
-      {contacts.length > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          {/* Page Size Selector */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Show</span>
-            <select
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => table.setPageSize(Number(e.target.value))}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              {[10, 20, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </select>
-            <span className="text-sm text-gray-600">per page</span>
-          </div>
-
-          {/* Page Info */}
-          <div className="text-sm text-gray-600">
-            Page{' '}
-            <span className="font-semibold text-gray-900">
-              {table.getState().pagination.pageIndex + 1}
-            </span>{' '}
-            of{' '}
-            <span className="font-semibold text-gray-900">
-              {table.getPageCount()}
-            </span>
-            {' · '}
-            <span className="text-gray-500">
-              {table.getFilteredRowModel().rows.length} results
-            </span>
-          </div>
-
-          {/* Navigation Buttons */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-              className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              title="First page"
-            >
-              <ChevronsLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              title="Previous page"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-
-            {/* Page Number Buttons */}
-            <div className="hidden sm:flex items-center gap-1 mx-2">
-              {Array.from({ length: Math.min(5, table.getPageCount()) }, (_, i) => {
-                const currentPage = table.getState().pagination.pageIndex;
-                const totalPages = table.getPageCount();
-                let pageNum;
-
-                if (totalPages <= 5) {
-                  pageNum = i;
-                } else if (currentPage <= 2) {
-                  pageNum = i;
-                } else if (currentPage >= totalPages - 3) {
-                  pageNum = totalPages - 5 + i;
-                } else {
-                  pageNum = currentPage - 2 + i;
-                }
-
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => table.setPageIndex(pageNum)}
-                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${currentPage === pageNum
-                      ? 'bg-blue-600 text-white'
-                      : 'border border-gray-200 hover:bg-gray-50 text-gray-700'
-                      }`}
-                  >
-                    {pageNum + 1}
-                  </button>
-                );
-              })}
+      {
+        contacts.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            {/* Page Size Selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Show</span>
+              <select
+                value={table.getState().pagination.pageSize}
+                onChange={(e) => table.setPageSize(Number(e.target.value))}
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {[10, 20, 50].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    {pageSize}
+                  </option>
+                ))}
+              </select>
+              <span className="text-sm text-gray-600">per page</span>
             </div>
 
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              title="Next page"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-              className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              title="Last page"
-            >
-              <ChevronsRight className="w-4 h-4" />
-            </button>
+            {/* Page Info */}
+            <div className="text-sm text-gray-600">
+              Page{' '}
+              <span className="font-semibold text-gray-900">
+                {table.getState().pagination.pageIndex + 1}
+              </span>{' '}
+              of{' '}
+              <span className="font-semibold text-gray-900">
+                {table.getPageCount()}
+              </span>
+              {' · '}
+              <span className="text-gray-500">
+                {table.getFilteredRowModel().rows.length} results
+              </span>
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage()}
+                className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                title="First page"
+              >
+                <ChevronsLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                title="Previous page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {/* Page Number Buttons */}
+              <div className="hidden sm:flex items-center gap-1 mx-2">
+                {Array.from({ length: Math.min(5, table.getPageCount()) }, (_, i) => {
+                  const currentPage = table.getState().pagination.pageIndex;
+                  const totalPages = table.getPageCount();
+                  let pageNum;
+
+                  if (totalPages <= 5) {
+                    pageNum = i;
+                  } else if (currentPage <= 2) {
+                    pageNum = i;
+                  } else if (currentPage >= totalPages - 3) {
+                    pageNum = totalPages - 5 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => table.setPageIndex(pageNum)}
+                      className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${currentPage === pageNum
+                        ? 'bg-blue-600 text-white'
+                        : 'border border-gray-200 hover:bg-gray-50 text-gray-700'
+                        }`}
+                    >
+                      {pageNum + 1}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                title="Next page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                disabled={!table.getCanNextPage()}
+                className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                title="Last page"
+              >
+                <ChevronsRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 }

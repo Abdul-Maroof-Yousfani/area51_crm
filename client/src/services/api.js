@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://area51crm.inplsoftwares.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3006/api' : 'https://area51crm.inplsoftwares.com/api');
 
 const fetchWithAuth = async (url, options = {}) => {
     const token = localStorage.getItem('token');
@@ -83,10 +83,11 @@ export const authService = {
 };
 
 export const contactService = {
-    async getAll(cursor = null, limit = 100) {
+    async getAll(cursor = null, limit = 100, search = '') {
         const params = new URLSearchParams();
         if (cursor) params.append('cursor', cursor);
         params.append('limit', limit.toString());
+        if (search) params.append('search', search);
 
         const url = `${API_BASE_URL}/contacts${params.toString() ? '?' + params.toString() : ''}`;
         const response = await fetchWithAuth(url, {

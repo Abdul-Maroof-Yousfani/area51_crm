@@ -11,8 +11,8 @@ export function useLeads({ enabled = true } = {}) {
     const fetchLeads = useCallback(async (params = {}) => {
         setLoading(true);
         try {
-            // Default to get all (limit 1000) for client-side compat if no params
-            const fetchParams = { limit: 1000, ...params };
+            // Default to get all (limit 10000) for client-side compat if no params
+            const fetchParams = { limit: 10000, ...params };
             const response = await leadsService.getAll(fetchParams);
 
             // Transform data to match existing UI structure where needed

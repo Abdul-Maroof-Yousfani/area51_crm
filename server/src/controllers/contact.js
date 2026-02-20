@@ -21,11 +21,24 @@ const updateContactSchema = Joi.object({
 // Get all contacts with pagination
 export const getContacts = async (req, res) => {
     try {
-        const { cursor, limit = 100 } = req.query;
-        const take = Math.min(parseInt(limit) || 100, 1000); // Max 1000 per request
+        const { cursor, limit = 100, search } = req.query;
+        const take = Math.min(parseInt(limit) || 100, 20000); // Max 20000 per request
 
         // Build query conditions
-        const whereCondition = cursor ? { id: { gt: parseInt(cursor) } } : {};
+        const whereCondition = {};
+
+        if (cursor) {
+            whereCondition.id = { gt: parseInt(cursor) };
+        }
+
+        if (search) {
+            whereCondition.OR = [
+                { firstName: { contains: search, mode: 'insensitive' } },
+                { lastName: { contains: search, mode: 'insensitive' } },
+                { email: { contains: search, mode: 'insensitive' } },
+                { phone: { contains: search, mode: 'insensitive' } }
+            ];
+        }
 
         // Get paginated contacts
         const contacts = await prisma.contact.findMany({
@@ -34,8 +47,8 @@ export const getContacts = async (req, res) => {
             orderBy: { id: 'asc' }
         });
 
-        // Get total count
-        const total = await prisma.contact.count();
+        // Get total count (approximate if search is active to save perf? No, count is fine for now)
+        const total = await prisma.contact.count({ where: whereCondition });
 
         // Check if there are more records
         const hasMore = contacts.length > take;

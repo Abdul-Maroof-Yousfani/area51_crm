@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Search, Plus, ChevronRight, User } from 'lucide-react';
 import { STAGES, MANAGERS, EVENT_TYPES } from '../../lib/constants';
 import ContactModal from './ContactModal';
+import { contactService } from '../../services/api';
 
 export default function NewLeadModal({ onClose, onSave, managers, contacts, onAddContact, sources, eventTypes }) {
   const [step, setStep] = useState(1);
@@ -20,13 +21,33 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
     source: ''
   });
 
-  const filteredContacts = contacts
-    .filter(
-      (c) =>
-        c.firstName.toLowerCase().includes(contactSearch.toLowerCase()) ||
-        (c.phone && c.phone.includes(contactSearch))
-    )
-    .slice(0, 5);
+  // Async search state
+  const [searchedContacts, setSearchedContacts] = useState([]);
+  const [searching, setSearching] = useState(false);
+
+  // Debounced search effect
+  React.useEffect(() => {
+    const search = async () => {
+      if (!contactSearch) {
+        setSearchedContacts([]);
+        return;
+      }
+      setSearching(true);
+      try {
+        const result = await contactService.getAll(null, 5, contactSearch);
+        setSearchedContacts(result.data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setSearching(false);
+      }
+    };
+
+    const timer = setTimeout(search, 400);
+    return () => clearTimeout(timer);
+  }, [contactSearch]);
+
+  const displayContacts = contactSearch ? searchedContacts : (contacts || []).slice(0, 5);
 
   const handleContactSelect = (contact) => {
     setSelectedContact(contact);
@@ -96,7 +117,8 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
                 />
               </div>
               <div className="space-y-2 max-h-60 overflow-y-auto">
-                {filteredContacts.map((c) => (
+                {searching && <p className="text-center text-xs text-gray-500">Searching...</p>}
+                {displayContacts.map((c) => (
                   <div
                     key={c.id}
                     onClick={() => handleContactSelect(c)}
@@ -116,7 +138,7 @@ export default function NewLeadModal({ onClose, onSave, managers, contacts, onAd
                     <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
                 ))}
-                {filteredContacts.length === 0 && contactSearch && (
+                {!searching && displayContacts.length === 0 && contactSearch && (
                   <p className="text-center text-sm text-gray-400 py-2">No contacts found.</p>
                 )}
               </div>

@@ -46,22 +46,39 @@ export default function App() {
   const { user, activeUser, setActiveUser, authLoading, authError, login, signup, logout } = useAuth();
 
   // Firestore data
-  const {
-    data,
-    sources,
-    contacts,
-    stats,
-    handleSaveLead,
-    handleAddLead,
-    handleAddSource,
-    handleUpdateSource,
-    handleDeleteSource,
-    handleAddContact,
-    handleUpdateContact,
-    addActivityLog,
-    handleTruncateLeads,
-    handleDeleteAllContacts
-  } = useFirestoreData(user);
+  // Firestore data (DISABLED FOR PERFORMANCE)
+  // const {
+  //   data,
+  //   sources,
+  //   contacts,
+  //   stats,
+  //   handleSaveLead,
+  //   handleAddLead,
+  //   handleAddSource,
+  //   handleUpdateSource,
+  //   handleDeleteSource,
+  //   handleAddContact,
+  //   handleUpdateContact,
+  //   addActivityLog,
+  //   handleTruncateLeads,
+  //   handleDeleteAllContacts
+  // } = useFirestoreData(user);
+
+  // Safe fallbacks for disabled firestore vars
+  const data = [];
+  const sources = [];
+  const contacts = [];
+  const stats = { revenue: 0, pipe: 0, total: 0, conversion: 0, wonCount: 0 };
+  const handleSaveLead = async () => { };
+  const handleAddLead = async () => { };
+  const handleAddSource = async () => { };
+  const handleUpdateSource = async () => { };
+  const handleDeleteSource = async () => { };
+  const handleAddContact = async () => { };
+  const handleUpdateContact = async () => { };
+  const addActivityLog = async () => { };
+  const handleTruncateLeads = async () => { };
+  const handleDeleteAllContacts = async () => { };
 
   // App settings (managers, event types from Firestore)
   const { eventTypes } = useAppSettings();
@@ -77,7 +94,10 @@ export default function App() {
     addContact,
     updateContact,
     deleteContact,
-    deleteAllContacts
+    deleteAllContacts,
+    searchContacts,
+    loadMore,
+    hasMore
   } = useContacts({ enabled: !!user });
 
   // Sources from API
@@ -688,6 +708,9 @@ export default function App() {
               onUpdateContact={updateContact}
               onDeleteContact={deleteContact}
               onDeleteAllContacts={deleteAllContacts}
+              searchContacts={searchContacts}
+              loadMore={loadMore}
+              hasMore={hasMore}
             />
           } />
 

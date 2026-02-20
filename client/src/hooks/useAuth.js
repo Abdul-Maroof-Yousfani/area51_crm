@@ -11,14 +11,23 @@ export function useAuth() {
   useEffect(() => {
     const token = authService.getToken();
     if (token) {
-      // Decode token to get user info (JWT payload is base64 encoded)
       try {
+        // Decode token to get user info (JWT payload is base64 encoded)
         const payload = JSON.parse(atob(token.split('.')[1]));
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          const userData = JSON.parse(storedUser);
-          setUser({ id: payload.id, role: payload.role });
-          setActiveUser(userData);
+
+        // Check if token is expired
+        const currentTime = Date.now() / 1000;
+        if (payload.exp && payload.exp < currentTime) {
+          console.warn('Token expired, clearing session');
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        } else {
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            const userData = JSON.parse(storedUser);
+            setUser({ id: payload.id, role: payload.role });
+            setActiveUser(userData);
+          }
         }
       } catch (e) {
         console.error('Invalid token:', e);

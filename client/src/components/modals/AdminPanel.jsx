@@ -24,16 +24,44 @@ import {
   Search,
   Settings,
   Calendar,
-  Edit2
+  Edit2,
+  CheckCircle,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import { ROLES, MANAGERS, EVENT_TYPES } from '../../lib/constants';
 import { userService, settingsService, maintenanceService, sourcesService } from '../../services/api';
+
+// Helper component for copy button
+const CopyButton = ({ text }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className={`p-2 rounded-lg transition-colors ${copied ? 'bg-green-100 text-green-600' : 'hover:bg-slate-200 text-slate-600'}`}
+      title="Copy Password"
+    >
+      {copied ? <CheckCircle className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+    </button>
+  );
+};
 
 export default function AdminPanel({ onClose }) {
   const [users, setUsers] = useState([]);
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserName, setNewUserName] = useState('');
-  const [newUserRole, setNewUserRole] = useState('Manager');
+  const [newUserRole, setNewUserRole] = useState('Sales');
   const [loading, setLoading] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [showAssignmentRules, setShowAssignmentRules] = useState(false);
@@ -258,6 +286,8 @@ export default function AdminPanel({ onClose }) {
     await saveEventTypes(updated);
   };
 
+  const [statusModal, setStatusModal] = useState(null); // { type: 'success'|'error', title, message, details, link, password }
+
   const handleAddUser = async (e) => {
     e.preventDefault();
     if (!newUserEmail.trim() || !newUserName.trim()) return;
@@ -270,25 +300,16 @@ export default function AdminPanel({ onClose }) {
       });
 
       if (result.status) {
-        const { tempPassword, resetLink } = result.data;
-
-        // In a real app with email service, we'd say "Email sent".
-        // Here we simulate the "copy link" flow since we don't have a realemailer yet.
-        const copyLink = window.confirm(
-          `✅ User ${newUserName} has been added!\n\n` +
-          `Temporary Password: ${tempPassword}\n` +
-          `Reset Link: ${resetLink}\n\n` +
-          `Click OK to copy the link to clipboard.`
-        );
-
-        if (copyLink) {
-          try {
-            await navigator.clipboard.writeText(resetLink);
-            alert('Link copied!');
-          } catch {
-            prompt('Copy this link:', resetLink);
-          }
-        }
+        const { tempPassword } = result.data;
+        // Success Modal
+        setStatusModal({
+          type: 'success',
+          title: 'User Created Successfully',
+          message: `User ${newUserName} has been added to the team.`,
+          password: tempPassword,
+          link: 'https://area51crm.inplsoftwares.com',
+          details: 'Please share these credentials with the user.'
+        });
 
         setNewUserEmail('');
         setNewUserName('');
@@ -298,20 +319,55 @@ export default function AdminPanel({ onClose }) {
       }
     } catch (error) {
       console.error(error);
-      alert('Failed to invite user: ' + (error.message || 'Unknown error'));
+
+      let errorMessage = error.message || 'An unknown error occurred.';
+      let errorDetails = 'Please check the details and try again.';
+
+      // Sanitize Prisma/Database errors
+      if (errorMessage.includes('Prisma') || errorMessage.includes('invocation') || errorMessage.includes('create()')) {
+        if (errorMessage.includes('Unique constraint')) {
+          errorMessage = 'A user with this email already exists.';
+        } else if (errorMessage.includes('argument `role`')) {
+          errorMessage = 'Invalid role selected.';
+          errorDetails = 'The selected role is not supported by the system. Please try checking for updates.';
+        } else {
+          errorMessage = 'Database operation failed.';
+          errorDetails = 'An internal system error occurred. Please contact support.';
+        }
+      }
+
+      // Error Modal
+      setStatusModal({
+        type: 'error',
+        title: 'User Creation Failed',
+        message: errorMessage,
+        details: errorDetails
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleRemoveUser = async (id) => {
-    if (!window.confirm(`Revoke access for this user?`)) return;
+  const [confirmDelete, setConfirmDelete] = useState(null); // { id, name }
+
+  const handleRemoveUser = (user) => {
+    setConfirmDelete({ id: user.id, name: user.username || user.email });
+  };
+
+  const confirmDeleteAction = async () => {
+    if (!confirmDelete) return;
     try {
-      await userService.delete(id);
+      await userService.delete(confirmDelete.id);
       loadUsers(); // Refresh list
+      setConfirmDelete(null);
     } catch (error) {
       console.error(error);
-      alert('Failed to remove user');
+      setStatusModal({
+        type: 'error',
+        title: 'Deletion Failed',
+        message: error.message || 'Failed to remove user',
+        details: 'Please try again later.'
+      });
     }
   };
 
@@ -374,6 +430,70 @@ export default function AdminPanel({ onClose }) {
             <X className="w-5 h-5" />
           </button>
         </div>
+        {/* Status Modal Overlay */}
+        {statusModal && (
+          <div className="absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+            <div className={`bg-white rounded-2xl shadow-2xl border w-full max-w-md overflow-hidden transform transition-all scale-100 ${statusModal.type === 'error' ? 'border-red-100' : 'border-green-100'}`}>
+              <div className={`p-6 text-center ${statusModal.type === 'error' ? 'bg-red-50' : 'bg-green-50'}`}>
+                <div className={`w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 ${statusModal.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                  {statusModal.type === 'error' ? <AlertTriangle className="w-8 h-8" /> : <CheckCircle className="w-8 h-8" />}
+                </div>
+                <h3 className={`text-xl font-bold mb-2 ${statusModal.type === 'error' ? 'text-red-900' : 'text-green-900'}`}>{statusModal.title}</h3>
+                <p className={`text-sm ${statusModal.type === 'error' ? 'text-red-700' : 'text-green-700'}`}>{statusModal.message}</p>
+              </div>
+
+              <div className="p-6 space-y-4">
+                {statusModal.type === 'success' && (
+                  <div className="space-y-4">
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                      <label className="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wider">Temporary Password</label>
+                      <div className="flex items-center gap-2">
+                        <code className="flex-1 font-mono text-lg font-bold text-slate-800 bg-white px-3 py-2 rounded border border-slate-200">{statusModal.password}</code>
+                        <CopyButton text={statusModal.password} />
+                      </div>
+                    </div>
+
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                      <div className="flex gap-3">
+                        <div className="bg-blue-100 p-2 rounded-lg h-fit text-blue-600">
+                          <Globe className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-blue-900 text-sm mb-1">Login URL</h4>
+                          <a
+                            href={statusModal.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 text-xs break-all flex items-center gap-1 font-medium"
+                          >
+                            {statusModal.link} <ExternalLink className="w-3 h-3" />
+                          </a>
+                          <p className="text-xs text-blue-700/80 mt-2 leading-relaxed">
+                            Instructions: Go to the link above, login with the temporary password, and change it immediately.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {statusModal.type === 'error' && (
+                  <div className="bg-red-50 p-4 rounded-xl border border-red-100 text-sm text-red-800">
+                    {statusModal.details}
+                  </div>
+                )}
+
+                <button
+                  onClick={() => setStatusModal(null)}
+                  className={`w-full py-3 rounded-xl font-bold transition-all transform active:scale-95 ${statusModal.type === 'error' ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-200' : 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-200'}`}
+                >
+                  {statusModal.type === 'error' ? 'Close' : 'Done'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="p-6 flex-1 overflow-y-auto bg-slate-50">
           <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 mb-6">
             <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -941,7 +1061,7 @@ export default function AdminPanel({ onClose }) {
                     </td>
                     <td className="px-6 py-3 text-right flex justify-end gap-2">
                       <button
-                        onClick={() => handleRemoveUser(u.id)}
+                        onClick={() => handleRemoveUser(u)}
                         className="p-1.5 text-red-600 hover:bg-red-50 rounded-md"
                         title="Revoke Access"
                       >
@@ -974,6 +1094,37 @@ export default function AdminPanel({ onClose }) {
             </button>
           </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {confirmDelete && (
+          <div className="absolute inset-0 z-50 bg-white/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+            <div className="bg-white rounded-2xl shadow-2xl border border-red-100 w-full max-w-sm overflow-hidden transform transition-all scale-100">
+              <div className="p-6 text-center bg-red-50">
+                <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 bg-red-100 text-red-600">
+                  <Trash2 className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-red-900">Revoke Access?</h3>
+                <p className="text-sm text-red-700">
+                  Are you sure you want to remove <strong>{confirmDelete.name}</strong>? This action cannot be undone.
+                </p>
+              </div>
+              <div className="p-4 flex gap-3 bg-white">
+                <button
+                  onClick={() => setConfirmDelete(null)}
+                  className="flex-1 py-2.5 rounded-lg font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteAction}
+                  className="flex-1 py-2.5 rounded-lg font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 transition-all active:scale-95"
+                >
+                  Confirm Revoke
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
